@@ -1,5 +1,11 @@
+import Header from "../components/Header";
+
 function Summoners() {
-  return <></>;
+  return (
+    <>
+      <Header />
+    </>
+  );
 }
 
 export default Summoners;

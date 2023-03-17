@@ -11,7 +11,7 @@ import adcIcon from "../img/lane/adc.svg";
 import supIcon from "../img/lane/sup.svg";
 import geng from "../img/team/geng.png";
 import t1 from "../img/team/t1.png";
-
+import styled from "styled-components";
 function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
