@@ -50,10 +50,21 @@ function Summoners() {
     );
     const LeagueResJson: LeagueArray = await leagueRes.json();
 
-    console.log(LeagueResJson);
+    const matchRes = await fetch(
+      `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${
+        summonersResJson.puuid
+      }/ids?start=0&count=${15}&api_key=${API_KEY}`
+    ); // matchV5 소환사 정보에서 불러온 puuid로 해당 소환사의 경기 코드를 불러오는 API rate limit에 걸리는 관계로 0~15로 설정
+    const matchResJson = await matchRes.json();
+
+    // 전적이 없는 경우를 컨트롤 하기 위해, 없는 경우엔 null을 db에 업로드하고 그 외엔 matchResJson을 할당하고 업로드
+    let matchHistory = null;
+    if (matchResJson) {
+      matchHistory = matchResJson;
+    }
 
     /*
-     이 부분은 가장 마지막 단계 / db에 정보를 업로드 하는 단계임
+     이 부분은 가장 마지막 단계 / db에 정보를 업로드 하는 단계
      소환사 정보가 있으면, 파이어 베이스에 doc(db,"컬렉션 명","doc 명"), {data} 형식으로 추가 하는 기능
     */
     //사례 1.
@@ -62,6 +73,7 @@ function Summoners() {
         ...summonersResJson,
         league1: LeagueResJson[0],
         league2: LeagueResJson[1],
+        matchHistory,
       };
       await setDoc(
         doc(dbService, "user", summonersResJson.puuid),
@@ -73,6 +85,7 @@ function Summoners() {
         ...summonersResJson,
         league1: LeagueResJson[0],
         league2: null,
+        matchHistory,
       };
       await setDoc(
         doc(dbService, "user", summonersResJson.puuid),
@@ -84,6 +97,7 @@ function Summoners() {
         ...summonersResJson,
         league1: null,
         league2: null,
+        matchHistory,
       };
 
       await setDoc(
@@ -91,6 +105,18 @@ function Summoners() {
         summonerInfo
       );
     }
+
+    const matchInfoRes = await fetch(
+      `https://asia.api.riotgames.com/lol/match/v5/matches/${matchResJson[0]}?api_key=${API_KEY}`
+    );
+    const matchInfoJson = await matchInfoRes.json();
+
+    await setDoc(
+      doc(dbService, "match", matchInfoJson.metadata.matchId),
+      matchInfoJson
+    );
+    //
+    //
   }
 
   useEffect(() => {}, []);
