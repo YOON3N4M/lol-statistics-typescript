@@ -118,10 +118,13 @@ function Summoners() {
      docSnap.exists()가 false일 경우 (=>매치 코드가 db에 없는 경우)
      api 요청을 보내고 그 값을 db에 업로드하는 방식으로 동작함.
     */
+    let tempArr: any = [];
+
     async function fetchAllMatchInfo(item: string, index: number) {
       const docRef = doc(dbService, "match", item);
       const docSnap = await getDoc(docRef);
       const docSnapData: MatchInfoObj | undefined = docSnap.data();
+
       if (docSnap.exists() === false) {
         const matchInfoRes = await fetch(
           `https://asia.api.riotgames.com/lol/match/v5/matches/${matchResJson[index]}?api_key=${API_KEY}`
@@ -129,11 +132,16 @@ function Summoners() {
         const matchInfoResJson = await matchInfoRes.json();
         await setDoc(doc(dbService, "match", item), matchInfoResJson);
         console.log("업로드 완료");
-      } else if (docSnapData !== undefined) {
-        console.log("이미 존재하는 전적 입니다. 푸쉬합니다.");
-        matchInfoArr.push(docSnapData);
-        console.log(matchInfoArr);
+        tempArr.push(matchInfoResJson);
+        console.log("푸쉬 완료");
       }
+
+      if (docSnapData !== undefined) {
+        console.log("이미 존재하는 전적 입니다. 푸쉬합니다.");
+        tempArr.push(docSnapData);
+        console.log(tempArr);
+      }
+      setMatchInfoArr(tempArr);
     }
 
     // matchHistory가 존재하면 fetch
