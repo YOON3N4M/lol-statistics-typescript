@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { dbService } from "../fBase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 interface SummonerObj {
   accountId: string;
@@ -22,11 +22,17 @@ interface LeagueObj {
 
 type LeagueArray = Array<LeagueObj>;
 
+interface MatchInfoObj {}
+type MatchInfoArray = Array<MatchInfoObj>;
+
 function Summoners() {
   const API_KEY = process.env.REACT_APP_RIOT_API_KEY;
   const testName = "늙고건강한퇴물";
+  const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([]);
 
   async function fetchAPI() {
+    // matchInfoArr 초기화
+    setMatchInfoArr([]);
     //소환사 정보 요청
     const summonersRes: any = await fetch(
       `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${testName}?api_key=${API_KEY}`
@@ -55,7 +61,7 @@ function Summoners() {
         summonersResJson.puuid
       }/ids?start=0&count=${15}&api_key=${API_KEY}`
     ); // matchV5 소환사 정보에서 불러온 puuid로 해당 소환사의 경기 코드를 불러오는 API rate limit에 걸리는 관계로 0~15로 설정
-    const matchResJson = await matchRes.json();
+    const matchResJson: Array<string> = await matchRes.json();
 
     // 전적이 없는 경우를 컨트롤 하기 위해, 없는 경우엔 null을 db에 업로드하고 그 외엔 matchResJson을 할당하고 업로드
     let matchHistory = null;
@@ -105,18 +111,35 @@ function Summoners() {
         summonerInfo
       );
     }
+    /*
+     배열 matchHistory의 매치 코드를 활용 해 매치 정보를 받아오고 파이어 베이스에 업로드하는 함수
+     매치 기록이 이미 존재하는지 비교하는 코드가 추가되어야 함.
+     아래 함수는 매치 코드(item)으로 db에 doc 요청을 한 후, 
+     docSnap.exists()가 false일 경우 (=>매치 코드가 db에 없는 경우)
+     api 요청을 보내고 그 값을 db에 업로드하는 방식으로 동작함.
+    */
+    async function fetchAllMatchInfo(item: string, index: number) {
+      const docRef = doc(dbService, "match", item);
+      const docSnap = await getDoc(docRef);
+      const docSnapData: MatchInfoObj | undefined = docSnap.data();
+      if (docSnap.exists() === false) {
+        const matchInfoRes = await fetch(
+          `https://asia.api.riotgames.com/lol/match/v5/matches/${matchResJson[index]}?api_key=${API_KEY}`
+        );
+        const matchInfoResJson = await matchInfoRes.json();
+        await setDoc(doc(dbService, "match", item), matchInfoResJson);
+        console.log("업로드 완료");
+      } else if (docSnapData !== undefined) {
+        console.log("이미 존재하는 전적 입니다. 푸쉬합니다.");
+        matchInfoArr.push(docSnapData);
+        console.log(matchInfoArr);
+      }
+    }
 
-    const matchInfoRes = await fetch(
-      `https://asia.api.riotgames.com/lol/match/v5/matches/${matchResJson[0]}?api_key=${API_KEY}`
-    );
-    const matchInfoJson = await matchInfoRes.json();
-
-    await setDoc(
-      doc(dbService, "match", matchInfoJson.metadata.matchId),
-      matchInfoJson
-    );
-    //
-    //
+    // matchHistory가 존재하면 fetch
+    if (matchHistory !== null) {
+      matchHistory.map((item, index) => fetchAllMatchInfo(item, index));
+    }
   }
 
   useEffect(() => {}, []);
