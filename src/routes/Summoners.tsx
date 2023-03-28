@@ -29,6 +29,7 @@ function Summoners() {
   const API_KEY = process.env.REACT_APP_RIOT_API_KEY;
   const testName = "늙고건강한퇴물";
   const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([]);
+  const matchQty = 15;
 
   async function fetchAPI() {
     // matchInfoArr 초기화
@@ -57,9 +58,7 @@ function Summoners() {
     const LeagueResJson: LeagueArray = await leagueRes.json();
 
     const matchRes = await fetch(
-      `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${
-        summonersResJson.puuid
-      }/ids?start=0&count=${15}&api_key=${API_KEY}`
+      `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${summonersResJson.puuid}/ids?start=0&count=${matchQty}&api_key=${API_KEY}`
     ); // matchV5 소환사 정보에서 불러온 puuid로 해당 소환사의 경기 코드를 불러오는 API rate limit에 걸리는 관계로 0~15로 설정
     const matchResJson: Array<string> = await matchRes.json();
 
