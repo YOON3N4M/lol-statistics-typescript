@@ -1,9 +1,9 @@
 import React from "react";
 import Header from "../components/Header";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
-import { setUserName, clearAll } from "../modules/sumonnersInfo";
+
 import topIcon from "../img/lane/top.svg";
 import jgIcon from "../img/lane/jg.svg";
 import midIcon from "../img/lane/mid.svg";
@@ -12,13 +12,145 @@ import supIcon from "../img/lane/sup.svg";
 import geng from "../img/team/geng.png";
 import t1 from "../img/team/t1.png";
 import styled from "styled-components";
+
+const HomeContainer = styled.div`
+  width: 100%;
+  height: 1000px;
+  background-color: #5383e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const LogoContainer = styled.div`
+  width: 100%;
+  height: 224px;
+  margin: 56px 0 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const Logo = styled.span`
+  color: white;
+  font-size: 10rem;
+  font-weight: 900;
+`;
+const SearchContainer = styled.div`
+  width: 800px;
+  height: 60px;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const RegionOption = styled.div`
+  width: 234px;
+  height: 40px;
+  padding-left: 32px;
+  padding-right: 8px;
+  margin-right: 8px;
+`;
+const StyledLabel = styled.small`
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 3px;
+`;
+const Region = styled.span`
+  color: gray;
+  font-size: 14px;
+`;
+const VLine = styled.div`
+  border-left: solid 1px gray;
+  height: 30px;
+  opacity: 30%;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  border: 0px;
+  outline: none;
+  font-size: 14px;
+`;
+
+const SearchBtn = styled.button`
+  color: #5383e8;
+  font-size: 25px;
+  font-weight: 700;
+  margin-right: 30px;
+  cursor: pointer;
+  border: 0px;
+  background-color: rgb(0, 0, 0, 0);
+`;
+const InputContainer = styled.div`
+  width: 420px;
+  height: 40px;
+`;
+
+const ProContainer = styled.div`
+  margin-top: 40px;
+  width: 800px;
+  height: 464px;
+  background-color: white;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ProHeader = styled.div`
+  height: 50px;
+  font-weight: 800;
+  padding-top: 10px;
+  padding-left: 10px;
+  border-bottom: 1px solid #ebeef1;
+`;
+const TeamContainer = styled.div`
+  display: flex;
+`;
+const Team = styled.div`
+  width: 400px;
+`;
+const TeamHeader = styled.div`
+  width: 399px;
+  height: 70px;
+  background-color: white;
+  border-bottom: 1px solid #ebeef1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const Tone = styled.img`
+  width: 70px;
+`;
+const Geng = styled.img`
+  width: 40px;
+`;
+const PlayerContainer = styled.div`
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 40px 0px 40px;
+  border-bottom: 1px solid #ebeef1;
+  cursor: pointer;
+`;
+const Lane = styled.img``;
+const Nickname = styled.div`
+  font-weight: 900;
+  font-size: 30px;
+  margin-left: 75px;
+`;
+const Name = styled.div`
+  top: 9px;
+  position: relative;
+  font-weight: 200;
+  left: 3px;
+`;
+
 function Home() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userName } = useSelector((state: any) => ({
-    userName: state.summonersInfo.userName,
-  }));
   const [username, setUsername] = useState("");
 
   function onChange(e: any) {
@@ -31,20 +163,14 @@ function Home() {
     if (username.trim() === "") {
     } else if (username.length === 2) {
       const usernameRe = `${username[0]} ${username[1]}`;
-      dispatch(setUserName(usernameRe));
+
       navigate(`summoners/kr/${usernameRe}`);
     } else {
-      dispatch(setUserName(username));
       navigate(`summoners/kr/${username}`);
     }
   }
 
-  useEffect(() => {
-    dispatch(clearAll());
-  }, []);
-
   function onClick(name: string) {
-    dispatch(setUserName(name));
     navigate(`summoners/kr/${name}`);
   }
   const sktMember = {
@@ -66,129 +192,129 @@ function Home() {
   return (
     <>
       <Header />
-      <div className="home-wrap">
-        <div className="home-logo-box">
-          <span className="home-logo">OP.GG</span>
-        </div>
-        <div className="search-container">
+      <HomeContainer>
+        <LogoContainer>
+          <Logo className="home-logo">OP.GG</Logo>
+        </LogoContainer>
+        <div>
           <form onSubmit={onSubmit}>
-            <div className="search-box">
-              <div className="region-option">
-                <small className="label">Region</small>
-                <span className="selected-region">Korea</span>
-              </div>
-              <div className="line"></div>
-              <div className="input-box">
-                <small className="label">Search</small>
-                <input
+            <SearchContainer>
+              <RegionOption>
+                <StyledLabel>Region</StyledLabel>
+                <Region>Korea</Region>
+              </RegionOption>
+              <VLine></VLine>
+              <InputContainer>
+                <StyledLabel>Search</StyledLabel>
+                <SearchInput
                   onChange={onChange}
                   className="search-input"
                   placeholder="소환사명..."
                   value={username}
-                ></input>
-              </div>
-              <span onClick={onSubmit} className="search-btn">
+                ></SearchInput>
+              </InputContainer>
+              <SearchBtn onClick={onSubmit} className="search-btn">
                 .GG
-              </span>
-            </div>
+              </SearchBtn>
+            </SearchContainer>
           </form>
         </div>
 
-        <div className="pro-container">
-          <div className="pro-header">
+        <ProContainer>
+          <ProHeader>
             <span>프로게이머 전적 바로가기</span>
-          </div>
-          <div className="team-container">
-            <div className="team-left">
-              <div className="team-header">
+          </ProHeader>
+          <TeamContainer>
+            <Team>
+              <TeamHeader>
                 <div>
-                  <img className="t-one" src={t1} />
+                  <Tone src={t1} />
                 </div>
-              </div>
-              <div onClick={() => onClick(sktMember.top)} className="pro">
+              </TeamHeader>
+              <PlayerContainer onClick={() => onClick(sktMember.top)}>
                 <div className="pro-lane">
                   <img src={topIcon} />
                 </div>
-                <div className="pro-nick">Zeus</div>
-                <div className="pro-name">최우제</div>
-              </div>
-              <div onClick={() => onClick(sktMember.jg)} className="pro">
+                <Nickname>Zeus</Nickname>
+                <Name>최우제</Name>
+              </PlayerContainer>
+              <PlayerContainer onClick={() => onClick(sktMember.jg)}>
                 <div className="pro-lane">
                   <img src={jgIcon} />
                 </div>
-                <div className="pro-nick">Oner</div>
-                <div className="pro-name">문현준</div>
-              </div>{" "}
-              <div onClick={() => onClick(sktMember.mid)} className="pro">
+                <Nickname>Oner</Nickname>
+                <Name>문현준</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(sktMember.mid)}>
                 <div className="pro-lane">
                   <img src={midIcon} />
                 </div>
-                <div className="pro-nick">Faker</div>
-                <div className="pro-name">이상혁</div>
-              </div>{" "}
-              <div onClick={() => onClick(sktMember.adc)} className="pro">
+                <Nickname>Faker</Nickname>
+                <Name>이상혁</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(sktMember.adc)}>
                 <div className="pro-lane">
                   {" "}
                   <img src={adcIcon} />
                 </div>
-                <div className="pro-nick">Gumayusi</div>
-                <div className="pro-name">이민형</div>
-              </div>{" "}
-              <div onClick={() => onClick(sktMember.sup)} className="pro">
+                <Nickname>Gumayusi</Nickname>
+                <Name>이민형</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(sktMember.sup)}>
                 <div className="pro-lane">
                   <img src={supIcon} />
                 </div>
-                <div className="pro-nick">Keria</div>
-                <div className="pro-name">류민석</div>
-              </div>
-            </div>
-            <div className="team-right">
-              <div className="team-header">
+                <Nickname>Keria</Nickname>
+                <Name>류민석</Name>
+              </PlayerContainer>
+            </Team>
+            <Team>
+              <TeamHeader>
                 {" "}
                 <div>
-                  <img className="geng" src={geng} />
+                  <Geng src={geng} />
                 </div>
-              </div>
-              <div onClick={() => onClick(gengMember.top)} className="pro">
+              </TeamHeader>
+              <PlayerContainer onClick={() => onClick(gengMember.top)}>
                 <div className="pro-lane">
                   <img src={topIcon} />
                 </div>
-                <div className="pro-nick">Doran</div>
-                <div className="pro-name">최현준</div>
-              </div>
-              <div onClick={() => onClick(gengMember.jg)} className="pro">
+                <Nickname>Doran</Nickname>
+                <Name>최현준</Name>
+              </PlayerContainer>
+              <PlayerContainer onClick={() => onClick(gengMember.jg)}>
                 <div className="pro-lane">
                   <img src={jgIcon} />
                 </div>
-                <div className="pro-nick">Peanut</div>
-                <div className="pro-name">한왕호</div>
-              </div>{" "}
-              <div onClick={() => onClick(gengMember.mid)} className="pro">
+                <Nickname>Peanut</Nickname>
+                <Name>한왕호</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(gengMember.mid)}>
                 <div className="pro-lane">
                   <img src={midIcon} />
                 </div>
-                <div className="pro-nick">Chovy</div>
-                <div className="pro-name">정지훈</div>
-              </div>{" "}
-              <div onClick={() => onClick(gengMember.adc)} className="pro">
+                <Nickname>Chovy</Nickname>
+                <Name>정지훈</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(gengMember.adc)}>
                 <div className="pro-lane">
                   {" "}
                   <img src={adcIcon} />
                 </div>
-                <div className="pro-nick">Payz</div>
-                <div className="pro-name">김수환</div>
-              </div>{" "}
-              <div onClick={() => onClick(gengMember.sup)} className="pro">
+                <Nickname>Payz</Nickname>
+                <Name>김수환</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(gengMember.sup)}>
                 <div className="pro-lane">
                   <img src={supIcon} />
                 </div>
-                <div className="pro-nick">Delight</div>
-                <div className="pro-name">유환중</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                <Nickname>Delight</Nickname>
+                <Name>유환중</Name>
+              </PlayerContainer>
+            </Team>
+          </TeamContainer>
+        </ProContainer>
+      </HomeContainer>
     </>
   );
 }
