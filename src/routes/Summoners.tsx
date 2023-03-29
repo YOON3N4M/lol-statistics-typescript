@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { dbService } from "../fBase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
 
 interface SummonerObj {
   accountId: string;
@@ -25,18 +36,37 @@ type LeagueArray = Array<LeagueObj>;
 interface MatchInfoObj {}
 type MatchInfoArray = Array<MatchInfoObj>;
 
+interface UserDocument {
+  accountId?: string;
+  id?: string;
+  name?: string;
+  profileIconId?: number;
+  puuid?: string;
+  summonerLevel?: number;
+  league1?: object;
+  league2?: object;
+  matchHistory?: Array<string>;
+}
+
+const ContentsHeader = styled.div``;
+const Wrapper = styled.div``;
+const ProfileIconContainer = styled.div``;
+
 function Summoners() {
   const API_KEY = process.env.REACT_APP_RIOT_API_KEY;
-  const testName = "늙고건강한퇴물";
+  let userInfo: UserDocument | undefined;
   const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([]);
   const matchQty = 15;
+  const params = useParams();
+
+  //해당 라우터가 동작하자마자 검색된 유저의 정보를 db에서 가져오는 함수
 
   async function fetchAPI() {
     // matchInfoArr 초기화
     setMatchInfoArr([]);
     //소환사 정보 요청
     const summonersRes: any = await fetch(
-      `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${testName}?api_key=${API_KEY}`
+      `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${params.summonersName}?api_key=${API_KEY}`
     ).catch((error) => console.log(error));
 
     // 소환사 정보 저장
@@ -59,7 +89,7 @@ function Summoners() {
 
     const matchRes = await fetch(
       `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${summonersResJson.puuid}/ids?start=0&count=${matchQty}&api_key=${API_KEY}`
-    ); // matchV5 소환사 정보에서 불러온 puuid로 해당 소환사의 경기 코드를 불러오는 API rate limit에 걸리는 관계로 0~15로 설정
+    );
     const matchResJson: Array<string> = await matchRes.json();
 
     // 전적이 없는 경우를 컨트롤 하기 위해, 없는 경우엔 null을 db에 업로드하고 그 외엔 matchResJson을 할당하고 업로드
@@ -117,7 +147,6 @@ function Summoners() {
      docSnap.exists()가 false일 경우 (=>매치 코드가 db에 없는 경우)
      api 요청을 보내고 그 값을 db에 업로드하는 방식으로 동작함.
     */
-    let tempArr: any = [];
 
     async function fetchAllMatchInfo(item: string, index: number) {
       const docRef = doc(dbService, "match", item);
@@ -131,16 +160,14 @@ function Summoners() {
         const matchInfoResJson = await matchInfoRes.json();
         await setDoc(doc(dbService, "match", item), matchInfoResJson);
         console.log("업로드 완료");
-        tempArr.push(matchInfoResJson);
+        setMatchInfoArr((prev) => [...prev, matchInfoResJson]);
         console.log("푸쉬 완료");
       }
 
       if (docSnapData !== undefined) {
-        console.log("이미 존재하는 전적 입니다. 푸쉬합니다.");
-        tempArr.push(docSnapData);
-        console.log(tempArr);
+        console.log("이미 db에 존재하는 전적 입니다. 푸쉬합니다.");
+        setMatchInfoArr((prev) => [...prev, docSnapData]);
       }
-      setMatchInfoArr(tempArr);
     }
 
     // matchHistory가 존재하면 fetch
@@ -149,12 +176,57 @@ function Summoners() {
     }
   }
 
-  useEffect(() => {}, []);
+  async function getUserDocument() {
+    const q = query(
+      collection(dbService, "user"),
+      where("name", "==", params.summonersName)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      userInfo = doc.data();
+    });
+
+    if (userInfo !== undefined) {
+      console.log("db에 저장된 유저 입니다");
+    } else {
+      console.log("db에 유저 데이터가 없습니다.");
+    }
+  }
+
+  async function getMatchFromDB(item: string) {
+    const docRef = doc(dbService, "match", item);
+    const docSnap = await getDoc(docRef);
+    const docSnapData: MatchInfoObj | undefined = docSnap.data();
+    setMatchInfoArr((prev: any) => [...prev, docSnapData]);
+  }
+
+  async function atFirst() {
+    setMatchInfoArr([]);
+    await getUserDocument();
+    if (userInfo?.matchHistory !== undefined) {
+      userInfo.matchHistory.map((item) => getMatchFromDB(item));
+    } else {
+      fetchAPI();
+    }
+  }
+
+  useEffect(() => {
+    atFirst();
+  }, []);
 
   return (
     <>
       <Header />
       <button onClick={fetchAPI}>갱신</button>
+      {matchInfoArr.length !== 0 ? (
+        <>
+          {matchInfoArr.map(() => (
+            <div>hi</div>
+          ))}
+        </>
+      ) : (
+        <div>비어있음</div>
+      )}
     </>
   );
 }

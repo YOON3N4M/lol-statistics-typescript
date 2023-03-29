@@ -7,13 +7,21 @@ import { Provider } from "react-redux";
 import Home from "./routes/Home";
 import Summoners from "./routes/Summoners";
 import rootReducer from "./modules/index";
-import styled, { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
 body{
   padding:0;
   margin:0;
 }
+ul{
+  padding: 0 0;
+  margin: 0px
+}
+li{
+  list-style: none;
+}
+
 `;
 
 const router = createBrowserRouter([
