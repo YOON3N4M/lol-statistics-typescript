@@ -48,13 +48,99 @@ interface UserDocument {
   matchHistory?: Array<string>;
 }
 
-const ContentsHeader = styled.div``;
-const Wrapper = styled.div``;
-const ProfileIconContainer = styled.div``;
+const ContentsHeader = styled.div`
+  background-color: white;
+  width: 100%;
+  height: 273-45px;
+  padding-bottom: 25px;
+  padding-top: 16px;
+`;
+const Wrapper = styled.div`
+  width: 1080px;
+  margin-bottom: 10px;
+  display: flex;
+  margin: 0 auto;
+`;
+const ProfileIconContainer = styled.div`
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin-top: 52px;
+`;
+const ProfileIcon = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  z-index: -1;
+`;
+const Level = styled.div`
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  margin-top: -11px;
+  text-align: center;
+  font-size: 12px;
+  color: white;
+  background-color: #202d37;
+  width: 36.22px;
+  height: 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  line-height: 20px;
+  z-index: 100;
+`;
+const Info = styled.div`
+  width: 541px;
+  height: 202px;
+  margin-left: 24px;
+`;
+const TierContainer = styled.div`
+  height: 32px;
+`;
+const TierLi = styled.li`
+  display: inline-block;
+  list-style: none;
+  padding: 0px 4px;
+  min-width: 78.33px;
+  max-width: 120px;
+  line-height: 18px;
+  background-color: #ebeef1;
+  border-radius: 2px;
+  text-align: center;
+  margin-right: 4px;
+`;
+const Year = styled.div`
+  font-size: 11px;
+  color: #9aa4af;
+`;
+const Name = styled.div`
+  height: 32px;
+  font-size: 24px;
+  font-weight: bold;
+`;
+const RefeshBtn = styled.button`
+  color: white;
+  border: 0px;
+  border-radius: 4px;
+  background-color: #5383e8;
+  cursor: pointer;
+  width: 80px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 50px;
+`;
+const LastUpdate = styled.div`
+  margin-top: 8px;
+  color: gray;
+  font-size: 12px;
+`;
 
+//
 function Summoners() {
   const API_KEY = process.env.REACT_APP_RIOT_API_KEY;
-  let userInfo: UserDocument | undefined;
+  //let userInfo: UserDocument | undefined;
+  const [userInfo, setUserInfo] = useState<UserDocument>();
   const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([]);
   const matchQty = 15;
   const params = useParams();
@@ -182,8 +268,9 @@ function Summoners() {
       where("name", "==", params.summonersName)
     );
     const querySnapshot = await getDocs(q);
+
     querySnapshot.forEach((doc) => {
-      userInfo = doc.data();
+      setUserInfo(doc.data());
     });
 
     if (userInfo !== undefined) {
@@ -205,8 +292,9 @@ function Summoners() {
     await getUserDocument();
     if (userInfo?.matchHistory !== undefined) {
       userInfo.matchHistory.map((item) => getMatchFromDB(item));
+      console.log(userInfo);
     } else {
-      fetchAPI();
+      // fetchAPI();
     }
   }
 
@@ -214,9 +302,39 @@ function Summoners() {
     atFirst();
   }, []);
 
+  console.log(userInfo);
   return (
     <>
       <Header />
+      {userInfo !== undefined ? (
+        <>
+          <ContentsHeader>
+            <Wrapper>
+              <ProfileIconContainer>
+                <ProfileIcon
+                  src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/profileicon/${userInfo.profileIconId}.png`}
+                />
+                <Level>{userInfo.summonerLevel}</Level>
+              </ProfileIconContainer>
+              <Info>
+                <TierContainer>
+                  <ul>
+                    <TierLi>
+                      <Year></Year>
+                    </TierLi>
+                  </ul>
+                </TierContainer>
+                <Name>{userInfo.name}</Name>
+                <RefeshBtn>전적 갱신</RefeshBtn>
+                <LastUpdate>최근 업데이트 : 방금 전</LastUpdate>
+              </Info>
+            </Wrapper>
+          </ContentsHeader>
+        </>
+      ) : (
+        <div>엥</div>
+      )}
+
       <button onClick={fetchAPI}>갱신</button>
       {matchInfoArr.length !== 0 ? (
         <>
