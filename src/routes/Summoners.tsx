@@ -420,10 +420,35 @@ function Summoners() {
   //let userInfo: UserDocument | undefined;
   const [userInfo, setUserInfo] = useState<UserDocument>();
   const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([]);
+  const [loadingDone, setLoadingDone] = useState(false);
   const matchQty = 15;
   const params = useParams();
+  const [alarm, setAlarm] = useState(false);
 
-  //해당 라우터가 동작하자마자 검색된 유저의 정보를 db에서 가져오는 함수
+  function alarmFn() {
+    setAlarm(true);
+    setTimeout(() => {
+      setAlarm(false);
+    }, 3000);
+  }
+
+  async function getUserDocument() {
+    const q = query(
+      collection(dbService, "user"),
+      where("name", "==", params.summonersName)
+    );
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      setUserInfo(doc.data());
+    });
+
+    if (userInfo !== undefined) {
+      console.log("db에 저장된 유저 입니다");
+    } else {
+      console.log("db에 유저 데이터가 없습니다.");
+    }
+  }
 
   async function fetchAPI() {
     // matchInfoArr 초기화
@@ -538,24 +563,7 @@ function Summoners() {
     if (matchHistory !== null) {
       matchHistory.map((item, index) => fetchAllMatchInfo(item, index));
     }
-  }
-
-  async function getUserDocument() {
-    const q = query(
-      collection(dbService, "user"),
-      where("name", "==", params.summonersName)
-    );
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((doc) => {
-      setUserInfo(doc.data());
-    });
-
-    if (userInfo !== undefined) {
-      console.log("db에 저장된 유저 입니다");
-    } else {
-      console.log("db에 유저 데이터가 없습니다.");
-    }
+    getUserDocument();
   }
 
   async function getMatchFromDB(item: string) {
@@ -579,9 +587,10 @@ function Summoners() {
       userInfo.matchHistory.map((item) => getMatchFromDB(item));
       console.log(userInfo);
     } else {
-      // fetchAPI();
+      fetchAPI();
+      getUserDocument();
     }
-  }, [userInfo]);
+  }, []);
 
   console.log(matchInfoArr, "");
   return (
@@ -606,7 +615,7 @@ function Summoners() {
                   </ul>
                 </TierContainer>
                 <Name>{userInfo.name}</Name>
-                <RefeshBtn>전적 갱신</RefeshBtn>
+                <RefeshBtn onClick={fetchAPI}>전적 갱신</RefeshBtn>
                 <LastUpdate>최근 업데이트 : 방금 전</LastUpdate>
               </Info>
             </Wrapper>
@@ -661,7 +670,7 @@ function Summoners() {
                   <RatioKda>
                     <Chart>
                       <Text>
-                        <strong>100%</strong>
+                        <strong>0%</strong>
                       </Text>
                       <div>
                         <svg viewBox="0 0 200 200">
@@ -706,7 +715,11 @@ function Summoners() {
               <MatchHistoryContainer>
                 {/* 여기서 map */}
                 {matchInfoArr.map((match) => (
-                  <MatchHistorys match={match} userInfo={userInfo} />
+                  <MatchHistorys
+                    loadingDone={loadingDone}
+                    match={match}
+                    userInfo={userInfo}
+                  />
                 ))}
               </MatchHistoryContainer>
             </RightContents>
@@ -714,17 +727,6 @@ function Summoners() {
         </>
       ) : (
         <div>존재 하지 않는 소환사 입니다.</div>
-      )}
-
-      <button onClick={fetchAPI}>갱신</button>
-      {matchInfoArr.length !== 0 ? (
-        <>
-          {matchInfoArr.map(() => (
-            <div>hi</div>
-          ))}
-        </>
-      ) : (
-        <div>비어있음</div>
       )}
     </>
   );
