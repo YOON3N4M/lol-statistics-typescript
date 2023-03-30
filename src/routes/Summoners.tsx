@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import MatchHistorys from "../components/MatchHistorys";
 
 interface SummonerObj {
   accountId: string;
@@ -33,10 +34,13 @@ interface LeagueObj {
 
 type LeagueArray = Array<LeagueObj>;
 
-interface MatchInfoObj {}
+export interface MatchInfoObj {
+  info?: any;
+  metadata?: any;
+}
 type MatchInfoArray = Array<MatchInfoObj>;
 
-interface UserDocument {
+export interface UserDocument {
   accountId?: string;
   id?: string;
   name?: string;
@@ -47,7 +51,7 @@ interface UserDocument {
   league2?: object;
   matchHistory?: Array<string>;
 }
-
+//상단 헤더 부분 컴포넌트
 const ContentsHeader = styled.div`
   background-color: white;
   width: 100%;
@@ -134,6 +138,280 @@ const LastUpdate = styled.div`
   margin-top: 8px;
   color: gray;
   font-size: 12px;
+`;
+// 헤더 아래 탭
+const InfoListTab = styled.div`
+  width: 100%;
+  height: 45px;
+  border-top: 1px solid;
+  border-color: #ebeef1;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  background-color: white;
+`;
+const InfoList = styled.ul`
+  display: flex;
+  width: 1080px;
+  margin: 0 auto;
+`;
+const InfoListItem = styled.span<{ selected: boolean }>`
+  text-align: center;
+  display: block;
+  min-width: 60px;
+  line-height: 36px;
+  padding: 0 16px;
+  margin-right: 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: ${(props: any) => (props.selected ? "#ecf2ff" : "none")};
+  font-weight: ${(props: any) => (props.selected ? 700 : "")};
+  color: ${(props: any) => (props.selected ? "#4171d6" : "")};
+`;
+
+// 컨텐츠 부분 컴포넌트
+const ContentsContainer = styled.div`
+  width: 1080px;
+  margin: 0 auto;
+  height: 800px;
+`;
+// 모스트 챔피언, 현재 티어 등 좌측 컨텐츠 컴포넌트
+const LeftContents = styled.div`
+  display: inline-block;
+  vertical-align: top;
+  width: 332px;
+  min-height: 870px;
+  font-size: 12px;
+`;
+const CurrentRankContainer = styled.div`
+  margin-bottom: 8px;
+`;
+const CurrentRankHeader = styled.div`
+  background-color: white;
+  margin-top: 8px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  line-height: 35px;
+  padding: 0 12px;
+  font-size: 14px;
+`;
+const CurrentRankContents = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-top: 1px solid;
+  border-color: #ebeef1;
+  width: 308px;
+  height: 97px;
+  background-color: white;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+`;
+const CurrentTierImg = styled.img`
+  width: 60px;
+`;
+const CurrentTierImgContainer = styled.div`
+  background-color: #f7f7f9;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const CurrnetTierContainer = styled.div`
+  flex: 1 1 0%;
+  position: relative;
+  margin-left: 16px;
+`;
+const CurrentTier = styled.div`
+  font-size: 20px;
+  font-weight: bold;
+`;
+const CurrentLp = styled.div`
+  line-height: 16px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #758592;
+`;
+const WinLoseContainer = styled.div`
+  font-size: 12px;
+  color: #9aa4af;
+`;
+const WinLose = styled.div`
+  line-height: 26px;
+  color: #9aa4af;
+`;
+const WinRate = styled.div`
+  margin-top: 2px;
+  line-height: 16px;
+`;
+
+const MostPlayed = styled.div`
+  margin-top: 8px;
+  background-color: white;
+  border-radius: 4px;
+`;
+const MostPlayedTab = styled.ul`
+  display: flex;
+  justify-content: space-between;
+  padding: 4px;
+  margin: 0px;
+  font-size: 14px;
+  border-bottom: 1px solid;
+  border-color: #ebeef1;
+`;
+const MostPlayedItem = styled.li<{ selected: boolean }>`
+  flex: 1;
+  margin-left: 4px;
+  vertical-align: middle;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  line-height: 28px;
+  background-color: ${(props: any) => (props.selected ? "#ecf2ff" : "none")};
+  font-weight: ${(props: any) => (props.selected ? 700 : "")};
+  color: ${(props: any) => (props.selected ? "#4171d6" : "")};
+`;
+const MostChampionContainer = styled.div`
+  //여기서 map 으로 뿌림
+  display: table;
+  width: 100%;
+  height: 48px;
+  border-bottom: 1px solid;
+  border-color: #ebeef1;
+  color: #9aa4af;
+  text-align: center;
+  table-layout: fixed;
+`;
+const More = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0 8px;
+  font-size: 12px;
+  text-align: center;
+  background-color: #f7f7f9;
+  color: #758592;
+  box-sizing: border-box;
+  cursor: pointer;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+`;
+// 개요 ,전적 등이 보여지는 우측 컴포넌트
+const RightContents = styled.div`
+  display: inline-block;
+  width: 740px;
+  height: 1000px;
+  margin-top: 8px;
+  margin-left: 8px;
+  vertical-align: top;
+`;
+const MatchHistoryTab = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: 1px solid;
+  border-color: #ebeef1;
+  background-color: white;
+`;
+const MatchHistroyTabUl = styled.ul`
+  display: flex;
+  line-height: 28px;
+  margin: 0px;
+`;
+const MatchHistoryTabLi = styled.li<{ selected: boolean }>`
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 28px;
+  cursor: pointer;
+  background-color: ${(props: any) => (props.selected ? "#ecf2ff" : "none")};
+  font-weight: ${(props: any) => (props.selected ? 700 : "")};
+  color: ${(props: any) => (props.selected ? "#4171d6" : "")};
+`;
+
+const Summary = styled.div`
+  display: flex;
+  text-align: left;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 24px 21px;
+  box-sizing: border-box;
+  width: 740px;
+  height: 164px;
+  background-color: white;
+`;
+const SumStats = styled.div`
+  width: 222px;
+`;
+const SumWinLose = styled.div`
+  font-size: 12px;
+  color: #758592;
+`;
+const RatioKda = styled.div`
+  display: flex;
+  margin-top: 12px;
+`;
+const Chart = styled.div`
+  position: relative;
+  display: inline-block;
+  width: 88px;
+  height: 88px;
+`;
+const Text = styled.div`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 88px;
+  height: 88px;
+  line-height: 88px;
+  text-align: center;
+  font-size: 14px;
+  color: #5383e8;
+`;
+const SumInfo = styled.div`
+  margin-left: 32px;
+`;
+const KDA = styled.div`
+  font-size: 12px;
+  letter-spacing: 0px;
+`;
+
+const Death = styled.span``;
+const SumRaito = styled.div`
+  margin-top: 2px;
+  line-height: 26px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #202d37;
+`;
+const KillPart = styled.div`
+  line-height: 16px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #d31a45;
+`;
+const Champions = styled.div`
+  width: 222px;
+  margin-left: 16px;
+`;
+const Title = styled.div`
+  line-height: 16px;
+  font-size: 12px;
+  color: #758592;
+`;
+const Positions = styled.div`
+  width: 222px;
+`;
+
+const MatchHistoryContainer = styled.div`
+  margin-top: 8px;
 `;
 
 //
@@ -287,22 +565,25 @@ function Summoners() {
     setMatchInfoArr((prev: any) => [...prev, docSnapData]);
   }
 
-  async function atFirst() {
+  function atFirst() {
     setMatchInfoArr([]);
-    await getUserDocument();
-    if (userInfo?.matchHistory !== undefined) {
-      userInfo.matchHistory.map((item) => getMatchFromDB(item));
-      console.log(userInfo);
-    } else {
-      // fetchAPI();
-    }
+    getUserDocument();
   }
 
   useEffect(() => {
     atFirst();
   }, []);
 
-  console.log(userInfo);
+  useEffect(() => {
+    if (userInfo?.matchHistory !== undefined) {
+      userInfo.matchHistory.map((item) => getMatchFromDB(item));
+      console.log(userInfo);
+    } else {
+      // fetchAPI();
+    }
+  }, [userInfo]);
+
+  console.log(matchInfoArr, "");
   return (
     <>
       <Header />
@@ -330,9 +611,109 @@ function Summoners() {
               </Info>
             </Wrapper>
           </ContentsHeader>
+          <InfoListTab>
+            <InfoList>
+              <li>
+                <InfoListItem selected={true}>종합</InfoListItem>
+              </li>
+              <li>
+                <InfoListItem selected={false}>인게임 정보</InfoListItem>
+              </li>
+            </InfoList>
+          </InfoListTab>
+          <ContentsContainer>
+            <LeftContents>
+              <CurrentRankContainer>
+                <CurrentRankHeader>
+                  <span>솔로랭크</span>
+                </CurrentRankHeader>
+              </CurrentRankContainer>
+              <MostPlayed>
+                <MostPlayedTab>
+                  <MostPlayedItem selected={true}>최근게임</MostPlayedItem>
+                  <MostPlayedItem selected={false}>솔로랭크</MostPlayedItem>
+                  <MostPlayedItem selected={false}>자유랭크</MostPlayedItem>
+                </MostPlayedTab>
+                <MostChampionContainer>
+                  {/* 여기에서 map*/}
+                </MostChampionContainer>
+                <More>더 보기 + 다른 시즌 보기</More>
+              </MostPlayed>
+            </LeftContents>
+            <RightContents>
+              <MatchHistoryTab>
+                <MatchHistroyTabUl>
+                  <MatchHistoryTabLi selected={true}>전체</MatchHistoryTabLi>
+                  <MatchHistoryTabLi selected={false}>
+                    솔로랭크
+                  </MatchHistoryTabLi>
+                  <MatchHistoryTabLi selected={false}>
+                    자유랭크
+                  </MatchHistoryTabLi>
+                  <MatchHistoryTabLi selected={false}>
+                    큐 타입
+                  </MatchHistoryTabLi>
+                </MatchHistroyTabUl>
+              </MatchHistoryTab>
+              <Summary>
+                <SumStats>
+                  <SumWinLose>전 승 패 </SumWinLose>
+                  <RatioKda>
+                    <Chart>
+                      <Text>
+                        <strong>100%</strong>
+                      </Text>
+                      <div>
+                        <svg viewBox="0 0 200 200">
+                          <circle
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="#E84057"
+                            strokeWidth="30"
+                          />
+                          <circle
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="#5383E8"
+                            strokeWidth="30"
+                            strokeDasharray="80"
+                            strokeDashoffset={2 * Math.PI * 90 * 0.22}
+                          />
+                        </svg>
+                      </div>
+                    </Chart>
+                    <SumInfo>
+                      <KDA>
+                        <span>3</span>
+                        <Death>3</Death>
+                        <span>3</span>
+                      </KDA>
+                      <SumRaito>1.55 : 1</SumRaito>
+                      <KillPart>킬관여 100%</KillPart>
+                    </SumInfo>
+                  </RatioKda>
+                </SumStats>
+                <Champions>
+                  <Title>플레이한 챔피언 (최근 {matchQty}게임)</Title>
+                  <ul>{/* 여기에서 map */}</ul>
+                </Champions>
+                <Positions>{/* 여기에 positions */}</Positions>
+              </Summary>
+              <MatchHistoryContainer>
+                {/* 여기서 map */}
+                {matchInfoArr.map((match) => (
+                  <MatchHistorys match={match} userInfo={userInfo} />
+                ))}
+              </MatchHistoryContainer>
+            </RightContents>
+          </ContentsContainer>
         </>
       ) : (
-        <div>엥</div>
+        <div>존재 하지 않는 소환사 입니다.</div>
       )}
 
       <button onClick={fetchAPI}>갱신</button>
