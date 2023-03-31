@@ -1,5 +1,5 @@
 ### 🚧수정이 진행중인 프로젝트 입니다🚧
-> 검색시 출력되는 전적 라우트의 레이아웃, 기능이 완전한 상태가 아닙니다.
+> 검색시 출력되는 전적 페이지의 레이아웃, 기능이 완전한 상태가 아닙니다.
 > 수정중에 있습니다.
 <br>
 <br>
@@ -7,8 +7,15 @@
 
 # lol-statistics-typescript
 
-현재 버전 배포 : https://lol-statistic.firebaseapp.com/ <br><br>
-기존 버전 배포 : https://yoon3n4m.github.io/lol-statistics/ & 저장소 :https://github.com/YOON3N4M/lol-statistics
+현재 버전 배포 : https://lol-statistic.firebaseapp.com/
+> (react, typescript, firebase, styled-components 적용)
+<br>
+
+기존 버전 배포 : https://yoon3n4m.github.io/lol-statistics/ & 저장소 :https://github.com/YOON3N4M/lol-statistics 
+> (react, javascript, redux)
+
+<br>
+
 ### 스택
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">  <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <hr>
