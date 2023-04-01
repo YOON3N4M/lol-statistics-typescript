@@ -32,6 +32,7 @@ interface PlayerObj {
   visionWardsBoughtInGame: number;
   neutralMinionsKilled: number;
   totalMinionsKilled: number;
+  champLevel: number;
 }
 
 const Match = styled.li<{ isWin: boolean }>`
@@ -87,13 +88,12 @@ const TopRow = styled.div`
 `;
 const Champion = styled.div`
   display: flex;
-  align-items: center;
 `;
 const ChampionIconBox = styled.div``;
 const ChampionIcon = styled.img`
   border-radius: 50%;
   width: 48px;
-  height: 48px;
+  max-height: 48px;
 `;
 const ChampionLevel = styled.span`
   position: relative;
@@ -601,6 +601,7 @@ function MatchHistorys({
                       <ChampionIcon
                         src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${fixChampion}.png`}
                       ></ChampionIcon>
+                      <ChampionLevel>{currentPlayer.champLevel}</ChampionLevel>
                     </ChampionIconBox>
                     <SpellContainer>
                       <SpellBox>

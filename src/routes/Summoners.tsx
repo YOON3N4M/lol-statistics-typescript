@@ -15,6 +15,8 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import MatchHistorys from "../components/MatchHistorys";
 import Summarys from "../components/Summarys";
+import PositionsBar from "../components/PositionsBar";
+import MostChampions from "../components/MostChampions";
 
 interface SummonerObj {
   accountId: string;
@@ -429,7 +431,7 @@ function Summoners() {
   const params = useParams();
   const [alarm, setAlarm] = useState(false);
   //검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
-  const [currentMatch, setCurrentMatch] = useState([]);
+  const [currentMatch, setCurrentMatch] = useState<any>([]);
   //각 게임들을 각 챔피언 이름으로 분류 (객체)
   const [byChampion, setBychampion] = useState({});
   //위 객체를 배열로 변환한 값
@@ -446,13 +448,6 @@ function Summoners() {
   // 검색된 게임 승리 수
   const [currentWins, setCurrentWins] = useState(-1);
   //검색된 게임 포지션 비율
-  const [positions, setPositions] = useState({
-    top: 0,
-    jungle: 0,
-    mid: 0,
-    adc: 0,
-    sup: 0,
-  });
 
   function alarmFn() {
     setAlarm(true);
@@ -625,7 +620,6 @@ function Summoners() {
   useEffect(() => {
     if (userInfo?.matchHistory !== undefined) {
       userInfo.matchHistory.map((item) => getMatchFromDB(item));
-      console.log(userInfo);
     } else {
       fetchAPI();
       getUserDocument();
@@ -635,13 +629,13 @@ function Summoners() {
   useEffect(() => {
     setBychampion(groupBy(currentMatch, "championName"));
     if (currentMatch.length === matchInfoArr.length) {
-      const kills = currentMatch.reduce(function add(sum, item: any) {
+      const kills = currentMatch.reduce(function add(sum: any, item: any) {
         return sum + item.kills;
       }, 0);
-      const deaths = currentMatch.reduce(function add(sum, item: any) {
+      const deaths = currentMatch.reduce(function add(sum: any, item: any) {
         return sum + item.deaths;
       }, 0);
-      const assists = currentMatch.reduce(function add(sum, item: any) {
+      const assists = currentMatch.reduce(function add(sum: any, item: any) {
         return sum + item.assists;
       }, 0);
 
@@ -682,13 +676,10 @@ function Summoners() {
     }
   }, [byChampion]);
 
-  console.log(byChampion);
-  console.log(byChampionArr);
-  console.log(currentWins);
-  console.log(totalKillPart);
   return (
     <>
       <Header />
+
       {userInfo !== undefined ? (
         <>
           <ContentsHeader>
@@ -737,7 +728,13 @@ function Summoners() {
                   <MostPlayedItem selected={false}>자유랭크</MostPlayedItem>
                 </MostPlayedTab>
                 <MostChampionContainer>
-                  {/* 여기에서 map*/}
+                  {byChampionArr.length !== 0
+                    ? byChampionArr
+                        .slice(0, 7)
+                        .map((champion: any) => (
+                          <MostChampions champion={champion} />
+                        ))
+                    : null}
                 </MostChampionContainer>
                 <More>더 보기 + 다른 시즌 보기</More>
               </MostPlayed>
@@ -849,7 +846,9 @@ function Summoners() {
                       : null}
                   </ul>
                 </Champions>
-                <Positions>{/* 여기에 positions */}</Positions>
+                <Positions>
+                  <PositionsBar currentMatch={currentMatch} />
+                </Positions>
               </Summary>
               <MatchHistoryContainer>
                 {/* 여기서 map */}

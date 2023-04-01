@@ -55,7 +55,6 @@ function Summarys({ champion }: Props) {
   } else if (kda >= 5) {
     kdaColor = "#F06F00";
   }
-  console.log(kills);
   return (
     <>
       <SumLi>
