@@ -1,11 +1,13 @@
 import { kill } from "process";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { MatchInfoObj, UserDocument } from "../routes/Summoners";
 
 interface Props {
   userInfo: UserDocument;
   match: MatchInfoObj;
-  loadingDone: boolean;
+  setCurrentMatch: Function;
+  setTotalKillPart: Function;
 }
 
 interface PlayerObj {
@@ -265,7 +267,12 @@ const DetailBtn = styled.button<{ isWin: boolean }>`
   background-color: ${(props: any) => (props.isWin ? "#d5e3ff" : "#ffd8d9")};
 `;
 
-function MatchHistorys({ userInfo, match, loadingDone }: Props) {
+function MatchHistorys({
+  userInfo,
+  match,
+  setCurrentMatch,
+  setTotalKillPart,
+}: Props) {
   const name = userInfo.name;
   // 매치 내 검색된 플레이어와 이름이 같은 플레이어의 정보를 currentPlayer에 할당
   const currentPlayer: PlayerObj = match.info.participants.filter(
@@ -281,8 +288,9 @@ function MatchHistorys({ userInfo, match, loadingDone }: Props) {
   const teamATotalKills = teamA.reduce(function add(sum: any, item: any) {
     return sum + item.kills;
   }, 0);
+
   //킬 관여율
-  let killPart;
+  let killPart: number;
   if (teamATotalKills !== 0) {
     killPart = Math.round(
       ((currentPlayer.kills + currentPlayer.assists) / teamATotalKills) * 100
@@ -567,6 +575,12 @@ function MatchHistorys({ userInfo, match, loadingDone }: Props) {
     default:
       break;
   }
+
+  useEffect(() => {
+    setCurrentMatch((prev: any) => [...prev, currentPlayer]);
+    setTotalKillPart((prev: any) => [...prev, killPart]);
+  }, []);
+
   return (
     <>
       {match !== undefined ? (
@@ -575,7 +589,7 @@ function MatchHistorys({ userInfo, match, loadingDone }: Props) {
             <GameContainer>
               <Game>
                 <Type isWin={win}>{gameType}</Type>
-                <Timestamp></Timestamp>
+                <Timestamp>-시간 전</Timestamp>
                 <Horizontal></Horizontal>
                 <Result isWin={win}>{win ? "승리" : "패배"}</Result>
                 <Length>{`${gameDuration}분`}</Length>

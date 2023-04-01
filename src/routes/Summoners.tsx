@@ -14,6 +14,7 @@ import {
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import MatchHistorys from "../components/MatchHistorys";
+import Summarys from "../components/Summarys";
 
 interface SummonerObj {
   accountId: string;
@@ -380,12 +381,16 @@ const SumInfo = styled.div`
 `;
 const KDA = styled.div`
   font-size: 12px;
-  letter-spacing: 0px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #758592;
 `;
 
-const Death = styled.span``;
+const KDANum = styled.span<{ deaths: boolean }>`
+  color: ${(props: any) => (props.deaths ? "#d31a45" : "#758592")};
+`;
 const SumRaito = styled.div`
-  margin-top: 2px;
+  margin-top: 8px;
   line-height: 26px;
   font-size: 20px;
   font-weight: bold;
@@ -393,7 +398,7 @@ const SumRaito = styled.div`
 `;
 const KillPart = styled.div`
   line-height: 16px;
-  margin-top: 2px;
+  margin-top: 0px;
   font-size: 12px;
   color: #d31a45;
 `;
@@ -417,13 +422,37 @@ const MatchHistoryContainer = styled.div`
 //
 function Summoners() {
   const API_KEY = process.env.REACT_APP_RIOT_API_KEY;
-  //let userInfo: UserDocument | undefined;
   const [userInfo, setUserInfo] = useState<UserDocument>();
   const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([]);
   const [loadingDone, setLoadingDone] = useState(false);
   const matchQty = 15;
   const params = useParams();
   const [alarm, setAlarm] = useState(false);
+  //검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
+  const [currentMatch, setCurrentMatch] = useState([]);
+  //각 게임들을 각 챔피언 이름으로 분류 (객체)
+  const [byChampion, setBychampion] = useState({});
+  //위 객체를 배열로 변환한 값
+  const [byChampionArr, setByChampionArr] = useState<any>([]);
+  //검색된 게임의 총 킬,뎃,어시
+  const [totalInfo, setTotalInfo] = useState({
+    totalKills: 0,
+    totalDeaths: 0,
+    totalAssists: 0,
+  });
+  // 킬 관여율 -Summary에 표시 될
+  const [totalKillPart, setTotalKillPart] = useState([]);
+  const [totalKillPartNum, setTotalKillPartNum] = useState<number>();
+  // 검색된 게임 승리 수
+  const [currentWins, setCurrentWins] = useState(-1);
+  //검색된 게임 포지션 비율
+  const [positions, setPositions] = useState({
+    top: 0,
+    jungle: 0,
+    mid: 0,
+    adc: 0,
+    sup: 0,
+  });
 
   function alarmFn() {
     setAlarm(true);
@@ -578,6 +607,17 @@ function Summoners() {
     getUserDocument();
   }
 
+  function groupBy(objectArray: any, property: any) {
+    return objectArray.reduce(function (acc: any, obj: any) {
+      var key = obj[property];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj);
+      return acc;
+    }, {});
+  }
+
   useEffect(() => {
     atFirst();
   }, []);
@@ -592,7 +632,60 @@ function Summoners() {
     }
   }, []);
 
-  console.log(matchInfoArr, "");
+  useEffect(() => {
+    setBychampion(groupBy(currentMatch, "championName"));
+    if (currentMatch.length === matchInfoArr.length) {
+      const kills = currentMatch.reduce(function add(sum, item: any) {
+        return sum + item.kills;
+      }, 0);
+      const deaths = currentMatch.reduce(function add(sum, item: any) {
+        return sum + item.deaths;
+      }, 0);
+      const assists = currentMatch.reduce(function add(sum, item: any) {
+        return sum + item.assists;
+      }, 0);
+
+      setTotalInfo((prev) => {
+        return { ...prev, totalKills: kills / matchInfoArr.length };
+      });
+      setTotalInfo((prev) => {
+        return { ...prev, totalDeaths: deaths / matchInfoArr.length };
+      });
+      setTotalInfo((prev) => {
+        return { ...prev, totalAssists: assists / matchInfoArr.length };
+      });
+
+      setCurrentWins(currentMatch.filter((e: any) => e.win === true).length);
+    }
+    if (totalKillPart.length === matchInfoArr.length) {
+      const sumKillPart = totalKillPart.reduce(function (sum, item) {
+        return sum + item;
+      }, 0);
+      const sumAvg: number = sumKillPart / matchInfoArr.length;
+      setTotalKillPartNum(sumAvg);
+    }
+  }, [currentMatch]);
+
+  useEffect(() => {
+    //챔피언 별로 분류 , 게임 수가 많은 챔피언 순으로
+
+    let a = Object.entries(byChampion).sort(function (a: any, b: any) {
+      return b[1].length - a[1].length;
+    });
+    //비동기적 처리를 위해 a 내부 배열의 합이 mtchInfoArr의 값과 같아지면 setByChamionArr
+    let aLength = a.reduce(function add(sum: any, item: any) {
+      return sum + item[1].length;
+    }, 0);
+
+    if (aLength === matchInfoArr.length) {
+      setByChampionArr(a);
+    }
+  }, [byChampion]);
+
+  console.log(byChampion);
+  console.log(byChampionArr);
+  console.log(currentWins);
+  console.log(totalKillPart);
   return (
     <>
       <Header />
@@ -666,11 +759,19 @@ function Summoners() {
               </MatchHistoryTab>
               <Summary>
                 <SumStats>
-                  <SumWinLose>전 승 패 </SumWinLose>
+                  <SumWinLose>
+                    {matchInfoArr.length}전 {currentWins}승{" "}
+                    {matchInfoArr.length - currentWins}패
+                  </SumWinLose>
                   <RatioKda>
                     <Chart>
                       <Text>
-                        <strong>0%</strong>
+                        <strong>
+                          {Math.round(
+                            (currentWins / matchInfoArr.length) * 100
+                          )}
+                          %
+                        </strong>
                       </Text>
                       <div>
                         <svg viewBox="0 0 200 200">
@@ -689,7 +790,15 @@ function Summoners() {
                             fill="none"
                             stroke="#5383E8"
                             strokeWidth="30"
-                            strokeDasharray="80"
+                            strokeDasharray={`${
+                              (2 * Math.PI * 80 * currentWins) /
+                              matchInfoArr.length
+                            } ${
+                              2 *
+                              Math.PI *
+                              80 *
+                              (1 - currentWins / matchInfoArr.length)
+                            }`}
                             strokeDashoffset={2 * Math.PI * 90 * 0.22}
                           />
                         </svg>
@@ -697,18 +806,48 @@ function Summoners() {
                     </Chart>
                     <SumInfo>
                       <KDA>
-                        <span>3</span>
-                        <Death>3</Death>
-                        <span>3</span>
+                        <KDANum deaths={false}>
+                          {totalInfo.totalKills.toFixed(1)}
+                        </KDANum>
+                        /
+                        <KDANum deaths={true}>
+                          {totalInfo.totalDeaths.toFixed(1)}
+                        </KDANum>
+                        /
+                        <KDANum deaths={false}>
+                          {totalInfo.totalAssists.toFixed(1)}
+                        </KDANum>
                       </KDA>
-                      <SumRaito>1.55 : 1</SumRaito>
-                      <KillPart>킬관여 100%</KillPart>
+                      <SumRaito>
+                        {(
+                          (totalInfo.totalKills + totalInfo.totalAssists) /
+                          totalInfo.totalDeaths
+                        ).toFixed(2)}{" "}
+                        : 1
+                      </SumRaito>
+                      <KillPart>
+                        킬관여{" "}
+                        {totalKillPartNum !== undefined
+                          ? Math.round(totalKillPartNum)
+                          : 0}
+                        %
+                      </KillPart>
                     </SumInfo>
                   </RatioKda>
                 </SumStats>
                 <Champions>
-                  <Title>플레이한 챔피언 (최근 {matchQty}게임)</Title>
-                  <ul>{/* 여기에서 map */}</ul>
+                  <Title>
+                    플레이한 챔피언 (최근 {matchInfoArr.length}게임)
+                  </Title>
+                  <ul>
+                    {byChampionArr.length !== 0
+                      ? byChampionArr
+                          .slice(0, 3)
+                          .map((champion: any) => (
+                            <Summarys champion={champion} />
+                          ))
+                      : null}
+                  </ul>
                 </Champions>
                 <Positions>{/* 여기에 positions */}</Positions>
               </Summary>
@@ -716,9 +855,10 @@ function Summoners() {
                 {/* 여기서 map */}
                 {matchInfoArr.map((match) => (
                   <MatchHistorys
-                    loadingDone={loadingDone}
                     match={match}
                     userInfo={userInfo}
+                    setCurrentMatch={setCurrentMatch}
+                    setTotalKillPart={setTotalKillPart}
                   />
                 ))}
               </MatchHistoryContainer>
