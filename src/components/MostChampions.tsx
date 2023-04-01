@@ -154,7 +154,7 @@ function MostChampions({ champion }: Props) {
             {totalKda === Infinity ? (
               "Perfect"
             ) : (
-              <>{totalKda.toFixed(2)}:1평점</>
+              <>{totalKda.toFixed(2)}:1 평점</>
             )}
           </MostRatio>
           <MostKda>
