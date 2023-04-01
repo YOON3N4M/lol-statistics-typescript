@@ -676,6 +676,8 @@ function Summoners() {
     }
   }, [byChampion]);
 
+  console.log(matchInfoArr.length);
+
   return (
     <>
       <Header />
@@ -728,7 +730,10 @@ function Summoners() {
                   <MostPlayedItem selected={false}>자유랭크</MostPlayedItem>
                 </MostPlayedTab>
                 <MostChampionContainer>
-                  {byChampionArr.length !== 0
+                  {matchInfoArr.length ===
+                  byChampionArr.reduce(function add(sum: any, item: any) {
+                    return sum + item[1].length;
+                  }, 0)
                     ? byChampionArr
                         .slice(0, 7)
                         .map((champion: any) => (
