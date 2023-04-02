@@ -1,4 +1,3 @@
-import { kill } from "process";
 import { useEffect } from "react";
 import styled from "styled-components";
 import { MatchInfoObj, UserDocument } from "../routes/Summoners";
@@ -279,9 +278,11 @@ function MatchHistorys({
     (player: PlayerObj) => player.summonerName === name
   )[0];
   // 매치 내 플레이어 10명중 검색된 플레이어와 같은 팀인 플레이어를 teamA에 할당
+
   const teamA = match.info.participants.filter(
     (player: PlayerObj) => player.teamId === currentPlayer.teamId
   );
+
   const teamLeft = match.info.participants.slice(0, 5);
   const teamRight = match.info.participants.slice(5);
 

@@ -448,7 +448,7 @@ function Summoners() {
   // 검색된 게임 승리 수
   const [currentWins, setCurrentWins] = useState(-1);
   //검색된 게임 포지션 비율
-
+  const [notFound, setNotFound] = useState(false);
   function alarmFn() {
     setAlarm(true);
     setTimeout(() => {
@@ -459,8 +459,9 @@ function Summoners() {
   async function getUserDocument() {
     const q = query(
       collection(dbService, "user"),
-      where("name", "==", params.summonersName)
+      where("nameRe", "==", params.summonersName?.replace(/ /g, ""))
     );
+    console.log(params.summonersName?.replace(/ /g, ""));
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
@@ -480,11 +481,14 @@ function Summoners() {
     //소환사 정보 요청
     const summonersRes: any = await fetch(
       `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${params.summonersName}?api_key=${API_KEY}`
-    ).catch((error) => console.log(error));
+    ).catch((error) => setNotFound(true));
 
     // 소환사 정보 저장
     const summonersResJson: SummonerObj = await summonersRes.json();
-
+    const summonerResJsonRe = {
+      ...summonersResJson,
+      nameRe: summonersResJson.name.replace(/ /g, ""), // 이 부분이 없으면 db검색이 어려움
+    };
     /* 검색된 소환사의 리그 정보를 불러온다 
     사례 1. 길이 2 = 자유랭크, 솔로랭크 모두 랭크가 존재 이때,
       [0] => 솔로랭크
@@ -518,7 +522,7 @@ function Summoners() {
     //사례 1.
     if (summonersResJson && LeagueResJson.length === 2) {
       const summonerInfo = {
-        ...summonersResJson,
+        ...summonerResJsonRe,
         league1: LeagueResJson[0],
         league2: LeagueResJson[1],
         matchHistory,
@@ -530,7 +534,7 @@ function Summoners() {
       //사례 2.
     } else if (summonersResJson && LeagueResJson.length === 1) {
       const summonerInfo = {
-        ...summonersResJson,
+        ...summonerResJsonRe,
         league1: LeagueResJson[0],
         league2: null,
         matchHistory,
@@ -542,7 +546,7 @@ function Summoners() {
       //사례 3.
     } else if (summonersResJson && LeagueResJson.length === 0) {
       const summonerInfo = {
-        ...summonersResJson,
+        ...summonerResJsonRe,
         league1: null,
         league2: null,
         matchHistory,
@@ -676,13 +680,24 @@ function Summoners() {
     }
   }, [byChampion]);
 
-  console.log(matchInfoArr.length);
+  console.log();
+
+  const NotFoundMsg = styled.div`
+    padding-top: 50px;
+    text-align: center;
+    font-size: 30px;
+  `;
 
   return (
     <>
       <Header />
-
-      {userInfo !== undefined ? (
+      {notFound ? (
+        <NotFoundMsg>
+          등록되지 않은 소환사 입니다. 오타를 확인 후 다시 검색 해주세요.
+        </NotFoundMsg>
+      ) : null}
+      {userInfo !== undefined &&
+      userInfo.matchHistory?.length === matchInfoArr.length ? (
         <>
           <ContentsHeader>
             <Wrapper>
@@ -857,21 +872,22 @@ function Summoners() {
               </Summary>
               <MatchHistoryContainer>
                 {/* 여기서 map */}
-                {matchInfoArr.map((match) => (
-                  <MatchHistorys
-                    match={match}
-                    userInfo={userInfo}
-                    setCurrentMatch={setCurrentMatch}
-                    setTotalKillPart={setTotalKillPart}
-                  />
-                ))}
+
+                {matchInfoArr.length === 15
+                  ? matchInfoArr.map((match) => (
+                      <MatchHistorys
+                        match={match}
+                        userInfo={userInfo}
+                        setCurrentMatch={setCurrentMatch}
+                        setTotalKillPart={setTotalKillPart}
+                      />
+                    ))
+                  : null}
               </MatchHistoryContainer>
             </RightContents>
           </ContentsContainer>
         </>
-      ) : (
-        <div>존재 하지 않는 소환사 입니다.</div>
-      )}
+      ) : null}
     </>
   );
 }

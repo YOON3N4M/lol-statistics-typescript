@@ -6,7 +6,6 @@ import { legacy_createStore as createStore } from "redux";
 import { Provider } from "react-redux";
 import Home from "./routes/Home";
 import Summoners from "./routes/Summoners";
-import rootReducer from "./modules/index";
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -36,14 +35,12 @@ const router = createBrowserRouter([
   },
 ]);
 
-const store = createStore(rootReducer);
-
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <Provider store={store}>
+  <>
     <GlobalStyle />
     <RouterProvider router={router} />
-  </Provider>
+  </>
 );
