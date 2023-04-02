@@ -17,6 +17,15 @@ import MatchHistorys from "../components/MatchHistorys";
 import Summarys from "../components/Summarys";
 import PositionsBar from "../components/PositionsBar";
 import MostChampions from "../components/MostChampions";
+import IRON from "../img/tier/iron.png";
+import BRONZE from "../img/tier/bronze.png";
+import SILVER from "../img/tier/silver.png";
+import GOLD from "../img/tier/gold.png";
+import PLATINUM from "../img/tier/platinum.png";
+import DIAMOND from "../img/tier/diamond.png";
+import MASTER from "../img/tier/master.png";
+import GRANDMASTER from "../img/tier/grandmaster.png";
+import CHALLENGER from "../img/tier/challenger.png";
 
 interface SummonerObj {
   accountId: string;
@@ -50,7 +59,7 @@ export interface UserDocument {
   profileIconId?: number;
   puuid?: string;
   summonerLevel?: number;
-  league1?: object;
+  league1?: any;
   league2?: object;
   matchHistory?: Array<string>;
 }
@@ -737,6 +746,31 @@ function Summoners() {
                 <CurrentRankHeader>
                   <span>솔로랭크</span>
                 </CurrentRankHeader>
+                {userInfo.league1?.queueType === "RANKED_SOLO_5x5" ? (
+                  <CurrentRankContents>
+                    <CurrentTierImgContainer>
+                      <CurrentTierImg />
+                    </CurrentTierImgContainer>
+                    <CurrnetTierContainer>
+                      <CurrentTier>{userInfo.league1.tier}</CurrentTier>
+                      <CurrentLp>{userInfo.league1.leaguePoints} LP</CurrentLp>
+                    </CurrnetTierContainer>
+                    <WinLoseContainer>
+                      <WinLose>
+                        {userInfo.league1.wins}승 {userInfo.league1.losses}패
+                      </WinLose>
+                      <WinRate>
+                        승률{` `}
+                        {Math.ceil(
+                          (userInfo.league1.wins /
+                            (userInfo.league1.wins + userInfo.league1.losses)) *
+                            100
+                        )}
+                        %
+                      </WinRate>
+                    </WinLoseContainer>
+                  </CurrentRankContents>
+                ) : null}
               </CurrentRankContainer>
               <MostPlayed>
                 <MostPlayedTab>

@@ -175,7 +175,7 @@ function Home() {
   }
   const sktMember = {
     top: "2U35",
-    jg: "쇼호쿠 정대만",
+    jg: "잘가요 굿바이",
     mid: "Hide on bush",
     adc: "T1 Gumayusi",
     sup: "역천괴",
