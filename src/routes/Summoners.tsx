@@ -429,6 +429,11 @@ const Positions = styled.div`
 const MatchHistoryContainer = styled.div`
   margin-top: 8px;
 `;
+const NotFoundMsg = styled.div`
+  padding-top: 50px;
+  text-align: center;
+  font-size: 30px;
+`;
 
 //
 function Summoners() {
@@ -464,6 +469,54 @@ function Summoners() {
       setAlarm(false);
     }, 3000);
   }
+  const [tierImg, setTierImg] = useState("");
+  const [tierCap, setTierCap] = useState("");
+
+  useEffect(() => {
+    console.log(IRON);
+    switch (userInfo?.league1.tier) {
+      case "IRON":
+        setTierCap("Iron");
+        setTierImg(IRON);
+        break;
+      case "BRONZE":
+        setTierCap("Bronze");
+        setTierImg(BRONZE);
+        break;
+      case "SILVER":
+        setTierCap("Silver");
+        setTierImg(SILVER);
+        break;
+      case "GOLD":
+        setTierCap("Gold");
+        setTierImg(GOLD);
+        break;
+      case "PLATINUM":
+        setTierCap("Platinum");
+        setTierImg(PLATINUM);
+        break;
+      case "DIAMOND":
+        setTierCap("Diamond");
+        setTierImg(DIAMOND);
+        break;
+      case "MASTER":
+        setTierCap("Master");
+        setTierImg(MASTER);
+        break;
+      case "GRANDMASTER":
+        setTierCap("Grandmaster");
+        setTierImg(GRANDMASTER);
+        break;
+      case "CHALLENGER":
+        setTierCap("Challenger");
+        setTierImg(CHALLENGER);
+        break;
+      default:
+        setTierCap("unranked");
+        setTierImg("unranked");
+        break;
+    }
+  }, [userInfo]);
 
   async function getUserDocument() {
     const q = query(
@@ -691,12 +744,6 @@ function Summoners() {
 
   console.log();
 
-  const NotFoundMsg = styled.div`
-    padding-top: 50px;
-    text-align: center;
-    font-size: 30px;
-  `;
-
   return (
     <>
       <Header />
@@ -726,7 +773,7 @@ function Summoners() {
                 </TierContainer>
                 <Name>{userInfo.name}</Name>
                 <RefeshBtn onClick={fetchAPI}>전적 갱신</RefeshBtn>
-                <LastUpdate>최근 업데이트 : 방금 전</LastUpdate>
+                <LastUpdate>최근 업데이트 : - </LastUpdate>
               </Info>
             </Wrapper>
           </ContentsHeader>
@@ -749,10 +796,12 @@ function Summoners() {
                 {userInfo.league1?.queueType === "RANKED_SOLO_5x5" ? (
                   <CurrentRankContents>
                     <CurrentTierImgContainer>
-                      <CurrentTierImg />
+                      <CurrentTierImg src={tierImg} />
                     </CurrentTierImgContainer>
                     <CurrnetTierContainer>
-                      <CurrentTier>{userInfo.league1.tier}</CurrentTier>
+                      <CurrentTier>
+                        {tierCap} {userInfo.league1.rank}
+                      </CurrentTier>
                       <CurrentLp>{userInfo.league1.leaguePoints} LP</CurrentLp>
                     </CurrnetTierContainer>
                     <WinLoseContainer>

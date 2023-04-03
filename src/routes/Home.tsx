@@ -186,7 +186,7 @@ function Home() {
     jg: "XiaoHuaSheng7",
     mid: "GOOD GAME GG XD",
     adc: "으끄으끄",
-    sup: "빨간머리 강백호",
+    sup: "무성은고기먹을래",
   };
 
   return (
