@@ -113,6 +113,9 @@ const SpellContainer = styled.div`
 `;
 const SpellBox = styled.div`
   margin-left: 4px;
+  width: 22px;
+  height: 22px;
+  margin-bottom: 3px;
 `;
 const SpellIcon = styled.img`
   width: 22px;

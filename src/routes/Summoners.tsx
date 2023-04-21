@@ -474,7 +474,7 @@ function Summoners() {
 
   useEffect(() => {
     console.log(IRON);
-    switch (userInfo?.league1.tier) {
+    switch (userInfo?.league1?.tier) {
       case "IRON":
         setTierCap("Iron");
         setTierImg(IRON);
