@@ -280,7 +280,7 @@ const MostPlayedItem = styled.li<{ selected: boolean }>`
   flex: 1;
   margin-left: 4px;
   vertical-align: middle;
-  cursor: pointer;
+  cursor: ${(props: any) => (props.selected ? "pointer" : "")};
   text-align: center;
   border-radius: 4px;
   line-height: 28px;
@@ -342,7 +342,7 @@ const MatchHistoryTabLi = styled.li<{ selected: boolean }>`
   border-radius: 4px;
   font-size: 14px;
   line-height: 28px;
-  cursor: pointer;
+  cursor: ${(props: any) => (props.selected ? "pointer" : "")};
   background-color: ${(props: any) => (props.selected ? "#ecf2ff" : "none")};
   font-weight: ${(props: any) => (props.selected ? 700 : "")};
   color: ${(props: any) => (props.selected ? "#4171d6" : "")};
@@ -783,7 +783,7 @@ function Summoners() {
                 <InfoListItem selected={true}>종합</InfoListItem>
               </li>
               <li>
-                <InfoListItem selected={false}>인게임 정보</InfoListItem>
+                {/*<InfoListItem selected={false}>인게임 정보</InfoListItem>*/}
               </li>
             </InfoList>
           </InfoListTab>
@@ -824,8 +824,8 @@ function Summoners() {
               <MostPlayed>
                 <MostPlayedTab>
                   <MostPlayedItem selected={true}>최근게임</MostPlayedItem>
-                  <MostPlayedItem selected={false}>솔로랭크</MostPlayedItem>
-                  <MostPlayedItem selected={false}>자유랭크</MostPlayedItem>
+                  <MostPlayedItem selected={false}></MostPlayedItem>
+                  <MostPlayedItem selected={false}></MostPlayedItem>
                 </MostPlayedTab>
                 <MostChampionContainer>
                   {matchInfoArr.length ===
@@ -839,22 +839,16 @@ function Summoners() {
                         ))
                     : null}
                 </MostChampionContainer>
-                <More>더 보기 + 다른 시즌 보기</More>
+                <More></More>
               </MostPlayed>
             </LeftContents>
             <RightContents>
               <MatchHistoryTab>
                 <MatchHistroyTabUl>
                   <MatchHistoryTabLi selected={true}>전체</MatchHistoryTabLi>
-                  <MatchHistoryTabLi selected={false}>
-                    솔로랭크
-                  </MatchHistoryTabLi>
-                  <MatchHistoryTabLi selected={false}>
-                    자유랭크
-                  </MatchHistoryTabLi>
-                  <MatchHistoryTabLi selected={false}>
-                    큐 타입
-                  </MatchHistoryTabLi>
+                  <MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+                  <MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+                  <MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
                 </MatchHistroyTabUl>
               </MatchHistoryTab>
               <Summary>
