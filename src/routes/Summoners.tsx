@@ -663,7 +663,7 @@ function Summoners() {
     setMatchInfoArr((prev: any) => [...prev, docSnapData]);
   }
 
-  function atFirst() {
+  function firstInit() {
     setMatchInfoArr([]);
     getUserDocument();
   }
@@ -680,7 +680,7 @@ function Summoners() {
   }
 
   useEffect(() => {
-    atFirst();
+    firstInit();
   }, []);
 
   useEffect(() => {

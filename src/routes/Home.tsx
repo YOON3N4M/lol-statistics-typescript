@@ -174,7 +174,7 @@ function Home() {
     navigate(`summoners/kr/${name}`);
   }
   const sktMember = {
-    top: "2U35",
+    top: "우 제",
     jg: "잘가요 굿바이",
     mid: "Hide on bush",
     adc: "T1 Gumayusi",
