@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import styled from "styled-components";
-import { MatchInfoObj, UserDocument } from "../routes/Summoners";
+import { MatchInfoObj, UserDocument } from "../@types/types";
 
 interface Props {
   userInfo: UserDocument;
