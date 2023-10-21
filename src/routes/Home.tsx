@@ -12,6 +12,193 @@ import supIcon from "../img/lane/sup.svg";
 import geng from "../img/team/geng.png";
 import t1 from "../img/team/t1.png";
 import styled from "styled-components";
+import { api } from "../utils/api";
+import { LeagueObj, SummonerObj } from "../@types/types";
+
+function Home() {
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState("");
+
+  function onChange(e: any) {
+    setUsername(e.target.value);
+  }
+
+  function onSubmit(e: any) {
+    e.preventDefault();
+    // 닉네임이 두 글자일 경우 정상적인 소환사 조회가 불가능하여, 사이에 공백을 넣어서 처리함.
+    if (username.trim() === "") {
+    } else if (username.length === 2) {
+      const usernameRe = `${username[0]} ${username[1]}`;
+
+      navigate(`summoners/kr/${usernameRe}`);
+    } else {
+      navigate(`summoners/kr/${username}`);
+    }
+  }
+
+  function onClick(name: string) {
+    navigate(`summoners/kr/${name}`);
+  }
+  const sktMember = {
+    top: "우 제",
+    jg: "잘가요 굿바이",
+    mid: "Hide on bush",
+    adc: "T1 Gumayusi",
+    sup: "역천괴",
+  };
+
+  const gengMember = {
+    top: "어리고싶다",
+    jg: "XiaoHuaSheng7",
+    mid: "GOOD GAME GG XD",
+    adc: "으끄으끄",
+    sup: "무성은고기먹을래",
+  };
+
+  async function getAllAPI() {
+    const summonerInfo: SummonerObj = await api.getSummonersInfo("마나번");
+
+    const leagueInfo: LeagueObj = await api.getLeagueInfo(summonerInfo.id);
+
+    const MatchInfo = await api.getMatchInfo(summonerInfo.puuid, 15);
+    console.log(summonerInfo, leagueInfo, MatchInfo);
+  }
+
+  useEffect(() => {
+    getAllAPI();
+  }, []);
+  return (
+    <>
+      <Header />
+      <HomeContainer>
+        <LogoContainer>
+          <Logo className="home-logo">OP.GG</Logo>
+        </LogoContainer>
+        <div>
+          <form onSubmit={onSubmit}>
+            <SearchContainer>
+              <RegionOption>
+                <StyledLabel>Region</StyledLabel>
+                <Region>Korea</Region>
+              </RegionOption>
+              <VLine></VLine>
+              <InputContainer>
+                <StyledLabel>Search</StyledLabel>
+                <SearchInput
+                  onChange={onChange}
+                  className="search-input"
+                  placeholder="소환사명..."
+                  value={username}
+                ></SearchInput>
+              </InputContainer>
+              <SearchBtn onClick={onSubmit} className="search-btn">
+                .GG
+              </SearchBtn>
+            </SearchContainer>
+          </form>
+        </div>
+
+        <ProContainer>
+          <ProHeader>
+            <span>프로게이머 전적 바로가기</span>
+          </ProHeader>
+          <TeamContainer>
+            <Team>
+              <TeamHeader>
+                <div>
+                  <Tone src={t1} />
+                </div>
+              </TeamHeader>
+              <PlayerContainer onClick={() => onClick(sktMember.top)}>
+                <div className="pro-lane">
+                  <img src={topIcon} />
+                </div>
+                <Nickname>Zeus</Nickname>
+                <Name>최우제</Name>
+              </PlayerContainer>
+              <PlayerContainer onClick={() => onClick(sktMember.jg)}>
+                <div className="pro-lane">
+                  <img src={jgIcon} />
+                </div>
+                <Nickname>Oner</Nickname>
+                <Name>문현준</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(sktMember.mid)}>
+                <div className="pro-lane">
+                  <img src={midIcon} />
+                </div>
+                <Nickname>Faker</Nickname>
+                <Name>이상혁</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(sktMember.adc)}>
+                <div className="pro-lane">
+                  {" "}
+                  <img src={adcIcon} />
+                </div>
+                <Nickname>Gumayusi</Nickname>
+                <Name>이민형</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(sktMember.sup)}>
+                <div className="pro-lane">
+                  <img src={supIcon} />
+                </div>
+                <Nickname>Keria</Nickname>
+                <Name>류민석</Name>
+              </PlayerContainer>
+            </Team>
+            <Team>
+              <TeamHeader>
+                {" "}
+                <div>
+                  <Geng src={geng} />
+                </div>
+              </TeamHeader>
+              <PlayerContainer onClick={() => onClick(gengMember.top)}>
+                <div className="pro-lane">
+                  <img src={topIcon} />
+                </div>
+                <Nickname>Doran</Nickname>
+                <Name>최현준</Name>
+              </PlayerContainer>
+              <PlayerContainer onClick={() => onClick(gengMember.jg)}>
+                <div className="pro-lane">
+                  <img src={jgIcon} />
+                </div>
+                <Nickname>Peanut</Nickname>
+                <Name>한왕호</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(gengMember.mid)}>
+                <div className="pro-lane">
+                  <img src={midIcon} />
+                </div>
+                <Nickname>Chovy</Nickname>
+                <Name>정지훈</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(gengMember.adc)}>
+                <div className="pro-lane">
+                  {" "}
+                  <img src={adcIcon} />
+                </div>
+                <Nickname>Payz</Nickname>
+                <Name>김수환</Name>
+              </PlayerContainer>{" "}
+              <PlayerContainer onClick={() => onClick(gengMember.sup)}>
+                <div className="pro-lane">
+                  <img src={supIcon} />
+                </div>
+                <Nickname>Delight</Nickname>
+                <Name>유환중</Name>
+              </PlayerContainer>
+            </Team>
+          </TeamContainer>
+        </ProContainer>
+      </HomeContainer>
+    </>
+  );
+}
+
+export default Home;
 
 const HomeContainer = styled.div`
   width: 100%;
@@ -147,176 +334,3 @@ const Name = styled.div`
   font-weight: 200;
   left: 3px;
 `;
-
-function Home() {
-  const navigate = useNavigate();
-
-  const [username, setUsername] = useState("");
-
-  function onChange(e: any) {
-    setUsername(e.target.value);
-  }
-
-  function onSubmit(e: any) {
-    e.preventDefault();
-    // 닉네임이 두 글자일 경우 정상적인 소환사 조회가 불가능하여, 사이에 공백을 넣어서 처리함.
-    if (username.trim() === "") {
-    } else if (username.length === 2) {
-      const usernameRe = `${username[0]} ${username[1]}`;
-
-      navigate(`summoners/kr/${usernameRe}`);
-    } else {
-      navigate(`summoners/kr/${username}`);
-    }
-  }
-
-  function onClick(name: string) {
-    navigate(`summoners/kr/${name}`);
-  }
-  const sktMember = {
-    top: "우 제",
-    jg: "잘가요 굿바이",
-    mid: "Hide on bush",
-    adc: "T1 Gumayusi",
-    sup: "역천괴",
-  };
-
-  const gengMember = {
-    top: "어리고싶다",
-    jg: "XiaoHuaSheng7",
-    mid: "GOOD GAME GG XD",
-    adc: "으끄으끄",
-    sup: "무성은고기먹을래",
-  };
-
-  return (
-    <>
-      <Header />
-      <HomeContainer>
-        <LogoContainer>
-          <Logo className="home-logo">OP.GG</Logo>
-        </LogoContainer>
-        <div>
-          <form onSubmit={onSubmit}>
-            <SearchContainer>
-              <RegionOption>
-                <StyledLabel>Region</StyledLabel>
-                <Region>Korea</Region>
-              </RegionOption>
-              <VLine></VLine>
-              <InputContainer>
-                <StyledLabel>Search</StyledLabel>
-                <SearchInput
-                  onChange={onChange}
-                  className="search-input"
-                  placeholder="소환사명..."
-                  value={username}
-                ></SearchInput>
-              </InputContainer>
-              <SearchBtn onClick={onSubmit} className="search-btn">
-                .GG
-              </SearchBtn>
-            </SearchContainer>
-          </form>
-        </div>
-
-        <ProContainer>
-          <ProHeader>
-            <span>프로게이머 전적 바로가기</span>
-          </ProHeader>
-          <TeamContainer>
-            <Team>
-              <TeamHeader>
-                <div>
-                  <Tone src={t1} />
-                </div>
-              </TeamHeader>
-              <PlayerContainer onClick={() => onClick(sktMember.top)}>
-                <div className="pro-lane">
-                  <img src={topIcon} />
-                </div>
-                <Nickname>Zeus</Nickname>
-                <Name>최우제</Name>
-              </PlayerContainer>
-              <PlayerContainer onClick={() => onClick(sktMember.jg)}>
-                <div className="pro-lane">
-                  <img src={jgIcon} />
-                </div>
-                <Nickname>Oner</Nickname>
-                <Name>문현준</Name>
-              </PlayerContainer>{" "}
-              <PlayerContainer onClick={() => onClick(sktMember.mid)}>
-                <div className="pro-lane">
-                  <img src={midIcon} />
-                </div>
-                <Nickname>Faker</Nickname>
-                <Name>이상혁</Name>
-              </PlayerContainer>{" "}
-              <PlayerContainer onClick={() => onClick(sktMember.adc)}>
-                <div className="pro-lane">
-                  {" "}
-                  <img src={adcIcon} />
-                </div>
-                <Nickname>Gumayusi</Nickname>
-                <Name>이민형</Name>
-              </PlayerContainer>{" "}
-              <PlayerContainer onClick={() => onClick(sktMember.sup)}>
-                <div className="pro-lane">
-                  <img src={supIcon} />
-                </div>
-                <Nickname>Keria</Nickname>
-                <Name>류민석</Name>
-              </PlayerContainer>
-            </Team>
-            <Team>
-              <TeamHeader>
-                {" "}
-                <div>
-                  <Geng src={geng} />
-                </div>
-              </TeamHeader>
-              <PlayerContainer onClick={() => onClick(gengMember.top)}>
-                <div className="pro-lane">
-                  <img src={topIcon} />
-                </div>
-                <Nickname>Doran</Nickname>
-                <Name>최현준</Name>
-              </PlayerContainer>
-              <PlayerContainer onClick={() => onClick(gengMember.jg)}>
-                <div className="pro-lane">
-                  <img src={jgIcon} />
-                </div>
-                <Nickname>Peanut</Nickname>
-                <Name>한왕호</Name>
-              </PlayerContainer>{" "}
-              <PlayerContainer onClick={() => onClick(gengMember.mid)}>
-                <div className="pro-lane">
-                  <img src={midIcon} />
-                </div>
-                <Nickname>Chovy</Nickname>
-                <Name>정지훈</Name>
-              </PlayerContainer>{" "}
-              <PlayerContainer onClick={() => onClick(gengMember.adc)}>
-                <div className="pro-lane">
-                  {" "}
-                  <img src={adcIcon} />
-                </div>
-                <Nickname>Payz</Nickname>
-                <Name>김수환</Name>
-              </PlayerContainer>{" "}
-              <PlayerContainer onClick={() => onClick(gengMember.sup)}>
-                <div className="pro-lane">
-                  <img src={supIcon} />
-                </div>
-                <Nickname>Delight</Nickname>
-                <Name>유환중</Name>
-              </PlayerContainer>
-            </Team>
-          </TeamContainer>
-        </ProContainer>
-      </HomeContainer>
-    </>
-  );
-}
-
-export default Home;

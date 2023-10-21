@@ -30,10 +30,13 @@ import MASTER from "../img/tier/master.png";
 import GRANDMASTER from "../img/tier/grandmaster.png";
 import CHALLENGER from "../img/tier/challenger.png";
 
-import { LeagueArray, MatchInfoArray, MatchInfoObj, SummonerObj, UserDocument } from "../@types/types";
-import axios from "axios";
-import { SUMMONER_INFO_URL } from "../constants";
-import { getSummonersInfo } from "../utils/api";
+import {
+  LeagueArray,
+  MatchInfoArray,
+  MatchInfoObj,
+  SummonerObj,
+  UserDocument,
+} from "../@types/types";
 
 //
 function Summoners() {
@@ -71,15 +74,8 @@ function Summoners() {
   const [tierImg, setTierImg] = useState("");
   const [tierCap, setTierCap] = useState("");
 
-  const [test,setTest] = useState<any>()
-
-    useEffect(() => {
-    const result1 = getSummonersInfo("마나번").then((data)=> setTest(data))
-    }, [])
-  
-    console.log(test)
+  console.log(test);
   useEffect(() => {
-   
     switch (userInfo?.league1?.tier) {
       case "IRON":
         setTierCap("Iron");
@@ -129,7 +125,7 @@ function Summoners() {
       collection(dbService, "user"),
       where("nameRe", "==", params.summonersName?.replace(/ /g, ""))
     );
-   // console.log(params.summonersName?.replace(/ /g, ""));
+    // console.log(params.summonersName?.replace(/ /g, ""));
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
@@ -137,27 +133,20 @@ function Summoners() {
     });
 
     if (userInfo !== undefined) {
-    //  console.log("db에 저장된 유저 입니다");
+      //  console.log("db에 저장된 유저 입니다");
     } else {
-     // console.log("db에 유저 데이터가 없습니다.");
+      // console.log("db에 유저 데이터가 없습니다.");
     }
   }
-  
 
-    useEffect(() => {
-    const test =  getSummonersInfo("마나번")
-    console.log(test)
-    }, [])
-  
-
-  async function getLeagueInfo(){}
+  async function getLeagueInfo() {}
 
   // async function fetchAPI() {
   //   // matchInfoArr 초기화
   //   setMatchInfoArr([]);
   //   //소환사 정보 요청
   //   const userInfoResult: any = getSummonersInfo();
-  //   /* 검색된 소환사의 리그 정보를 불러온다 
+  //   /* 검색된 소환사의 리그 정보를 불러온다
   //   사례 1. 길이 2 = 자유랭크, 솔로랭크 모두 랭크가 존재 이때,
   //     [0] => 솔로랭크
   //     [1] => 자유랭크
@@ -228,7 +217,7 @@ function Summoners() {
   //   /*
   //    배열 matchHistory의 매치 코드를 활용 해 매치 정보를 받아오고 파이어 베이스에 업로드하는 함수
   //    매치 기록이 이미 존재하는지 비교하는 코드가 추가되어야 함.
-  //    아래 함수는 매치 코드(item)으로 db에 doc 요청을 한 후, 
+  //    아래 함수는 매치 코드(item)으로 db에 doc 요청을 한 후,
   //    docSnap.exists()가 false일 경우 (=>매치 코드가 db에 없는 경우)
   //    api 요청을 보내고 그 값을 db에 업로드하는 방식으로 동작함.
   //   */
@@ -287,14 +276,12 @@ function Summoners() {
 
   useEffect(() => {
     firstInit();
-    
   }, []);
 
   useEffect(() => {
     if (userInfo?.matchHistory !== undefined) {
       userInfo.matchHistory.map((item) => getMatchFromDB(item));
     } else {
-    
       getUserDocument();
     }
   }, []);
@@ -349,8 +336,6 @@ function Summoners() {
     }
   }, [byChampion]);
 
-
-
   return (
     <>
       <Header />
@@ -379,7 +364,13 @@ function Summoners() {
                   </ul>
                 </TierContainer>
                 <Name>{userInfo.name}</Name>
-                <RefeshBtn onClick={()=>{console.log("비활성화")}}>전적 갱신</RefeshBtn>
+                <RefeshBtn
+                  onClick={() => {
+                    console.log("비활성화");
+                  }}
+                >
+                  전적 갱신
+                </RefeshBtn>
                 <LastUpdate>최근 업데이트 : - </LastUpdate>
               </Info>
             </Wrapper>
@@ -577,7 +568,6 @@ function Summoners() {
 }
 
 export default Summoners;
-
 
 //상단 헤더 부분 컴포넌트
 const ContentsHeader = styled.div`
