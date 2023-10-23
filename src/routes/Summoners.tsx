@@ -20,35 +20,29 @@ import Summarys from '../components/Summarys'
 import PositionsBar from '../components/PositionsBar'
 import MostChampions from '../components/MostChampions'
 
-import IRON from '../img/tier/iron.png'
-import BRONZE from '../img/tier/bronze.png'
-import SILVER from '../img/tier/silver.png'
-import GOLD from '../img/tier/gold.png'
-import PLATINUM from '../img/tier/platinum.png'
-import DIAMOND from '../img/tier/diamond.png'
-import MASTER from '../img/tier/master.png'
-import GRANDMASTER from '../img/tier/grandmaster.png'
-import CHALLENGER from '../img/tier/challenger.png'
-
 import {
 	LeagueArray,
+	LeagueObj,
 	MatchInfoArray,
 	MatchInfoObj,
 	SummonerObj,
 	UserDocument,
 } from '../@types/types'
 import { firebaseAPI } from '../utils/firebaseApi'
+import { api } from '../utils/api'
 
 //
 
 function Summoners() {
 	const params = useParams()
 	const [searchedSummonersName, setSearchedSummonersName] = useState(
-		params.summonersName,
+		params?.summonersName,
 	)
 
-	const [userInfo, setUserInfo] = useState<UserDocument>()
-	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray>([])
+	const [userDocument, setUserDocument] = useState<UserDocument>()
+	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
+		[],
+	)
 	const [loadingDone, setLoadingDone] = useState(false)
 	const matchQty = 15
 	const [alarm, setAlarm] = useState(false)
@@ -80,68 +74,127 @@ function Summoners() {
 	const [tierImg, setTierImg] = useState('')
 	const [tierCap, setTierCap] = useState('')
 
-	useEffect(() => {
-		switch (userInfo?.league1?.tier) {
-			case 'IRON':
-				setTierCap('Iron')
-				setTierImg(IRON)
-				break
-			case 'BRONZE':
-				setTierCap('Bronze')
-				setTierImg(BRONZE)
-				break
-			case 'SILVER':
-				setTierCap('Silver')
-				setTierImg(SILVER)
-				break
-			case 'GOLD':
-				setTierCap('Gold')
-				setTierImg(GOLD)
-				break
-			case 'PLATINUM':
-				setTierCap('Platinum')
-				setTierImg(PLATINUM)
-				break
-			case 'DIAMOND':
-				setTierCap('Diamond')
-				setTierImg(DIAMOND)
-				break
-			case 'MASTER':
-				setTierCap('Master')
-				setTierImg(MASTER)
-				break
-			case 'GRANDMASTER':
-				setTierCap('Grandmaster')
-				setTierImg(GRANDMASTER)
-				break
-			case 'CHALLENGER':
-				setTierCap('Challenger')
-				setTierImg(CHALLENGER)
-				break
-			default:
-				setTierCap('unranked')
-				setTierImg('unranked')
-				break
-		}
-	}, [userInfo])
+	// useEffect(() => {
+	// 	switch (userDocument?.league1?.tier) {
+	// 		case 'IRON':
+	// 			setTierCap('Iron')
+	// 			setTierImg(IRON)
+	// 			break
+	// 		case 'BRONZE':
+	// 			setTierCap('Bronze')
+	// 			setTierImg(BRONZE)
+	// 			break
+	// 		case 'SILVER':
+	// 			setTierCap('Silver')
+	// 			setTierImg(SILVER)
+	// 			break
+	// 		case 'GOLD':
+	// 			setTierCap('Gold')
+	// 			setTierImg(GOLD)
+	// 			break
+	// 		case 'PLATINUM':
+	// 			setTierCap('Platinum')
+	// 			setTierImg(PLATINUM)
+	// 			break
+	// 		case 'DIAMOND':
+	// 			setTierCap('Diamond')
+	// 			setTierImg(DIAMOND)
+	// 			break
+	// 		case 'MASTER':
+	// 			setTierCap('Master')
+	// 			setTierImg(MASTER)
+	// 			break
+	// 		case 'GRANDMASTER':
+	// 			setTierCap('Grandmaster')
+	// 			setTierImg(GRANDMASTER)
+	// 			break
+	// 		case 'CHALLENGER':
+	// 			setTierCap('Challenger')
+	// 			setTierImg(CHALLENGER)
+	// 			break
+	// 		default:
+	// 			setTierCap('unranked')
+	// 			setTierImg('unranked')
+	// 			break
+	// 	}
+	// }, [userDocument])
 
-	useEffect(() => {}, [])
-
-	async function getUserDocumentDB() {
+	async function getUserDocumentDB(): Promise<UserDocument | undefined> {
 		if (searchedSummonersName === undefined) return
 		const result = await firebaseAPI.getUserDocument(searchedSummonersName)
-		if (result) setUserInfo(result)
+		setUserDocument(result)
+		if (result) return result
 	}
 
+	async function getMatchDocumentDB(matchIDArr: string[] | undefined) {
+		if (matchIDArr === undefined) return
+
+		const result: MatchInfoArray | undefined = await Promise.all(
+			matchIDArr.map(async (matchID) => {
+				return await firebaseAPI.getMatchFromDB(matchID)
+			}),
+		)
+		return result
+	}
+
+	async function getDocumentFromFirebase() {
+		const userDocs = await getUserDocumentDB()
+		console.log(userDocs)
+		setUserDocument(userDocs)
+		if (userDocs === undefined) return false
+
+		const matchArr: MatchInfoArray | undefined = await getMatchDocumentDB(
+			userDocs.matchHistory,
+		)
+
+		if (matchArr === undefined) return
+
+		setMatchInfoArr(matchArr)
+		return true
+	}
+
+	async function getRiotAPI() {
+		if (searchedSummonersName === undefined) return
+
+		try {
+			const summonerInfo: SummonerObj = await api.getSummonersInfo(
+				searchedSummonersName,
+			)
+			const leagueInfo: LeagueObj = await api.getLeagueInfo(summonerInfo.id)
+			const MatchInfo: string = await api.getMatchInfo(
+				summonerInfo.puuid,
+				matchQty,
+			)
+			console.log(summonerInfo, leagueInfo, MatchInfo)
+
+			const result = {
+				summonerInfo,
+				leagueInfo,
+				MatchInfo,
+			}
+			return result
+		} catch (error) {
+			console.log(error)
+			return error
+		}
+	}
+
+	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
 	useEffect(() => {
-		getUserDocumentDB()
+		async function existCheck() {
+			const isExist = await getDocumentFromFirebase()
+			console.log(isExist)
+			if (isExist) return
+			const riotAPIResult = await getRiotAPI()
+		}
+		existCheck()
 	}, [])
 
 	// async function fetchAPI() {
 	//   // matchInfoArr 초기화
 	//   setMatchInfoArr([]);
 	//   //소환사 정보 요청
-	//   const userInfoResult: any = getSummonersInfo();
+	//   const userDocumentResult: any = getSummonersInfo();
 	//   /* 검색된 소환사의 리그 정보를 불러온다
 	//   사례 1. 길이 2 = 자유랭크, 솔로랭크 모두 랭크가 존재 이때,
 	//     [0] => 솔로랭크
@@ -153,12 +206,12 @@ function Summoners() {
 	//   사례 3. 길이 0 = 자유랭크, 솔로랭크 모두 언랭
 	//   */
 	//   const leagueRes = await fetch(
-	//     `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${userInfoResult?.id}?api_key=${API_KEY}`
+	//     `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${userDocumentResult?.id}?api_key=${API_KEY}`
 	//   );
 	//   const LeagueResJson: LeagueArray = await leagueRes.json();
 
 	//   const matchRes = await fetch(
-	//     `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${userInfoResult?.puuid}/ids?start=0&count=${matchQty}&api_key=${API_KEY}`
+	//     `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${userDocumentResult?.puuid}/ids?start=0&count=${matchQty}&api_key=${API_KEY}`
 	//   );
 	//   const matchResJson: Array<string> = await matchRes.json();
 
@@ -263,14 +316,15 @@ function Summoners() {
 	}, [])
 
 	useEffect(() => {
-		if (userInfo?.matchHistory !== undefined) {
-			// userInfo.matchHistory.map((item) => getMatchFromDB(item));
+		if (userDocument?.matchHistory !== undefined) {
+			// userDocument.matchHistory.map((item) => getMatchFromDB(item));
 		} else {
 			//getUserDocument();
 		}
 	}, [])
 
 	useEffect(() => {
+		if (matchInfoArr === undefined) return
 		setBychampion(groupBy(currentMatch, 'championName'))
 		if (currentMatch.length === matchInfoArr.length) {
 			const kills = currentMatch.reduce(function add(sum: any, item: any) {
@@ -284,7 +338,7 @@ function Summoners() {
 			}, 0)
 
 			setTotalInfo((prev) => {
-				return { ...prev, totalKills: kills / matchInfoArr.length }
+				return { ...prev, totalKills: kills / matchInfoArr?.length }
 			})
 			setTotalInfo((prev) => {
 				return { ...prev, totalDeaths: deaths / matchInfoArr.length }
@@ -315,7 +369,7 @@ function Summoners() {
 			return sum + item[1].length
 		}, 0)
 
-		if (aLength === matchInfoArr.length) {
+		if (aLength === matchInfoArr?.length) {
 			setByChampionArr(a)
 		}
 	}, [byChampion])
@@ -328,16 +382,16 @@ function Summoners() {
 					등록되지 않은 소환사 입니다. 오타를 확인 후 다시 검색 해주세요.
 				</NotFoundMsg>
 			) : null}
-			{userInfo !== undefined &&
-			userInfo.matchHistory?.length === matchInfoArr.length ? (
+			{userDocument !== undefined &&
+			userDocument.matchHistory?.length === matchInfoArr?.length ? (
 				<>
 					<ContentsHeader>
 						<Wrapper>
 							<ProfileIconContainer>
 								<ProfileIcon
-									src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/profileicon/${userInfo.profileIconId}.png`}
+									src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/profileicon/${userDocument.profileIconId}.png`}
 								/>
-								<Level>{userInfo.summonerLevel}</Level>
+								<Level>{userDocument.summonerLevel}</Level>
 							</ProfileIconContainer>
 							<Info>
 								<TierContainer>
@@ -347,7 +401,7 @@ function Summoners() {
 										</TierLi>
 									</ul>
 								</TierContainer>
-								<Name>{userInfo.name}</Name>
+								<Name>{userDocument.name}</Name>
 								<RefeshBtn
 									onClick={() => {
 										console.log('비활성화')
@@ -375,26 +429,30 @@ function Summoners() {
 								<CurrentRankHeader>
 									<span>솔로랭크</span>
 								</CurrentRankHeader>
-								{userInfo.league1?.queueType === 'RANKED_SOLO_5x5' ? (
+								{userDocument.league1?.queueType === 'RANKED_SOLO_5x5' ? (
 									<CurrentRankContents>
 										<CurrentTierImgContainer>
 											<CurrentTierImg src={tierImg} />
 										</CurrentTierImgContainer>
 										<CurrnetTierContainer>
 											<CurrentTier>
-												{tierCap} {userInfo.league1.rank}
+												{tierCap} {userDocument.league1.rank}
 											</CurrentTier>
-											<CurrentLp>{userInfo.league1.leaguePoints} LP</CurrentLp>
+											<CurrentLp>
+												{userDocument.league1.leaguePoints} LP
+											</CurrentLp>
 										</CurrnetTierContainer>
 										<WinLoseContainer>
 											<WinLose>
-												{userInfo.league1.wins}승 {userInfo.league1.losses}패
+												{userDocument.league1.wins}승{' '}
+												{userDocument.league1.losses}패
 											</WinLose>
 											<WinRate>
 												승률{` `}
 												{Math.ceil(
-													(userInfo.league1.wins /
-														(userInfo.league1.wins + userInfo.league1.losses)) *
+													(userDocument.league1.wins /
+														(userDocument.league1.wins +
+															userDocument.league1.losses)) *
 														100,
 												)}
 												%
@@ -410,7 +468,7 @@ function Summoners() {
 									<MostPlayedItem selected={false}></MostPlayedItem>
 								</MostPlayedTab>
 								<MostChampionContainer>
-									{matchInfoArr.length ===
+									{matchInfoArr?.length ===
 									byChampionArr.reduce(function add(sum: any, item: any) {
 										return sum + item[1].length
 									}, 0)
@@ -436,21 +494,21 @@ function Summoners() {
 							<Summary>
 								<SumStats>
 									<SumWinLose>
-										{matchInfoArr.length}전 {currentWins}승{' '}
-										{matchInfoArr.length - currentWins}패
+										{/* {matchInfoArr?.length}전 {currentWins}승{' '}
+										{matchInfoArr?.length - currentWins}패 */}
 									</SumWinLose>
 									<RatioKda>
 										<Chart>
 											<Text>
 												<strong>
-													{Math.round(
+													{/* {Math.round(
 														(currentWins / matchInfoArr.length) * 100,
-													)}
+													)} */}
 													%
 												</strong>
 											</Text>
 											<div>
-												<svg viewBox="0 0 200 200">
+												{/* <svg viewBox="0 0 200 200">
 													<circle
 														cx="100"
 														cy="100"
@@ -477,7 +535,7 @@ function Summoners() {
 														}`}
 														strokeDashoffset={2 * Math.PI * 90 * 0.22}
 													/>
-												</svg>
+												</svg> */}
 											</div>
 										</Chart>
 										<SumInfo>
@@ -513,7 +571,7 @@ function Summoners() {
 								</SumStats>
 								<Champions>
 									<Title>
-										플레이한 챔피언 (최근 {matchInfoArr.length}게임)
+										{/* 플레이한 챔피언 (최근 {matchInfoArr.length}게임) */}
 									</Title>
 									<ul>
 										{byChampionArr.length !== 0
@@ -532,16 +590,16 @@ function Summoners() {
 							<MatchHistoryContainer>
 								{/* 여기서 map */}
 
-								{matchInfoArr.length === 15
+								{/* {matchInfoArr.length === 15
 									? matchInfoArr.map((match) => (
 											<MatchHistorys
 												match={match}
-												userInfo={userInfo}
+												userDocument={userDocument}
 												setCurrentMatch={setCurrentMatch}
 												setTotalKillPart={setTotalKillPart}
 											/>
 									  ))
-									: null}
+									: null} */}
 							</MatchHistoryContainer>
 						</RightContents>
 					</ContentsContainer>
