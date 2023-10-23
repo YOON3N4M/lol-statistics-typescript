@@ -10,6 +10,7 @@ import CHALLENGER from '../img/tier/challenger.png'
 
 // KEY and ETC....
 export const API_KEY = process.env.REACT_APP_RIOT_API_KEY
+export const DATA_DRAGON_VERSION = '13.20.1'
 
 // API URL
 export const SUMMONER_INFO_URL = (nickname) => {

@@ -31,21 +31,23 @@ import {
 } from '../@types/types'
 import { firebaseAPI } from '../utils/firebaseApi'
 import { api } from '../utils/api'
+import { DATA_DRAGON_VERSION } from '../constants'
+import CurrentRank from '../components/CurrentRank'
 
 //
 
 function Summoners() {
+	const matchQty = 15
 	const params = useParams()
 	const [searchedSummonersName, setSearchedSummonersName] = useState(
 		params?.summonersName,
 	)
-
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
 		[],
 	)
+
 	const [loadingDone, setLoadingDone] = useState(false)
-	const matchQty = 15
 	const [alarm, setAlarm] = useState(false)
 	//검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
 	const [currentMatch, setCurrentMatch] = useState<any>([])
@@ -388,14 +390,14 @@ function Summoners() {
 					등록되지 않은 소환사 입니다. 오타를 확인 후 다시 검색 해주세요.
 				</NotFoundMsg>
 			) : null}
-			{userDocument !== undefined &&
-			userDocument.matchHistory?.length === matchInfoArr?.length ? (
+
+			{userDocument !== undefined && (
 				<>
 					<ContentsHeader>
 						<Wrapper>
 							<ProfileIconContainer>
 								<ProfileIcon
-									src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/profileicon/${userDocument.profileIconId}.png`}
+									src={`http://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/profileicon/${userDocument.profileIconId}.png`}
 								/>
 								<Level>{userDocument.summonerLevel}</Level>
 							</ProfileIconContainer>
@@ -429,44 +431,15 @@ function Summoners() {
 							</li>
 						</InfoList>
 					</InfoListTab>
+				</>
+			)}
+
+			{userDocument !== undefined &&
+			userDocument.matchHistory?.length === matchInfoArr?.length ? (
+				<>
 					<ContentsContainer>
 						<LeftContents>
-							<CurrentRankContainer>
-								<CurrentRankHeader>
-									<span>솔로랭크</span>
-								</CurrentRankHeader>
-								{userDocument.league1?.queueType === 'RANKED_SOLO_5x5' ? (
-									<CurrentRankContents>
-										<CurrentTierImgContainer>
-											<CurrentTierImg src={tierImg} />
-										</CurrentTierImgContainer>
-										<CurrnetTierContainer>
-											<CurrentTier>
-												{tierCap} {userDocument.league1.rank}
-											</CurrentTier>
-											<CurrentLp>
-												{userDocument.league1.leaguePoints} LP
-											</CurrentLp>
-										</CurrnetTierContainer>
-										<WinLoseContainer>
-											<WinLose>
-												{userDocument.league1.wins}승{' '}
-												{userDocument.league1.losses}패
-											</WinLose>
-											<WinRate>
-												승률{` `}
-												{Math.ceil(
-													(userDocument.league1.wins /
-														(userDocument.league1.wins +
-															userDocument.league1.losses)) *
-														100,
-												)}
-												%
-											</WinRate>
-										</WinLoseContainer>
-									</CurrentRankContents>
-								) : null}
-							</CurrentRankContainer>
+							<CurrentRank userDocument={userDocument} />
 							<MostPlayed>
 								<MostPlayedTab>
 									<MostPlayedItem selected={true}>최근게임</MostPlayedItem>
