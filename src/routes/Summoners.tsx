@@ -25,6 +25,7 @@ import {
 	LeagueObj,
 	MatchInfoArray,
 	MatchInfoObj,
+	PlayerObj,
 	RiotApiObj,
 	SummonerObj,
 	UserDocument,
@@ -33,6 +34,7 @@ import { firebaseAPI } from '../utils/firebaseApi'
 import { api } from '../utils/api'
 import { DATA_DRAGON_VERSION } from '../constants'
 import CurrentRank from '../components/CurrentRank'
+import MostPlayed from '../components/MostPlayed'
 
 //
 
@@ -43,12 +45,19 @@ function Summoners() {
 		params?.summonersName,
 	)
 	const [userDocument, setUserDocument] = useState<UserDocument>()
+	// matchQty 만큼의 총 전적
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
 		[],
 	)
+	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
+	const [mostPlayChampion, setMostPlayChampion] = useState<any>([])
 
-	const [loadingDone, setLoadingDone] = useState(false)
+	///
+	///
+	///
+	///
 	const [alarm, setAlarm] = useState(false)
+
 	//검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
 	const [currentMatch, setCurrentMatch] = useState<any>([])
 	//각 게임들을 각 챔피언 이름으로 분류 (객체)
@@ -180,6 +189,27 @@ function Summoners() {
 		}
 	}
 
+	function getMostChampionArr() {
+		const filtered = matchInfoArr?.map(
+			(game) =>
+				game?.info.participants.filter(
+					(player: any) => player.summonerName === userDocument?.name,
+				)[0],
+		)
+
+		const removeUndefined: any = filtered?.filter((item) => item !== undefined)
+		const most = removeUndefined.reduce((acc: any, obj: any) => {
+			const key = obj.championName
+			acc[key] = (acc[key] || []).concat(obj)
+			return acc
+		}, {})
+		const mostList = Object.values(most).sort(
+			(a: any, b: any) => b.length - a.length,
+		)
+
+		setMostPlayChampion(mostList)
+	}
+
 	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
 	// riot API 요청 후 바로 firebase 재요청
 	useEffect(() => {
@@ -197,6 +227,11 @@ function Summoners() {
 		}
 		existCheck()
 	}, [])
+
+	useEffect(() => {
+		if (matchInfoArr?.length === 0) return
+		getMostChampionArr()
+	}, [matchInfoArr])
 
 	// async function fetchAPI() {
 	//   // matchInfoArr 초기화
@@ -440,26 +475,7 @@ function Summoners() {
 					<ContentsContainer>
 						<LeftContents>
 							<CurrentRank userDocument={userDocument} />
-							<MostPlayed>
-								<MostPlayedTab>
-									<MostPlayedItem selected={true}>최근게임</MostPlayedItem>
-									<MostPlayedItem selected={false}></MostPlayedItem>
-									<MostPlayedItem selected={false}></MostPlayedItem>
-								</MostPlayedTab>
-								<MostChampionContainer>
-									{matchInfoArr?.length ===
-									byChampionArr.reduce(function add(sum: any, item: any) {
-										return sum + item[1].length
-									}, 0)
-										? byChampionArr
-												.slice(0, 7)
-												.map((champion: any) => (
-													<MostChampions champion={champion} />
-												))
-										: null}
-								</MostChampionContainer>
-								<More></More>
-							</MostPlayed>
+							<MostPlayed mostPlayChampion={mostPlayChampion} />
 						</LeftContents>
 						<RightContents>
 							<MatchHistoryTab>
@@ -789,57 +805,6 @@ const WinRate = styled.div`
 	line-height: 16px;
 `
 
-const MostPlayed = styled.div`
-	margin-top: 8px;
-	background-color: white;
-	border-radius: 4px;
-`
-const MostPlayedTab = styled.ul`
-	display: flex;
-	justify-content: space-between;
-	padding: 4px;
-	margin: 0px;
-	font-size: 14px;
-	border-bottom: 1px solid;
-	border-color: #ebeef1;
-`
-const MostPlayedItem = styled.li<{ selected: boolean }>`
-	flex: 1;
-	margin-left: 4px;
-	vertical-align: middle;
-	cursor: ${(props: any) => (props.selected ? 'pointer' : '')};
-	text-align: center;
-	border-radius: 4px;
-	line-height: 28px;
-	background-color: ${(props: any) => (props.selected ? '#ecf2ff' : 'none')};
-	font-weight: ${(props: any) => (props.selected ? 700 : '')};
-	color: ${(props: any) => (props.selected ? '#4171d6' : '')};
-`
-const MostChampionContainer = styled.div`
-	//여기서 map 으로 뿌림
-	display: table;
-	width: 100%;
-	height: 48px;
-	border-bottom: 1px solid;
-	border-color: #ebeef1;
-	color: #9aa4af;
-	text-align: center;
-	table-layout: fixed;
-`
-const More = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 8px 0 8px;
-	font-size: 12px;
-	text-align: center;
-	background-color: #f7f7f9;
-	color: #758592;
-	box-sizing: border-box;
-	cursor: pointer;
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
-`
 // 개요 ,전적 등이 보여지는 우측 컴포넌트
 const RightContents = styled.div`
 	display: inline-block;

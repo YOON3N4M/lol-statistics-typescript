@@ -1,37 +1,12 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { MatchInfoObj, UserDocument } from '../@types/types'
+import { MatchInfoObj, PlayerObj, UserDocument } from '../@types/types'
 
 interface Props {
 	userDocument: UserDocument
 	match: MatchInfoObj
 	setCurrentMatch: Function
 	setTotalKillPart: Function
-}
-
-interface PlayerObj {
-	championName: string
-	item0: number
-	item1: number
-	item2: number
-	item3: number
-	item4: number
-	item5: number
-	item6: number
-	summoner1Id: number
-	summoner2Id: number
-	perks: any
-	teamId: number
-	summonerName: string
-	kills: number
-	assists: number
-	win: boolean
-	deaths: number
-	queueId: number
-	visionWardsBoughtInGame: number
-	neutralMinionsKilled: number
-	totalMinionsKilled: number
-	champLevel: number
 }
 
 function MatchHistorys({

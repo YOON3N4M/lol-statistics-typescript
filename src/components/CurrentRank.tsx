@@ -1,7 +1,8 @@
 import styled from 'styled-components'
+import { UserDocument } from '../@types/types'
 
 interface Props {
-	userDocument: any
+	userDocument: UserDocument
 }
 
 export default function CurrentRank({ userDocument }: Props) {

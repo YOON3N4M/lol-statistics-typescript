@@ -55,19 +55,6 @@ function Home() {
 		sup: '무성은고기먹을래',
 	}
 
-	async function getAllAPI() {
-		try {
-			const summonerInfo: SummonerObj = await api.getSummonersInfo('s')
-			const leagueInfo: LeagueObj = await api.getLeagueInfo(summonerInfo.id)
-			const MatchInfo: string = await api.getMatchInfo(summonerInfo.puuid, 15)
-			console.log(summonerInfo, leagueInfo, MatchInfo)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
-	useEffect(() => {}, [])
-
 	return (
 		<>
 			<Header />
