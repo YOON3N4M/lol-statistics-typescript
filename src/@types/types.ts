@@ -27,10 +27,17 @@ export interface UserDocument {
 	accountId?: string
 	id?: string
 	name?: string
+	nameRe?: string
 	profileIconId?: number
 	puuid?: string
 	summonerLevel?: number
 	league1?: any
-	league2?: object
+	league2?: any
 	matchHistory?: Array<string>
+}
+
+export interface RiotApiObj {
+	summonerInfo: SummonerObj[]
+	leagueInfo: LeagueObj[]
+	matchInfo: string[]
 }

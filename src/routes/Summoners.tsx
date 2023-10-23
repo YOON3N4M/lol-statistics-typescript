@@ -25,6 +25,7 @@ import {
 	LeagueObj,
 	MatchInfoArray,
 	MatchInfoObj,
+	RiotApiObj,
 	SummonerObj,
 	UserDocument,
 } from '../@types/types'
@@ -160,17 +161,15 @@ function Summoners() {
 			const summonerInfo: SummonerObj = await api.getSummonersInfo(
 				searchedSummonersName,
 			)
-			const leagueInfo: LeagueObj = await api.getLeagueInfo(summonerInfo.id)
-			const MatchInfo: string = await api.getMatchInfo(
+			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
+			const matchInfo: string[] = await api.getMatchInfo(
 				summonerInfo.puuid,
 				matchQty,
 			)
-			console.log(summonerInfo, leagueInfo, MatchInfo)
-
 			const result = {
 				summonerInfo,
 				leagueInfo,
-				MatchInfo,
+				matchInfo,
 			}
 			return result
 		} catch (error) {
@@ -180,12 +179,19 @@ function Summoners() {
 	}
 
 	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
+	// riot API 요청 후 바로 firebase 재요청
 	useEffect(() => {
 		async function existCheck() {
 			const isExist = await getDocumentFromFirebase()
 			console.log(isExist)
 			if (isExist) return
-			const riotAPIResult = await getRiotAPI()
+			const riotAPIResult: any = await getRiotAPI()
+			const postDB = await firebaseAPI.postUserDocumentOnDB(
+				riotAPIResult.summonerInfo,
+				riotAPIResult.leagueInfo,
+				riotAPIResult.matchInfo,
+			)
+			const requestAgain = await getDocumentFromFirebase()
 		}
 		existCheck()
 	}, [])
