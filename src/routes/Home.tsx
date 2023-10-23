@@ -17,7 +17,6 @@ import { LeagueObj, SummonerObj } from "../@types/types";
 
 function Home() {
   const navigate = useNavigate();
-
   const [username, setUsername] = useState("");
 
   function onChange(e: any) {
@@ -30,7 +29,6 @@ function Home() {
     if (username.trim() === "") {
     } else if (username.length === 2) {
       const usernameRe = `${username[0]} ${username[1]}`;
-
       navigate(`summoners/kr/${usernameRe}`);
     } else {
       navigate(`summoners/kr/${username}`);
@@ -40,6 +38,7 @@ function Home() {
   function onClick(name: string) {
     navigate(`summoners/kr/${name}`);
   }
+
   const sktMember = {
     top: "우 제",
     jg: "잘가요 굿바이",
@@ -56,18 +55,6 @@ function Home() {
     sup: "무성은고기먹을래",
   };
 
-  async function getAllAPI() {
-    const summonerInfo: SummonerObj = await api.getSummonersInfo("마나번");
-
-    const leagueInfo: LeagueObj = await api.getLeagueInfo(summonerInfo.id);
-
-    const MatchInfo = await api.getMatchInfo(summonerInfo.puuid, 15);
-    console.log(summonerInfo, leagueInfo, MatchInfo);
-  }
-
-  useEffect(() => {
-    getAllAPI();
-  }, []);
   return (
     <>
       <Header />
