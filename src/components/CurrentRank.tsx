@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { UserDocument } from '../@types/types'
+import { LeagueInfo, UserDocument } from '../@types/types'
+import { tierIcon } from '../constants'
 
 interface Props {
 	userDocument: UserDocument
@@ -8,6 +9,50 @@ interface Props {
 export default function CurrentRank({ userDocument }: Props) {
 	const { league1, league2 } = userDocument
 	console.log(league1, league2)
+	const soloTier =
+		league1.tier.toLowerCase().charAt(0).toUpperCase() +
+		league1.tier.toLowerCase().substring(1)
+	const soloRank = romeNumToArabNum(league1.rank)
+
+	function romeNumToArabNum(rome: string) {
+		switch (rome) {
+			case 'I':
+				return 1
+			case 'II':
+				return 2
+			case 'III':
+				return 3
+			case 'IV':
+				return 4
+		}
+	}
+
+	function matchingTierImg(tier: string) {
+		switch (tier) {
+			case 'IRON':
+				return tierIcon.IRON
+			case 'BRONZE':
+				return tierIcon.BRONZE
+			case 'SILVER':
+				return tierIcon.SILVER
+			case 'GOLD':
+				return tierIcon.GOLD
+			case 'PLATINUM':
+				return tierIcon.PLATINUM
+			case 'EMERALD':
+				return tierIcon.EMERALD
+			case 'DIAMOND':
+				return tierIcon.DIAMOND
+			case 'MASTER':
+				return tierIcon.MASTER
+			case 'GRANDMASTER':
+				return tierIcon.GRANDMASTER
+			case 'CHALLENGER':
+				return tierIcon.CHALLENGER
+			default:
+				return 'unranked'
+		}
+	}
 	return (
 		<>
 			<CurrentRankContainer>
@@ -17,11 +62,14 @@ export default function CurrentRank({ userDocument }: Props) {
 				{league1 !== null ? (
 					<CurrentRankContents>
 						<CurrentTierImgContainer>
-							<CurrentTierImg src={'d'} />
+							<CurrentTierImg
+								src={matchingTierImg(league1.tier)}
+								alt={soloTier}
+							/>
 						</CurrentTierImgContainer>
 						<CurrentTierContainer>
 							<CurrentTier>
-								{league1.tier} {league1.rank}
+								{soloTier} {soloRank}
 							</CurrentTier>
 							<CurrentLp>{league1.leaguePoints} LP</CurrentLp>
 						</CurrentTierContainer>

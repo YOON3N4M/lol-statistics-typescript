@@ -77,6 +77,27 @@ export interface ParticipantInfo {
 	championName: string
 }
 
+export interface LeagueInfo {
+	leaguePoints: number
+	losses: number
+	queueType: 'RANKED_SOLO_5x5'
+	rank: string
+	summonerId: string
+	summonerName: string
+	tier:
+		| 'IRON'
+		| 'BRONZE'
+		| 'SILVER'
+		| 'GOLD'
+		| 'PLATINUM'
+		| 'EMERALD'
+		| 'DIAMOND'
+		| 'MASTER'
+		| 'GRANDMASTER'
+		| 'CHALLENGER'
+
+	wins: number
+}
 export interface ParticipantsData extends Array<ParticipantInfo[]> {
 	[index: number]: ParticipantInfo[]
 }

@@ -7,6 +7,7 @@ import DIAMOND from '../img/tier/diamond.png'
 import MASTER from '../img/tier/master.png'
 import GRANDMASTER from '../img/tier/grandmaster.png'
 import CHALLENGER from '../img/tier/challenger.png'
+import EMERALD from '../img/tier/emerald.png'
 
 // KEY and ETC....
 export const API_KEY = process.env.REACT_APP_RIOT_API_KEY
@@ -34,6 +35,7 @@ export const tierIcon = {
 	SILVER,
 	GOLD,
 	PLATINUM,
+	EMERALD,
 	DIAMOND,
 	MASTER,
 	GRANDMASTER,

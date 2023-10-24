@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ParticipantInfo } from '../@types/types'
 import { CHAMPION_ICON_URL } from '../constants'
+import { variable } from '../styles/Globalstyles'
 
 interface Props {
 	champions: ParticipantInfo[]
@@ -35,15 +36,15 @@ function MostChampions({ champions }: Props) {
 
 	function checkKDAColor() {
 		if (kdaAverage >= 5) {
-			return '#f06f00'
+			return variable.color.orange
 		} else if (4 <= kdaAverage && kdaAverage < 5) {
-			return '#0093ff'
+			return variable.color.sky
 		} else if (3 <= kdaAverage && kdaAverage < 4) {
-			return '#00bba3'
+			return variable.color.mint
 		}
 	}
 
-	const winRateColor = winRate >= 60 ? '#d31a45' : 'gray'
+	const winRateColor = winRate >= 60 ? variable.color.red : 'gray'
 	const kdaColor = checkKDAColor()
 
 	return (
