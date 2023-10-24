@@ -67,11 +67,16 @@ export interface PlayerObj {
 	champLevel: number
 }
 
-const test = [
-	{ name: 'AAA' },
-	{ name: 'AAA' },
-	{ name: 'AAA' },
-	{ name: 'BBB' },
-	{ name: 'BBB' },
-	{ name: 'CCC' },
-]
+export interface ParticipantInfo {
+	kills: number
+	deaths: number
+	assists: number
+	win: boolean
+	totalMinionsKilled: number
+	neutralMinionsKilled: number
+	championName: string
+}
+
+export interface ParticipantsData extends Array<ParticipantInfo[]> {
+	[index: number]: ParticipantInfo[]
+}

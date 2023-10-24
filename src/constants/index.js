@@ -23,6 +23,10 @@ export const MATCH_INFO_URL = (puuid, qty) => {
 	return `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${qty}&api_key=${API_KEY}`
 }
 
+export const CHAMPION_ICON_URL = (championName) => {
+	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${championName}.png`
+}
+
 // Images
 export const tierIcon = {
 	IRON,

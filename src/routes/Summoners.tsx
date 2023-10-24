@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
-import { dbService } from '../fBase'
-
-import {
-	doc,
-	setDoc,
-	getDoc,
-	collection,
-	query,
-	where,
-	getDocs,
-	onSnapshot,
-} from 'firebase/firestore'
 
 import Header from '../components/Header'
 import MatchHistorys from '../components/MatchHistorys'
@@ -50,7 +38,7 @@ function Summoners() {
 		[],
 	)
 	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
-	const [mostPlayChampion, setMostPlayChampion] = useState<any>([])
+	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
 
 	///
 	///
@@ -207,7 +195,7 @@ function Summoners() {
 			(a: any, b: any) => b.length - a.length,
 		)
 
-		setMostPlayChampion(mostList)
+		setMostPlayChampions(mostList)
 	}
 
 	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
@@ -475,7 +463,7 @@ function Summoners() {
 					<ContentsContainer>
 						<LeftContents>
 							<CurrentRank userDocument={userDocument} />
-							<MostPlayed mostPlayChampion={mostPlayChampion} />
+							<MostPlayed mostPlayChampions={mostPlayChampions} />
 						</LeftContents>
 						<RightContents>
 							<MatchHistoryTab>

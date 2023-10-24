@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import styled from 'styled-components'
+import { ParticipantsData } from '../@types/types'
+import MostChampions from './MostChampions'
 
 interface Props {
-	mostPlayChampion: any
+	mostPlayChampions: ParticipantsData
 }
-export default function MostPlayed({ mostPlayChampion }: Props) {
-	console.log(mostPlayChampion)
+export default function MostPlayed({ mostPlayChampions }: Props) {
+	console.log(mostPlayChampions)
+	const most7 = mostPlayChampions.slice(0, 7)
 	return (
 		<>
 			<MostPlayedBox>
@@ -15,16 +18,11 @@ export default function MostPlayed({ mostPlayChampion }: Props) {
 					<MostPlayedItem selected={false}></MostPlayedItem>
 				</MostPlayedTab>
 				<MostChampionContainer>
-					{/* {matchInfoArr?.length ===
-					byChampionArr.reduce(function add(sum: any, item: any) {
-						return sum + item[1].length
-					}, 0)
-						? byChampionArr
-								.slice(0, 7)
-								.map((champion: any) => <MostChampions champion={champion} />)
-						: null} */}
+					{most7.map((champions) => (
+						<MostChampions champions={champions} />
+					))}
 				</MostChampionContainer>
-				<More></More>
+				<More>더 보기</More>
 			</MostPlayedBox>
 		</>
 	)
