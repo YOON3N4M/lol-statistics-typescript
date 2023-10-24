@@ -28,6 +28,8 @@ export const CHAMPION_ICON_URL = (championName) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${championName}.png`
 }
 
+export const CHAMPIONS_JSON_URL = `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/data/ko_KR/champion.json`
+
 // Images
 export const tierIcon = {
 	IRON,
