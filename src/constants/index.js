@@ -29,6 +29,9 @@ export const CHAMPION_ICON_URL = (championName) => {
 }
 
 export const CHAMPIONS_JSON_URL = `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/data/ko_KR/champion.json`
+export const SUMMONER_PROFILE_ICON_URL = (iconId) => {
+	return `http://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/profileicon/${iconId}.png`
+}
 
 // Images
 export const tierIcon = {
