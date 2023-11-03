@@ -49,21 +49,7 @@ function Summoners() {
 
 	//검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
 	const [currentMatch, setCurrentMatch] = useState<any>([])
-	//각 게임들을 각 챔피언 이름으로 분류 (객체)
-	const [byChampion, setBychampion] = useState({})
-	//위 객체를 배열로 변환한 값
-	const [byChampionArr, setByChampionArr] = useState<any>([])
-	//검색된 게임의 총 킬,뎃,어시
-	const [totalInfo, setTotalInfo] = useState({
-		totalKills: 0,
-		totalDeaths: 0,
-		totalAssists: 0,
-	})
-	// 킬 관여율 -Summary에 표시 될
-	const [totalKillPart, setTotalKillPart] = useState([])
-	const [totalKillPartNum, setTotalKillPartNum] = useState<number>()
-	// 검색된 게임 승리 수
-	const [currentWins, setCurrentWins] = useState(-1)
+
 	//검색된 게임 포지션 비율
 	const [notFound, setNotFound] = useState(false)
 	function alarmFn() {
@@ -72,51 +58,6 @@ function Summoners() {
 			setAlarm(false)
 		}, 3000)
 	}
-
-	// useEffect(() => {
-	// 	switch (userDocument?.league1?.tier) {
-	// 		case 'IRON':
-	// 			setTierCap('Iron')
-	// 			setTierImg(IRON)
-	// 			break
-	// 		case 'BRONZE':
-	// 			setTierCap('Bronze')
-	// 			setTierImg(BRONZE)
-	// 			break
-	// 		case 'SILVER':
-	// 			setTierCap('Silver')
-	// 			setTierImg(SILVER)
-	// 			break
-	// 		case 'GOLD':
-	// 			setTierCap('Gold')
-	// 			setTierImg(GOLD)
-	// 			break
-	// 		case 'PLATINUM':
-	// 			setTierCap('Platinum')
-	// 			setTierImg(PLATINUM)
-	// 			break
-	// 		case 'DIAMOND':
-	// 			setTierCap('Diamond')
-	// 			setTierImg(DIAMOND)
-	// 			break
-	// 		case 'MASTER':
-	// 			setTierCap('Master')
-	// 			setTierImg(MASTER)
-	// 			break
-	// 		case 'GRANDMASTER':
-	// 			setTierCap('Grandmaster')
-	// 			setTierImg(GRANDMASTER)
-	// 			break
-	// 		case 'CHALLENGER':
-	// 			setTierCap('Challenger')
-	// 			setTierImg(CHALLENGER)
-	// 			break
-	// 		default:
-	// 			setTierCap('unranked')
-	// 			setTierImg('unranked')
-	// 			break
-	// 	}
-	// }, [userDocument])
 
 	async function getUserDocumentDB(): Promise<UserDocument | undefined> {
 		if (searchedSummonersName === undefined) return
@@ -128,17 +69,22 @@ function Summoners() {
 	async function getMatchDocumentDB(matchIDArr: string[] | undefined) {
 		if (matchIDArr === undefined) return
 
-		const result: MatchInfoArray | undefined = await Promise.all(
+		const result: any[] = await Promise.all(
 			matchIDArr.map(async (matchID) => {
-				return await firebaseAPI.getMatchFromDB(matchID)
+				const res = await firebaseAPI.getMatchFromDB(matchID)
+
+				if (res === undefined) return
+				return res
 			}),
 		)
-		return result
+		const removeUndefined = result.filter((e) => e !== undefined)
+
+		return removeUndefined
 	}
 
 	async function getDocumentFromFirebase() {
 		const userDocs = await getUserDocumentDB()
-		console.log(userDocs)
+
 		setUserDocument(userDocs)
 		if (userDocs === undefined) return false
 
@@ -147,7 +93,7 @@ function Summoners() {
 		)
 
 		if (matchArr === undefined) return
-
+		console.log(matchArr)
 		setMatchInfoArr(matchArr)
 		return true
 	}
@@ -160,7 +106,7 @@ function Summoners() {
 				searchedSummonersName,
 			)
 			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
-			const matchInfo: string[] = await api.getMatchInfo(
+			const matchInfo: string[] = await api.getMatchId(
 				summonerInfo.puuid,
 				matchQty,
 			)
@@ -177,6 +123,7 @@ function Summoners() {
 	}
 
 	function getMostChampionArr() {
+		if (!matchInfoArr) return
 		const filtered = matchInfoArr?.map(
 			(game) =>
 				game?.info.participants.filter(
@@ -200,9 +147,9 @@ function Summoners() {
 	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
 	// riot API 요청 후 바로 firebase 재요청
 	useEffect(() => {
-		async function existCheck() {
+		async function existCheckUserOnFirebase() {
 			const isExist = await getDocumentFromFirebase()
-			console.log(isExist)
+
 			if (isExist) return
 			const riotAPIResult: any = await getRiotAPI()
 			const postDB = await firebaseAPI.postUserDocumentOnDB(
@@ -212,138 +159,13 @@ function Summoners() {
 			)
 			const requestAgain = await getDocumentFromFirebase()
 		}
-		existCheck()
+		existCheckUserOnFirebase()
 	}, [])
 
 	useEffect(() => {
 		if (matchInfoArr?.length === 0) return
 		getMostChampionArr()
 	}, [matchInfoArr])
-
-	// async function fetchAPI() {
-	//   // matchInfoArr 초기화
-	//   setMatchInfoArr([]);
-	//   //소환사 정보 요청
-	//   const userDocumentResult: any = getSummonersInfo();
-	//   /* 검색된 소환사의 리그 정보를 불러온다
-	//   사례 1. 길이 2 = 자유랭크, 솔로랭크 모두 랭크가 존재 이때,
-	//     [0] => 솔로랭크
-	//     [1] => 자유랭크
-
-	//   사례 2. 길이 1 = 자유랭크, 솔로랭크 중 하나만 랭크가 존재
-	//     [0] => queueType을 보고 솔로랭크, 자유랭크 판별 해야함.
-
-	//   사례 3. 길이 0 = 자유랭크, 솔로랭크 모두 언랭
-	//   */
-	//   const leagueRes = await fetch(
-	//     `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${userDocumentResult?.id}?api_key=${API_KEY}`
-	//   );
-	//   const LeagueResJson: LeagueArray = await leagueRes.json();
-
-	//   const matchRes = await fetch(
-	//     `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${userDocumentResult?.puuid}/ids?start=0&count=${matchQty}&api_key=${API_KEY}`
-	//   );
-	//   const matchResJson: Array<string> = await matchRes.json();
-
-	//   // 전적이 없는 경우를 컨트롤 하기 위해, 없는 경우엔 null을 db에 업로드하고 그 외엔 matchResJson을 할당하고 업로드
-	//   let matchHistory = null;
-	//   if (matchResJson) {
-	//     matchHistory = matchResJson;
-	//   }
-
-	//   /*
-	//    이 부분은 가장 마지막 단계 / db에 정보를 업로드 하는 단계
-	//    소환사 정보가 있으면, 파이어 베이스에 doc(db,"컬렉션 명","doc 명"), {data} 형식으로 추가 하는 기능
-	//   */
-	//   //사례 1.
-	//   if (summonersResJson && LeagueResJson.length === 2) {
-	//     const summonerInfo = {
-	//       ...summonerResJsonRe,
-	//       league1: LeagueResJson[0],
-	//       league2: LeagueResJson[1],
-	//       matchHistory,
-	//     };
-	//     await setDoc(
-	//       doc(dbService, "user", summonersResJson.puuid),
-	//       summonerInfo
-	//     );
-	//     //사례 2.
-	//   } else if (summonersResJson && LeagueResJson.length === 1) {
-	//     const summonerInfo = {
-	//       ...summonerResJsonRe,
-	//       league1: LeagueResJson[0],
-	//       league2: null,
-	//       matchHistory,
-	//     };
-	//     await setDoc(
-	//       doc(dbService, "user", summonersResJson.puuid),
-	//       summonerInfo
-	//     );
-	//     //사례 3.
-	//   } else if (summonersResJson && LeagueResJson.length === 0) {
-	//     const summonerInfo = {
-	//       ...summonerResJsonRe,
-	//       league1: null,
-	//       league2: null,
-	//       matchHistory,
-	//     };
-
-	//     await setDoc(
-	//       doc(dbService, "user", summonersResJson.puuid),
-	//       summonerInfo
-	//     );
-	//   }
-	//   /*
-	//    배열 matchHistory의 매치 코드를 활용 해 매치 정보를 받아오고 파이어 베이스에 업로드하는 함수
-	//    매치 기록이 이미 존재하는지 비교하는 코드가 추가되어야 함.
-	//    아래 함수는 매치 코드(item)으로 db에 doc 요청을 한 후,
-	//    docSnap.exists()가 false일 경우 (=>매치 코드가 db에 없는 경우)
-	//    api 요청을 보내고 그 값을 db에 업로드하는 방식으로 동작함.
-	//   */
-
-	//   async function fetchAllMatchInfo(item: string, index: number) {
-	//     const docRef = doc(dbService, "match", item);
-	//     const docSnap = await getDoc(docRef);
-	//     const docSnapData: MatchInfoObj | undefined = docSnap.data();
-
-	//     if (docSnap.exists() === false) {
-	//       const matchInfoRes = await fetch(
-	//         `https://asia.api.riotgames.com/lol/match/v5/matches/${matchResJson[index]}?api_key=${API_KEY}`
-	//       );
-	//       const matchInfoResJson = await matchInfoRes.json();
-	//       await setDoc(doc(dbService, "match", item), matchInfoResJson);
-	//       console.log("업로드 완료");
-	//       setMatchInfoArr((prev) => [...prev, matchInfoResJson]);
-	//       console.log("푸쉬 완료");
-	//     }
-
-	//     if (docSnapData !== undefined) {
-	//       console.log("이미 db에 존재하는 전적 입니다. 푸쉬합니다.");
-	//       setMatchInfoArr((prev) => [...prev, docSnapData]);
-	//     }
-	//   }
-
-	//   // matchHistory가 존재하면 fetch
-	//   if (matchHistory !== null) {
-	//     matchHistory.map((item, index) => fetchAllMatchInfo(item, index));
-	//   }
-	//   getUserDocument();
-	// }
-
-	function groupBy(objectArray: any, property: any) {
-		return objectArray.reduce(function (acc: any, obj: any) {
-			var key = obj[property]
-			if (!acc[key]) {
-				acc[key] = []
-			}
-			acc[key].push(obj)
-			return acc
-		}, {})
-	}
-
-	useEffect(() => {
-		console.log(params.summonersName)
-	}, [])
 
 	useEffect(() => {
 		if (userDocument?.matchHistory !== undefined) {
@@ -352,57 +174,6 @@ function Summoners() {
 			//getUserDocument();
 		}
 	}, [])
-
-	useEffect(() => {
-		if (matchInfoArr === undefined) return
-		setBychampion(groupBy(currentMatch, 'championName'))
-		if (currentMatch.length === matchInfoArr.length) {
-			const kills = currentMatch.reduce(function add(sum: any, item: any) {
-				return sum + item.kills
-			}, 0)
-			const deaths = currentMatch.reduce(function add(sum: any, item: any) {
-				return sum + item.deaths
-			}, 0)
-			const assists = currentMatch.reduce(function add(sum: any, item: any) {
-				return sum + item.assists
-			}, 0)
-
-			setTotalInfo((prev) => {
-				return { ...prev, totalKills: kills / matchInfoArr?.length }
-			})
-			setTotalInfo((prev) => {
-				return { ...prev, totalDeaths: deaths / matchInfoArr.length }
-			})
-			setTotalInfo((prev) => {
-				return { ...prev, totalAssists: assists / matchInfoArr.length }
-			})
-
-			setCurrentWins(currentMatch.filter((e: any) => e.win === true).length)
-		}
-		if (totalKillPart.length === matchInfoArr.length) {
-			const sumKillPart = totalKillPart.reduce(function (sum, item) {
-				return sum + item
-			}, 0)
-			const sumAvg: number = sumKillPart / matchInfoArr.length
-			setTotalKillPartNum(sumAvg)
-		}
-	}, [currentMatch])
-
-	useEffect(() => {
-		//챔피언 별로 분류 , 게임 수가 많은 챔피언 순으로
-
-		let a = Object.entries(byChampion).sort(function (a: any, b: any) {
-			return b[1].length - a[1].length
-		})
-		//비동기적 처리를 위해 a 내부 배열의 합이 mtchInfoArr의 값과 같아지면 setByChamionArr
-		let aLength = a.reduce(function add(sum: any, item: any) {
-			return sum + item[1].length
-		}, 0)
-
-		if (aLength === matchInfoArr?.length) {
-			setByChampionArr(a)
-		}
-	}, [byChampion])
 
 	return (
 		<>
@@ -456,8 +227,7 @@ function Summoners() {
 				</>
 			)}
 
-			{userDocument !== undefined &&
-			userDocument.matchHistory?.length === matchInfoArr?.length ? (
+			{userDocument !== undefined && (
 				<>
 					<ContentsContainer>
 						<LeftContents>
@@ -480,7 +250,7 @@ function Summoners() {
 							/>
 
 							<MatchHistoryContainer>
-								{matchInfoArr &&
+								{/* {matchInfoArr &&
 									matchInfoArr.map((match) => (
 										<MatchHistorys
 											match={match}
@@ -488,12 +258,12 @@ function Summoners() {
 											setCurrentMatch={setCurrentMatch}
 											setTotalKillPart={setTotalKillPart}
 										/>
-									))}
+									))} */}
 							</MatchHistoryContainer>
 						</RightContents>
 					</ContentsContainer>
 				</>
-			) : null}
+			)}
 		</>
 	)
 }

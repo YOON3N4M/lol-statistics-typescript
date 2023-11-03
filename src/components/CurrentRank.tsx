@@ -8,7 +8,6 @@ interface Props {
 
 export default function CurrentRank({ userDocument }: Props) {
 	const { league1, league2 } = userDocument
-	console.log(league1, league2)
 	const soloTier =
 		league1.tier.toLowerCase().charAt(0).toUpperCase() +
 		league1.tier.toLowerCase().substring(1)

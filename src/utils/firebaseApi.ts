@@ -14,6 +14,7 @@ import {
 	SummonerObj,
 	UserDocument,
 } from '../@types/types'
+import { match } from 'assert'
 
 async function getUserDocument(summonersName: string) {
 	const q = query(
@@ -40,10 +41,8 @@ async function getMatchFromDB(MatchID: string) {
 async function postUserDocumentOnDB(
 	summonerInfo: SummonerObj,
 	leagueInfo: LeagueObj[],
-	matchInfo: string[],
+	matchIdArr: string[],
 ) {
-	console.log(summonerInfo, leagueInfo, matchInfo)
-
 	const soloRank = leagueInfo.find(
 		(league) => league.queueType === 'RANKED_SOLO_5x5',
 	)
@@ -59,7 +58,7 @@ async function postUserDocumentOnDB(
 		profileIconId: summonerInfo.profileIconId,
 		puuid: summonerInfo.puuid,
 		summonerLevel: summonerInfo.summonerLevel,
-		matchHistory: matchInfo || [],
+		matchHistory: matchIdArr || [],
 		league1: soloRank || null,
 		league2: freeRank || null,
 	}
@@ -67,8 +66,16 @@ async function postUserDocumentOnDB(
 	await setDoc(doc(dbService, 'user', summonerInfo.puuid), userDocumentRef)
 }
 
+async function postMatchInfoOnDB(matchInfo: MatchInfoObj) {
+	const matchId = matchInfo.metadata.matchId
+	const docRef = doc(dbService, 'match', matchId)
+
+	const res = await setDoc(docRef, match)
+}
+
 export const firebaseAPI = {
 	getUserDocument,
 	getMatchFromDB,
 	postUserDocumentOnDB,
+	postMatchInfoOnDB,
 }

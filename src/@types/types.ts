@@ -21,7 +21,7 @@ export interface MatchInfoObj {
 	info?: any
 	metadata?: any
 }
-export type MatchInfoArray = Array<MatchInfoObj> | undefined
+export type MatchInfoArray = Array<MatchInfoObj> | undefined[] | undefined
 
 export interface UserDocument {
 	accountId?: string

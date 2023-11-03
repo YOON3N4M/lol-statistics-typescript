@@ -7,7 +7,6 @@ interface Props {
 	mostPlayChampions: ParticipantsData
 }
 export default function MostPlayed({ mostPlayChampions }: Props) {
-	console.log(mostPlayChampions)
 	const most7 = mostPlayChampions.slice(0, 7)
 	return (
 		<>
