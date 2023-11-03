@@ -1,46 +1,24 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { legacy_createStore as createStore } from "redux";
-import { Provider } from "react-redux";
-import Home from "./routes/Home";
-import Summoners from "./routes/Summoners";
-import { createGlobalStyle } from "styled-components";
-
-const GlobalStyle = createGlobalStyle`
-body{
-  padding:0;
-  margin:0;
-  background-color: #ebeef1;
-}
-ul{
-  padding: 0 0;
-  margin: 0px
-}
-li{
-  list-style: none;
-}
-
-`;
+import ReactDOM from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Home from './routes/Home'
+import Summoners from './routes/Summoners'
+import { GlobalStyles } from './styles/Globalstyles'
 
 const router = createBrowserRouter([
-  {
-    path: `${process.env.PUBLIC_URL + "/"}`,
-    element: <Home />,
-  },
-  {
-    path: `${process.env.PUBLIC_URL + "/summoners/kr/:summonersName"}`,
-    element: <Summoners />,
-  },
-]);
+	{
+		path: `${process.env.PUBLIC_URL + '/'}`,
+		element: <Home />,
+	},
+	{
+		path: `${process.env.PUBLIC_URL + '/summoners/kr/:summonersName'}`,
+		element: <Summoners />,
+	},
+])
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
-  <>
-    <GlobalStyle />
-    <RouterProvider router={router} />
-  </>
-);
+	<>
+		<GlobalStyles />
+		<RouterProvider router={router} />
+	</>,
+)
