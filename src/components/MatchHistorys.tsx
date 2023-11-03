@@ -28,12 +28,6 @@ function MatchHistorys({ userDocument, match }: Props) {
 	const matchStatistics = getMatchStatistics(match, name)
 	console.log(match, matchStatistics?.matchStatistics.queueType)
 
-	// if (currentPlayer.championName === 'FiddleSticks') {
-	// 	fixChampion = 'Fiddlesticks'
-	// } else {
-	// 	fixChampion = currentPlayer.championName
-	// }
-
 	return (
 		<>
 			{matchStatistics?.matchStatistics.queueType !== undefined && (
@@ -46,7 +40,7 @@ function MatchHistorys({ userDocument, match }: Props) {
 								</Type>
 								<Timestamp>-시간 전</Timestamp>
 								<Horizontal></Horizontal>
-								<Result isWin={false}>
+								<Result isWin={matchStatistics?.searchedPlayer.win}>
 									{matchStatistics?.searchedPlayer.win ? '승리' : '패배'}
 								</Result>
 								<Length>{`${matchStatistics?.matchStatistics.gameDurationTime}분`}</Length>
@@ -141,7 +135,7 @@ function MatchHistorys({ userDocument, match }: Props) {
 												</li>
 											))}
 										</ItemUl>
-										<WardBox isWin={true}>
+										<WardBox isWin={matchStatistics?.searchedPlayer.win}>
 											<WardIcon
 												src={ITEM_ICON_URL(
 													matchStatistics?.searchedPlayer.ward,
@@ -194,7 +188,7 @@ function MatchHistorys({ userDocument, match }: Props) {
 	)
 }
 
-const Match = styled.li<{ isWin?: boolean }>`
+const Match = styled.li<{ isWin?: any }>`
 	height: 96px;
 	margin-bottom: 8px;
 	border-radius: 4px;
@@ -220,7 +214,7 @@ const Game = styled.div`
 	font-size: 12px;
 	color: #758592;
 `
-const Type = styled.div<{ isWin?: boolean }>`
+const Type = styled.div<{ isWin?: any }>`
 	font-weight: bold;
 	color: ${(props: any) => (props.isWin ? '#4171d6' : '#d31a45')};
 `
@@ -233,7 +227,7 @@ const Horizontal = styled.div`
 	margin: 8px 0px 4px;
 	background-color: #d5e3ff;
 `
-const Result = styled.div<{ isWin?: boolean }>`
+const Result = styled.div<{ isWin?: any }>`
 	font-weight: bold;
 `
 const Length = styled.div``
@@ -349,7 +343,7 @@ const ItemUl = styled.ul`
 	display: flex;
 	margin: 0;
 `
-const ItemBox = styled.div<{ isWin?: boolean }>`
+const ItemBox = styled.div<{ isWin?: any }>`
 	width: 22px;
 	height: 22px;
 	background-color: ${(props: any) => (props.isWin ? '#b3cdff' : '#ffbac3')};
@@ -361,7 +355,7 @@ const ItemIcon = styled.img`
 	height: 22px;
 	border-radius: 4px;
 `
-const WardBox = styled.div<{ isWin?: boolean }>`
+const WardBox = styled.div<{ isWin?: any }>`
 	background-color: ${(props: any) => (props.isWin ? '#b3cdff' : '#ffbac3')};
 	width: 22px;
 	height: 22px;
@@ -419,7 +413,7 @@ const PartNameB = styled.b`
 	font-weight: bold;
 `
 const Detail = styled.div``
-const DetailBtn = styled.button<{ isWin?: boolean }>`
+const DetailBtn = styled.button<{ isWin?: any }>`
 	width: 40px;
 	height: 96px;
 	border: 0px;

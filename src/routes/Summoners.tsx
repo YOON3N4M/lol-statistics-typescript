@@ -24,6 +24,7 @@ import { DATA_DRAGON_VERSION, SUMMONER_PROFILE_ICON_URL } from '../constants'
 import CurrentRank from '../components/CurrentRank'
 import MostPlayed from '../components/MostPlayed'
 import Summary from '../components/Summary'
+import Footer from '../components/Footer'
 
 //
 
@@ -284,6 +285,7 @@ function Summoners() {
 					</ContentsContainer>
 				</>
 			)}
+			<Footer></Footer>
 		</>
 	)
 }
@@ -413,7 +415,7 @@ const InfoListItem = styled.span<{ selected: boolean }>`
 const ContentsContainer = styled.div`
 	width: 1080px;
 	margin: 0 auto;
-	height: 800px;
+	min-height: auto;
 `
 // 모스트 챔피언, 현재 티어 등 좌측 컨텐츠 컴포넌트
 const LeftContents = styled.div`
@@ -493,7 +495,7 @@ const WinRate = styled.div`
 const RightContents = styled.div`
 	display: inline-block;
 	width: 740px;
-	height: 1000px;
+	min-height: 1000px;
 	margin-top: 8px;
 	margin-left: 8px;
 	vertical-align: top;

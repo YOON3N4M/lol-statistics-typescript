@@ -398,3 +398,10 @@ export function getMatchStatistics(
 	}
 	return { searchedPlayer, matchStatistics }
 }
+
+// API에서 받아오는 피들스틱의 이름을 다른 api 요청시에 사용하면 에러가 나서 해당 부분 처리
+// 챔피언 이름 렌더링이 아닌 API 요청시에만 활용함.
+export function fixedChampionName(championName: string) {
+	if (championName === 'FiddleSticks') return 'Fiddlesticks'
+	return championName
+}

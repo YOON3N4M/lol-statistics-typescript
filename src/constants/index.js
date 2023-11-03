@@ -8,6 +8,7 @@ import MASTER from '../img/tier/master.png'
 import GRANDMASTER from '../img/tier/grandmaster.png'
 import CHALLENGER from '../img/tier/challenger.png'
 import EMERALD from '../img/tier/emerald.png'
+import { fixedChampionName } from '../utils'
 
 // KEY
 export const API_KEY = process.env.REACT_APP_RIOT_API_KEY
@@ -31,7 +32,9 @@ export const MATCH_INFO_URL = (id) => {
 export const DATA_DRAGON_VERSION = '13.20.1'
 
 export const CHAMPION_ICON_URL = (championName) => {
-	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${championName}.png`
+	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${fixedChampionName(
+		championName,
+	)}.png`
 }
 
 export const SUMMONER_PROFILE_ICON_URL = (iconId) => {
