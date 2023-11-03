@@ -52,7 +52,7 @@ export function getKillParticipationRate(
 	if (totalKills === 0) {
 		return 0
 	}
-	console.log(totalKills, playerKills, playerAssist)
+
 	return Math.round(((playerKills + playerAssist) / totalKills) * 100)
 }
 

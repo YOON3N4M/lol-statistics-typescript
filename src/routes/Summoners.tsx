@@ -110,6 +110,31 @@ function Summoners() {
 				summonerInfo.puuid,
 				matchQty,
 			)
+
+			if (matchInfo.length > 0) {
+				const result: any[] = await Promise.all(
+					matchInfo.map(async (matchID: string) => {
+						const res = await firebaseAPI.getMatchFromDB(matchID)
+
+						if (res === undefined) return matchID
+						return res
+					}),
+				)
+				const removeExist = result.filter((e) => typeof e === 'string')
+				const matchInfoResArr = await Promise.all(
+					removeExist.map(async (matchID: string) => {
+						const matchInfoRes = await api.getMatchInfo(matchID)
+						return matchInfoRes
+					}),
+				)
+
+				matchInfoResArr.map(async (matchInfoRes) => {
+					const firebaseRes = await firebaseAPI.postMatchInfoOnDB(matchInfoRes)
+				})
+
+				setMatchInfoArr(matchInfoResArr)
+			}
+
 			const result = {
 				summonerInfo,
 				leagueInfo,
@@ -205,7 +230,7 @@ function Summoners() {
 								<Name>{userDocument.name}</Name>
 								<RefeshBtn
 									onClick={() => {
-										console.log('비활성화')
+										getRiotAPI()
 									}}
 								>
 									전적 갱신
@@ -250,15 +275,10 @@ function Summoners() {
 							/>
 
 							<MatchHistoryContainer>
-								{/* {matchInfoArr &&
-									matchInfoArr.map((match) => (
-										<MatchHistorys
-											match={match}
-											userDocument={userDocument}
-											setCurrentMatch={setCurrentMatch}
-											setTotalKillPart={setTotalKillPart}
-										/>
-									))} */}
+								{matchInfoArr &&
+									matchInfoArr.map((match: any) => (
+										<MatchHistorys match={match} userDocument={userDocument} />
+									))}
 							</MatchHistoryContainer>
 						</RightContents>
 					</ContentsContainer>

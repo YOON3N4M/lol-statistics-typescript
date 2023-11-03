@@ -20,20 +20,13 @@ import {
 interface Props {
 	userDocument: UserDocument
 	match: MatchInfoObj
-	setCurrentMatch: Function
-	setTotalKillPart: Function
 }
 
-function MatchHistorys({
-	userDocument,
-	match,
-	setCurrentMatch,
-	setTotalKillPart,
-}: Props) {
+function MatchHistorys({ userDocument, match }: Props) {
 	const name = userDocument.name
 
 	const matchStatistics = getMatchStatistics(match, name)
-	console.log(match)
+	console.log(match, matchStatistics?.matchStatistics.queueType)
 
 	// if (currentPlayer.championName === 'FiddleSticks') {
 	// 	fixChampion = 'Fiddlesticks'
@@ -43,7 +36,7 @@ function MatchHistorys({
 
 	return (
 		<>
-			{match !== undefined && (
+			{matchStatistics?.matchStatistics.queueType !== undefined && (
 				<>
 					<Match isWin={matchStatistics?.searchedPlayer.win}>
 						<GameContainer>

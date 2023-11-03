@@ -70,7 +70,7 @@ async function postMatchInfoOnDB(matchInfo: MatchInfoObj) {
 	const matchId = matchInfo.metadata.matchId
 	const docRef = doc(dbService, 'match', matchId)
 
-	const res = await setDoc(docRef, match)
+	const res = await setDoc(docRef, matchInfo)
 }
 
 export const firebaseAPI = {
