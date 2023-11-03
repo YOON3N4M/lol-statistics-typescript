@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
 import { MatchInfoObj, PlayerObj, UserDocument } from '../@types/types'
+import { getCS, getKDA, getKillParticipationRate } from '../utils'
 
 interface Props {
 	userDocument: UserDocument
@@ -16,494 +17,482 @@ function MatchHistorys({
 	setTotalKillPart,
 }: Props) {
 	const name = userDocument.name
-	// 매치 내 검색된 플레이어와 이름이 같은 플레이어의 정보를 currentPlayer에 할당
-	const currentPlayer: PlayerObj = match.info.participants.filter(
-		(player: PlayerObj) => player.summonerName === name,
-	)[0]
-	// 매치 내 플레이어 10명중 검색된 플레이어와 같은 팀인 플레이어를 teamA에 할당
 
-	const teamA = match.info.participants.filter(
-		(player: PlayerObj) => player.teamId === currentPlayer.teamId,
-	)
-
-	const teamLeft = match.info.participants.slice(0, 5)
-	const teamRight = match.info.participants.slice(5)
-
-	const teamATotalKills = teamA.reduce(function add(sum: any, item: any) {
-		return sum + item.kills
-	}, 0)
-
-	//킬 관여율
-	let killPart: number
-	if (teamATotalKills !== 0) {
-		killPart = Math.round(
-			((currentPlayer.kills + currentPlayer.assists) / teamATotalKills) * 100,
+	function getMatchStatistics() {
+		const currentPlayer: PlayerObj = match.info.participants.filter(
+			(player: PlayerObj) => player.summonerName === name,
+		)[0]
+		const teamA = match.info.participants.filter(
+			(player: PlayerObj) => player.teamId === currentPlayer?.teamId,
 		)
-	} else {
-		killPart = 0
-	}
-	//게임 진행 시간
-	const gameDuration = (match.info.gameDuration / 60).toFixed(0)
-	const gameDurationNum = Number(match.info.gameDuration / 60)
+		const teamB = match.info.participants.filter(
+			(player: PlayerObj) => player.teamId !== currentPlayer?.teamId,
+		)
 
-	//승패
-	const win = currentPlayer.win
-	//챔피언 이름
-	let fixChampion
-	if (currentPlayer.championName === 'FiddleSticks') {
-		fixChampion = 'Fiddlesticks'
-	} else {
-		fixChampion = currentPlayer.championName
-	}
-	//KDA
-	let kda
-	if (
-		currentPlayer.kills === 0 &&
-		currentPlayer.assists === 0 &&
-		currentPlayer.deaths === 0
-	) {
-		kda = '0.00'
-	} else if (currentPlayer.deaths === 0) {
-		kda = 'Perfect'
-	} else {
-		kda = (
-			(currentPlayer.kills + currentPlayer.assists) /
-			currentPlayer.deaths
-		).toFixed(2)
-	}
+		const teamATotalKills = teamA.reduce(function add(sum: any, item: any) {
+			return sum + item.kills
+		}, 0)
 
-	//Cs
-	const CS =
-		currentPlayer.neutralMinionsKilled + currentPlayer.totalMinionsKilled
-	const CSm =
-		(currentPlayer.neutralMinionsKilled + currentPlayer.totalMinionsKilled) /
-		gameDurationNum
+		const teamBTotalKills = teamB.reduce(function add(sum: any, item: any) {
+			return sum + item.kills
+		}, 0)
 
-	// 아이템
-	let itemList = {
-		item0: false,
-		item1: false,
-		item2: false,
-		item3: false,
-		item4: false,
-		item5: false,
-		item6: false,
-	}
-	if (currentPlayer.item0 > 0) {
-		itemList.item0 = true
-	}
-	if (currentPlayer.item1 > 0) {
-		itemList.item1 = true
-	}
-	if (currentPlayer.item2 > 0) {
-		itemList.item2 = true
-	}
-	if (currentPlayer.item3 > 0) {
-		itemList.item3 = true
-	}
-	if (currentPlayer.item4 > 0) {
-		itemList.item4 = true
-	}
-	if (currentPlayer.item5 > 0) {
-		itemList.item5 = true
-	}
-	if (currentPlayer.item6 > 0) {
-		itemList.item6 = true
+		const searchedPlayersKillPart = getKillParticipationRate(
+			teamA,
+			currentPlayer.kills,
+			currentPlayer.assists,
+		)
+
+		const gameDurationTime = (match.info.gameDuration / 60).toFixed(0)
+		const gameDurationTimeNum = Number(match.info.gameDuration / 60)
+		const win = currentPlayer.win
+		const championName = currentPlayer.championName
+		const kda = getKDA(
+			currentPlayer.kills,
+			currentPlayer.deaths,
+			currentPlayer.assists,
+		)
+		const cs = getCS(
+			currentPlayer.neutralMinionsKilled,
+			currentPlayer.totalMinionsKilled,
+		)
+		const csPerMin = getCS(
+			currentPlayer.neutralMinionsKilled,
+			currentPlayer.totalMinionsKilled,
+			gameDurationTimeNum,
+		)
 	}
 
-	//큐 타입 (게임 타입)
-	let gameType
-	switch (match.info.queueId) {
-		case 400:
-			gameType = '일반'
-			break
-		case 420:
-			gameType = '솔랭'
-			break
-		case 430:
-			gameType = '일반'
-			break
-		case 440:
-			gameType = '자유 5:5 랭크'
-			break
-		case 450:
-			gameType = '무작위 총력전'
-			break
-		case 700:
-			gameType = '격전'
-			break
-		case 830:
-			gameType = '입문'
-			break
-		case 840:
-			gameType = '초보'
-			break
-		case 850:
-			gameType = '중급'
-			break
-		case 900:
-			gameType = '모두 무작위 U.R.F.'
-			break
-		case 920:
-			gameType = '포로왕'
-			break
-		case 1020:
-			gameType = '단일 챔피언'
-			break
-		case 1300:
-			gameType = '돌격 넥서스'
-			break
-		case 1400:
-			gameType = '궁극기 주문서'
-			break
-		case 2000:
-		case 2010:
-		case 2020:
-			gameType = '튜토리얼'
-			break
-		default:
-			break
-	}
+	// if (currentPlayer.championName === 'FiddleSticks') {
+	// 	fixChampion = 'Fiddlesticks'
+	// } else {
+	// 	fixChampion = currentPlayer.championName
+	// }
 
-	//스펠
-	let spellA
-	let spellB
-	switch (currentPlayer.summoner1Id) {
-		case 11:
-			spellA = 'SummonerSmite'
-			break
-		case 4:
-			spellA = 'SummonerFlash'
-			break
-		case 6:
-			spellA = 'SummonerHaste'
-			break
-		case 7:
-			spellA = 'SummonerHeal'
-			break
-		case 12:
-			spellA = 'SummonerTeleport'
-			break
-		case 21:
-			spellA = 'SummonerBarrier'
-			break
-		case 14:
-			spellA = 'SummonerDot'
-			break
-		case 3:
-			spellA = 'SummonerExhaust'
-			break
-		case 13:
-			spellA = 'SummonerMana'
-			break
-		case 1:
-			spellA = 'SummonerBoost'
-			break
-		case 39:
-			spellA = 'SummonerSnowURFSnowball_Mark'
-			break
-		default:
-			break
-	}
-	switch (currentPlayer.summoner2Id) {
-		case 11:
-			spellB = 'SummonerSmite'
-			break
-		case 4:
-			spellB = 'SummonerFlash'
-			break
-		case 6:
-			spellB = 'SummonerHaste'
-			break
-		case 7:
-			spellB = 'SummonerHeal'
-			break
-		case 12:
-			spellB = 'SummonerTeleport'
-			break
-		case 21:
-			spellB = 'SummonerBarrier'
-			break
-		case 14:
-			spellB = 'SummonerDot'
-			break
-		case 3:
-			spellB = 'SummonerExhaust'
-			break
-		case 13:
-			spellB = 'SummonerMana'
-			break
-		case 1:
-			spellB = 'SummonerBoost'
-			break
-		case 39:
-			spellB = 'SummonerSnowURFSnowball_Mark'
-			break
-		default:
-			break
-	}
+	// // 아이템
+	// let itemList = {
+	// 	item0: false,
+	// 	item1: false,
+	// 	item2: false,
+	// 	item3: false,
+	// 	item4: false,
+	// 	item5: false,
+	// 	item6: false,
+	// }
+	// if (currentPlayer.item0 > 0) {
+	// 	itemList.item0 = true
+	// }
+	// if (currentPlayer.item1 > 0) {
+	// 	itemList.item1 = true
+	// }
+	// if (currentPlayer.item2 > 0) {
+	// 	itemList.item2 = true
+	// }
+	// if (currentPlayer.item3 > 0) {
+	// 	itemList.item3 = true
+	// }
+	// if (currentPlayer.item4 > 0) {
+	// 	itemList.item4 = true
+	// }
+	// if (currentPlayer.item5 > 0) {
+	// 	itemList.item5 = true
+	// }
+	// if (currentPlayer.item6 > 0) {
+	// 	itemList.item6 = true
+	// }
 
-	//룬
-	let runeA
-	let runeB
-	switch (currentPlayer.perks.styles[0].selections[0].perk) {
-		case 8005:
-			runeA = 'Precision/PressTheAttack/PressTheAttack'
-			break
-		case 8008:
-			runeA = 'Precision/LethalTempo/LethalTempoTemp'
-			break
-		case 8021:
-			runeA = 'Precision/FleetFootwork/FleetFootwork'
-			break
-		case 8010:
-			runeA = 'Precision/Conqueror/Conqueror'
-			break
-		case 8112:
-			runeA = 'Domination/Electrocute/Electrocute'
-			break
-		case 8124:
-			runeA = 'Domination/Predator/Predator'
-			break
-		case 8128:
-			runeA = 'Domination/DarkHarvest/DarkHarvest'
-			break
-		case 9923:
-			runeA = 'Domination/HailOfBlades/HailOfBlades'
-			break
-		case 8214:
-			runeA = 'Sorcery/SummonAery/SummonAery'
-			break
-		case 8229:
-			runeA = 'Sorcery/ArcaneComet/ArcaneComet'
-			break
-		case 8230:
-			runeA = 'Sorcery/PhaseRush/PhaseRush'
-			break
-		case 8437:
-			runeA = 'Resolve/GraspOfTheUndying/GraspOfTheUndying'
-			break
-		case 8439:
-			runeA = 'Resolve/VeteranAftershock/VeteranAftershock'
-			break
-		case 8465:
-			runeA = 'Resolve/Guardian/Guardian'
-			break
-		case 8351:
-			runeA = 'Inspiration/GlacialAugment/GlacialAugment'
-			break
-		case 8360:
-			runeA = 'Inspiration/UnsealedSpellbook/UnsealedSpellbook'
-			break
-		case 8369:
-			runeA = 'Inspiration/FirstStrike/FirstStrike'
-			break
-	}
-	//서브룬 이미지
-	switch (currentPlayer.perks.styles[1].style) {
-		case 8000:
-			runeB = '7201_Precision'
-			break
-		case 8100:
-			runeB = '7200_Domination'
-			break
-		case 8200:
-			runeB = '7202_Sorcery'
-			break
-		case 8300:
-			runeB = '7203_Whimsy'
-			break
-		case 8400:
-			runeB = '7204_Resolve'
-			break
-		default:
-			break
-	}
+	// //큐 타입 (게임 타입)
+	// let gameType
+	// switch (match.info.queueId) {
+	// 	case 400:
+	// 		gameType = '일반'
+	// 		break
+	// 	case 420:
+	// 		gameType = '솔랭'
+	// 		break
+	// 	case 430:
+	// 		gameType = '일반'
+	// 		break
+	// 	case 440:
+	// 		gameType = '자유 5:5 랭크'
+	// 		break
+	// 	case 450:
+	// 		gameType = '무작위 총력전'
+	// 		break
+	// 	case 700:
+	// 		gameType = '격전'
+	// 		break
+	// 	case 830:
+	// 		gameType = '입문'
+	// 		break
+	// 	case 840:
+	// 		gameType = '초보'
+	// 		break
+	// 	case 850:
+	// 		gameType = '중급'
+	// 		break
+	// 	case 900:
+	// 		gameType = '모두 무작위 U.R.F.'
+	// 		break
+	// 	case 920:
+	// 		gameType = '포로왕'
+	// 		break
+	// 	case 1020:
+	// 		gameType = '단일 챔피언'
+	// 		break
+	// 	case 1300:
+	// 		gameType = '돌격 넥서스'
+	// 		break
+	// 	case 1400:
+	// 		gameType = '궁극기 주문서'
+	// 		break
+	// 	case 2000:
+	// 	case 2010:
+	// 	case 2020:
+	// 		gameType = '튜토리얼'
+	// 		break
+	// 	default:
+	// 		break
+	// }
 
-	useEffect(() => {
-		setCurrentMatch((prev: any) => [...prev, currentPlayer])
-		setTotalKillPart((prev: any) => [...prev, killPart])
-	}, [])
+	// //스펠
+	// let spellA
+	// let spellB
+	// switch (currentPlayer.summoner1Id) {
+	// 	case 11:
+	// 		spellA = 'SummonerSmite'
+	// 		break
+	// 	case 4:
+	// 		spellA = 'SummonerFlash'
+	// 		break
+	// 	case 6:
+	// 		spellA = 'SummonerHaste'
+	// 		break
+	// 	case 7:
+	// 		spellA = 'SummonerHeal'
+	// 		break
+	// 	case 12:
+	// 		spellA = 'SummonerTeleport'
+	// 		break
+	// 	case 21:
+	// 		spellA = 'SummonerBarrier'
+	// 		break
+	// 	case 14:
+	// 		spellA = 'SummonerDot'
+	// 		break
+	// 	case 3:
+	// 		spellA = 'SummonerExhaust'
+	// 		break
+	// 	case 13:
+	// 		spellA = 'SummonerMana'
+	// 		break
+	// 	case 1:
+	// 		spellA = 'SummonerBoost'
+	// 		break
+	// 	case 39:
+	// 		spellA = 'SummonerSnowURFSnowball_Mark'
+	// 		break
+	// 	default:
+	// 		break
+	// }
+	// switch (currentPlayer.summoner2Id) {
+	// 	case 11:
+	// 		spellB = 'SummonerSmite'
+	// 		break
+	// 	case 4:
+	// 		spellB = 'SummonerFlash'
+	// 		break
+	// 	case 6:
+	// 		spellB = 'SummonerHaste'
+	// 		break
+	// 	case 7:
+	// 		spellB = 'SummonerHeal'
+	// 		break
+	// 	case 12:
+	// 		spellB = 'SummonerTeleport'
+	// 		break
+	// 	case 21:
+	// 		spellB = 'SummonerBarrier'
+	// 		break
+	// 	case 14:
+	// 		spellB = 'SummonerDot'
+	// 		break
+	// 	case 3:
+	// 		spellB = 'SummonerExhaust'
+	// 		break
+	// 	case 13:
+	// 		spellB = 'SummonerMana'
+	// 		break
+	// 	case 1:
+	// 		spellB = 'SummonerBoost'
+	// 		break
+	// 	case 39:
+	// 		spellB = 'SummonerSnowURFSnowball_Mark'
+	// 		break
+	// 	default:
+	// 		break
+	// }
 
-	return (
-		<>
-			{match !== undefined ? (
-				<>
-					<Match isWin={win}>
-						<GameContainer>
-							<Game>
-								<Type isWin={win}>{gameType}</Type>
-								<Timestamp>-시간 전</Timestamp>
-								<Horizontal></Horizontal>
-								<Result isWin={win}>{win ? '승리' : '패배'}</Result>
-								<Length>{`${gameDuration}분`}</Length>
-							</Game>
-							<GameInfo>
-								<TopRow>
-									<Champion>
-										<ChampionIconBox>
-											<ChampionIcon
-												src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${fixChampion}.png`}
-											></ChampionIcon>
-											<ChampionLevel>{currentPlayer.champLevel}</ChampionLevel>
-										</ChampionIconBox>
-										<SpellContainer>
-											<SpellBox>
-												<SpellIcon
-													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${spellA}.png`}
-												/>
-											</SpellBox>
-											<SpellBox>
-												<SpellIcon
-													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${spellB}.png`}
-												/>
-											</SpellBox>
-										</SpellContainer>
-										<RuneContainer>
-											<MainRune>
-												<RuneIcon
-													src={`https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${runeA}.png`}
-												/>
-											</MainRune>
-											<RuneIcon
-												src={`https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${runeB}.png`}
-											/>
-										</RuneContainer>
-									</Champion>
-									<KDAContainer>
-										<KDA>
-											<KDASpan red={false}>{currentPlayer.kills}</KDASpan>/
-											<KDASpan red={true}>{currentPlayer.deaths}</KDASpan>/
-											<KDASpan red={false}>{currentPlayer.assists}</KDASpan>
-										</KDA>
-										<Ratio>
-											<span>{kda}</span> 평점
-										</Ratio>
-									</KDAContainer>
-									<Stats>
-										<Stat color="red">킬관여 {killPart}%</Stat>
-										<Stat color="gray">
-											제어와드 {currentPlayer.visionWardsBoughtInGame}
-										</Stat>
-										<Stat color="gray">
-											cs {CS}({CSm.toFixed(1)})
-										</Stat>
-										<Stat color="gray"></Stat>
-									</Stats>
-								</TopRow>
-								<BottomRow>
-									<ItemContainer>
-										<ItemUl>
-											<li>
-												<ItemBox isWin={win}>
-													{itemList.item0 ? (
-														<ItemIcon
-															src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item0}.png`}
-														/>
-													) : null}
-												</ItemBox>
-											</li>
-											<li>
-												<ItemBox isWin={win}>
-													{itemList.item1 ? (
-														<ItemIcon
-															src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item1}.png`}
-														/>
-													) : null}
-												</ItemBox>
-											</li>
-											<li>
-												<ItemBox isWin={win}>
-													{itemList.item2 ? (
-														<ItemIcon
-															src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item2}.png`}
-														/>
-													) : null}
-												</ItemBox>
-											</li>
-											<li>
-												<ItemBox isWin={win}>
-													{itemList.item3 ? (
-														<ItemIcon
-															src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item3}.png`}
-														/>
-													) : null}
-												</ItemBox>
-											</li>
-											<li>
-												<ItemBox isWin={win}>
-													{itemList.item4 ? (
-														<ItemIcon
-															src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item4}.png`}
-														/>
-													) : null}
-												</ItemBox>
-											</li>
-											<li>
-												<ItemBox isWin={win}>
-													{itemList.item5 ? (
-														<ItemIcon
-															src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item5}.png`}
-														/>
-													) : null}
-												</ItemBox>
-											</li>
-										</ItemUl>
-										<WardBox isWin={win}>
-											<WardIcon
-												src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item6}.png`}
-											/>
-										</WardBox>
-									</ItemContainer>
-								</BottomRow>
-							</GameInfo>
-							<PartContainer>
-								<ul>
-									{teamLeft.map((item: any, index: any) => (
-										<PartLi>
-											<PartIconBox>
-												<PartIcon
-													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${item.championName}.png`}
-												/>
-											</PartIconBox>
-											<PartNameBox>
-												{currentPlayer.summonerName === item.summonerName ? (
-													<PartNameB>{item.summonerName}</PartNameB>
-												) : (
-													<PartName>{item.summonerName}</PartName>
-												)}
-											</PartNameBox>
-										</PartLi>
-									))}
-								</ul>
-								<ul>
-									{teamRight.map((item: any) => (
-										<PartLi>
-											<PartIconBox>
-												<PartIcon
-													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${item.championName}.png`}
-												/>
-											</PartIconBox>
-											<PartNameBox>
-												{currentPlayer.summonerName === item.summonerName ? (
-													<PartNameB>{item.summonerName}</PartNameB>
-												) : (
-													<PartName>{item.summonerName}</PartName>
-												)}
-											</PartNameBox>
-										</PartLi>
-									))}
-								</ul>
-							</PartContainer>
-						</GameContainer>
-						<Detail>
-							<DetailBtn isWin={win}></DetailBtn>
-						</Detail>
-					</Match>
-				</>
-			) : null}
-		</>
-	)
+	// //룬
+	// let runeA
+	// let runeB
+	// switch (currentPlayer.perks.styles[0].selections[0].perk) {
+	// 	case 8005:
+	// 		runeA = 'Precision/PressTheAttack/PressTheAttack'
+	// 		break
+	// 	case 8008:
+	// 		runeA = 'Precision/LethalTempo/LethalTempoTemp'
+	// 		break
+	// 	case 8021:
+	// 		runeA = 'Precision/FleetFootwork/FleetFootwork'
+	// 		break
+	// 	case 8010:
+	// 		runeA = 'Precision/Conqueror/Conqueror'
+	// 		break
+	// 	case 8112:
+	// 		runeA = 'Domination/Electrocute/Electrocute'
+	// 		break
+	// 	case 8124:
+	// 		runeA = 'Domination/Predator/Predator'
+	// 		break
+	// 	case 8128:
+	// 		runeA = 'Domination/DarkHarvest/DarkHarvest'
+	// 		break
+	// 	case 9923:
+	// 		runeA = 'Domination/HailOfBlades/HailOfBlades'
+	// 		break
+	// 	case 8214:
+	// 		runeA = 'Sorcery/SummonAery/SummonAery'
+	// 		break
+	// 	case 8229:
+	// 		runeA = 'Sorcery/ArcaneComet/ArcaneComet'
+	// 		break
+	// 	case 8230:
+	// 		runeA = 'Sorcery/PhaseRush/PhaseRush'
+	// 		break
+	// 	case 8437:
+	// 		runeA = 'Resolve/GraspOfTheUndying/GraspOfTheUndying'
+	// 		break
+	// 	case 8439:
+	// 		runeA = 'Resolve/VeteranAftershock/VeteranAftershock'
+	// 		break
+	// 	case 8465:
+	// 		runeA = 'Resolve/Guardian/Guardian'
+	// 		break
+	// 	case 8351:
+	// 		runeA = 'Inspiration/GlacialAugment/GlacialAugment'
+	// 		break
+	// 	case 8360:
+	// 		runeA = 'Inspiration/UnsealedSpellbook/UnsealedSpellbook'
+	// 		break
+	// 	case 8369:
+	// 		runeA = 'Inspiration/FirstStrike/FirstStrike'
+	// 		break
+	// }
+	// //서브룬 이미지
+	// switch (currentPlayer.perks.styles[1].style) {
+	// 	case 8000:
+	// 		runeB = '7201_Precision'
+	// 		break
+	// 	case 8100:
+	// 		runeB = '7200_Domination'
+	// 		break
+	// 	case 8200:
+	// 		runeB = '7202_Sorcery'
+	// 		break
+	// 	case 8300:
+	// 		runeB = '7203_Whimsy'
+	// 		break
+	// 	case 8400:
+	// 		runeB = '7204_Resolve'
+	// 		break
+	// 	default:
+	// 		break
+	// }
+
+	// useEffect(() => {
+	// 	setCurrentMatch((prev: any) => [...prev, currentPlayer])
+	// 	setTotalKillPart((prev: any) => [...prev, killPart])
+	// }, [])
+
+	return <></>
+	// <>
+	// 	{match !== undefined ? (
+	// 		<>
+	// 			<Match isWin={win}>
+	// 				<GameContainer>
+	// 					<Game>
+	// 						<Type isWin={win}>{gameType}</Type>
+	// 						<Timestamp>-시간 전</Timestamp>
+	// 						<Horizontal></Horizontal>
+	// 						<Result isWin={win}>{win ? '승리' : '패배'}</Result>
+	// 						<Length>{`${gameDuration}분`}</Length>
+	// 					</Game>
+	// 					<GameInfo>
+	// 						<TopRow>
+	// 							<Champion>
+	// 								<ChampionIconBox>
+	// 									<ChampionIcon
+	// 										src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${fixChampion}.png`}
+	// 									></ChampionIcon>
+	// 									<ChampionLevel>{currentPlayer.champLevel}</ChampionLevel>
+	// 								</ChampionIconBox>
+	// 								<SpellContainer>
+	// 									<SpellBox>
+	// 										<SpellIcon
+	// 											src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${spellA}.png`}
+	// 										/>
+	// 									</SpellBox>
+	// 									<SpellBox>
+	// 										<SpellIcon
+	// 											src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${spellB}.png`}
+	// 										/>
+	// 									</SpellBox>
+	// 								</SpellContainer>
+	// 								<RuneContainer>
+	// 									<MainRune>
+	// 										<RuneIcon
+	// 											src={`https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${runeA}.png`}
+	// 										/>
+	// 									</MainRune>
+	// 									<RuneIcon
+	// 										src={`https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${runeB}.png`}
+	// 									/>
+	// 								</RuneContainer>
+	// 							</Champion>
+	// 							<KDAContainer>
+	// 								<KDA>
+	// 									<KDASpan red={false}>{currentPlayer.kills}</KDASpan>/
+	// 									<KDASpan red={true}>{currentPlayer.deaths}</KDASpan>/
+	// 									<KDASpan red={false}>{currentPlayer.assists}</KDASpan>
+	// 								</KDA>
+	// 								<Ratio>
+	// 									<span>{kda}</span> 평점
+	// 								</Ratio>
+	// 							</KDAContainer>
+	// 							<Stats>
+	// 								<Stat color="red">킬관여 {killPart}%</Stat>
+	// 								<Stat color="gray">
+	// 									제어와드 {currentPlayer.visionWardsBoughtInGame}
+	// 								</Stat>
+	// 								<Stat color="gray">
+	// 									cs {CS}({CSm.toFixed(1)})
+	// 								</Stat>
+	// 								<Stat color="gray"></Stat>
+	// 							</Stats>
+	// 						</TopRow>
+	// 						<BottomRow>
+	// 							<ItemContainer>
+	// 								<ItemUl>
+	// 									<li>
+	// 										<ItemBox isWin={win}>
+	// 											{itemList.item0 ? (
+	// 												<ItemIcon
+	// 													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item0}.png`}
+	// 												/>
+	// 											) : null}
+	// 										</ItemBox>
+	// 									</li>
+	// 									<li>
+	// 										<ItemBox isWin={win}>
+	// 											{itemList.item1 ? (
+	// 												<ItemIcon
+	// 													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item1}.png`}
+	// 												/>
+	// 											) : null}
+	// 										</ItemBox>
+	// 									</li>
+	// 									<li>
+	// 										<ItemBox isWin={win}>
+	// 											{itemList.item2 ? (
+	// 												<ItemIcon
+	// 													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item2}.png`}
+	// 												/>
+	// 											) : null}
+	// 										</ItemBox>
+	// 									</li>
+	// 									<li>
+	// 										<ItemBox isWin={win}>
+	// 											{itemList.item3 ? (
+	// 												<ItemIcon
+	// 													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item3}.png`}
+	// 												/>
+	// 											) : null}
+	// 										</ItemBox>
+	// 									</li>
+	// 									<li>
+	// 										<ItemBox isWin={win}>
+	// 											{itemList.item4 ? (
+	// 												<ItemIcon
+	// 													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item4}.png`}
+	// 												/>
+	// 											) : null}
+	// 										</ItemBox>
+	// 									</li>
+	// 									<li>
+	// 										<ItemBox isWin={win}>
+	// 											{itemList.item5 ? (
+	// 												<ItemIcon
+	// 													src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item5}.png`}
+	// 												/>
+	// 											) : null}
+	// 										</ItemBox>
+	// 									</li>
+	// 								</ItemUl>
+	// 								<WardBox isWin={win}>
+	// 									<WardIcon
+	// 										src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/item/${currentPlayer.item6}.png`}
+	// 									/>
+	// 								</WardBox>
+	// 							</ItemContainer>
+	// 						</BottomRow>
+	// 					</GameInfo>
+	// 					<PartContainer>
+	// 						<ul>
+	// 							{teamLeft.map((item: any, index: any) => (
+	// 								<PartLi>
+	// 									<PartIconBox>
+	// 										<PartIcon
+	// 											src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${item.championName}.png`}
+	// 										/>
+	// 									</PartIconBox>
+	// 									<PartNameBox>
+	// 										{currentPlayer.summonerName === item.summonerName ? (
+	// 											<PartNameB>{item.summonerName}</PartNameB>
+	// 										) : (
+	// 											<PartName>{item.summonerName}</PartName>
+	// 										)}
+	// 									</PartNameBox>
+	// 								</PartLi>
+	// 							))}
+	// 						</ul>
+	// 						<ul>
+	// 							{teamRight.map((item: any) => (
+	// 								<PartLi>
+	// 									<PartIconBox>
+	// 										<PartIcon
+	// 											src={`https://ddragon.leagueoflegends.com/cdn/13.6.1/img/champion/${item.championName}.png`}
+	// 										/>
+	// 									</PartIconBox>
+	// 									<PartNameBox>
+	// 										{currentPlayer.summonerName === item.summonerName ? (
+	// 											<PartNameB>{item.summonerName}</PartNameB>
+	// 										) : (
+	// 											<PartName>{item.summonerName}</PartName>
+	// 										)}
+	// 									</PartNameBox>
+	// 								</PartLi>
+	// 							))}
+	// 						</ul>
+	// 					</PartContainer>
+	// 				</GameContainer>
+	// 				<Detail>
+	// 					<DetailBtn isWin={win}></DetailBtn>
+	// 				</Detail>
+	// 			</Match>
+	// 		</>
+	// 	) : null}
+	// </>
 }
 
 const Match = styled.li<{ isWin: boolean }>`
