@@ -1,5 +1,6 @@
 import { PlayerObj } from '../@types/types'
 import { tierIcon } from '../constants'
+import championsData from '../data/championsData.json'
 
 // 티어 표기의 로마 숫자를 아랍 숫자로 변환
 export function romeNumToArabNum(rome: string) {
@@ -404,4 +405,11 @@ export function getMatchStatistics(
 export function fixedChampionName(championName: string) {
 	if (championName === 'FiddleSticks') return 'Fiddlesticks'
 	return championName
+}
+
+export function translateKorChampionName(championName: string) {
+	const championsObj: any = championsData.data
+	const koreanChampionName = championsObj[fixedChampionName(championName)].name
+
+	return koreanChampionName
 }

@@ -10,8 +10,9 @@ import CHALLENGER from '../img/tier/challenger.png'
 import EMERALD from '../img/tier/emerald.png'
 import { fixedChampionName } from '../utils'
 
-// KEY
+// KEY and ETC...
 export const API_KEY = process.env.REACT_APP_RIOT_API_KEY
+export const DATA_DRAGON_VERSION = '13.20.1'
 
 // API URL
 export const SUMMONER_INFO_URL = (nickname) => {
@@ -29,7 +30,6 @@ export const MATCH_INFO_URL = (id) => {
 }
 
 // DataDragon
-export const DATA_DRAGON_VERSION = '13.20.1'
 
 export const CHAMPION_ICON_URL = (championName) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${fixedChampionName(

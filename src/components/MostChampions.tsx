@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import { ParticipantInfo } from '../@types/types'
 import { CHAMPION_ICON_URL } from '../constants'
 import { variable } from '../styles/Globalstyles'
+import { translateKorChampionName } from '../utils'
 
 interface Props {
 	champions: ParticipantInfo[]
 }
 
 function MostChampions({ champions }: Props) {
-	const ChampionName = champions[0].championName
+	const ChampionName: any = champions[0].championName
 	const gameQty = champions.length
 	const totalKills = champions.reduce((sum, { kills }) => sum + kills, 0)
 	const totalDeaths = champions.reduce((sum, { deaths }) => sum + deaths, 0)
@@ -54,7 +55,7 @@ function MostChampions({ champions }: Props) {
 					<Icon src={CHAMPION_ICON_URL(ChampionName)} />
 				</IconBox>
 				<MostInfo>
-					<MostName>{ChampionName}</MostName>
+					<MostName>{translateKorChampionName(ChampionName)}</MostName>
 					<CS>CS {csAverage}</CS>
 				</MostInfo>
 				<MostStats>
