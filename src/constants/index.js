@@ -28,10 +28,23 @@ export const CHAMPION_ICON_URL = (championName) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${championName}.png`
 }
 
-export const CHAMPIONS_JSON_URL = `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/data/ko_KR/champion.json`
 export const SUMMONER_PROFILE_ICON_URL = (iconId) => {
 	return `http://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/profileicon/${iconId}.png`
 }
+
+export const SUMMONER_SPELL_ICON_URL = (spellId) => {
+	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/spell/${spellId}.png`
+}
+
+export const RUNE_ICON_URL = (runeId) => {
+	return `https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${runeId}.png`
+}
+
+export const ITEM_ICON_URL = (itemId) => {
+	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/item/${itemId}.png`
+}
+
+export const CHAMPIONS_JSON_URL = `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/data/ko_KR/champion.json`
 
 // Images
 export const tierIcon = {
