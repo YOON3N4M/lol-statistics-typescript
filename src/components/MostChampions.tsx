@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { ParticipantInfo } from '../@types/types'
 import { CHAMPION_ICON_URL } from '../constants'
 import { variable } from '../styles/Globalstyles'
-import { translateKorChampionName } from '../utils'
+import { getKDAColor, translateKorChampionName } from '../utils'
 
 interface Props {
 	champions: ParticipantInfo[]
@@ -35,18 +35,8 @@ function MostChampions({ champions }: Props) {
 
 	//색상 관련
 
-	function checkKDAColor() {
-		if (kdaAverage >= 5) {
-			return variable.color.orange
-		} else if (4 <= kdaAverage && kdaAverage < 5) {
-			return variable.color.sky
-		} else if (3 <= kdaAverage && kdaAverage < 4) {
-			return variable.color.mint
-		}
-	}
-
-	const winRateColor = winRate >= 60 ? variable.color.red : 'gray'
-	const kdaColor = checkKDAColor()
+	const winRateColor = winRate >= 60 ? variable.color.red : variable.color.gray
+	const kdaColor = getKDAColor(kdaAverage)
 
 	return (
 		<>
