@@ -42,7 +42,7 @@ export interface RiotApiObj {
 	matchInfo: string[]
 }
 
-export interface PlayerObj {
+export interface ParticipantInfo {
 	championName: string
 	item0: number
 	item1: number
@@ -65,16 +65,6 @@ export interface PlayerObj {
 	neutralMinionsKilled: number
 	totalMinionsKilled: number
 	champLevel: number
-}
-
-export interface ParticipantInfo {
-	kills: number
-	deaths: number
-	assists: number
-	win: boolean
-	totalMinionsKilled: number
-	neutralMinionsKilled: number
-	championName: string
 }
 
 export interface LeagueInfo {
@@ -101,3 +91,5 @@ export interface LeagueInfo {
 export interface ParticipantsData extends Array<ParticipantInfo[]> {
 	[index: number]: ParticipantInfo[]
 }
+
+export type ContentsType = 'InGame' | 'MatchHistorys'

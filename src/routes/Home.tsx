@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../components/Header'
+import Header from '../components/layout/Header'
 import { useState, useEffect } from 'react'
 
 import { useNavigate } from 'react-router-dom'

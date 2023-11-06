@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 
-import Header from '../components/Header'
+import Header from '../components/layout/Header'
 import MatchHistorys from '../components/MatchHistorys'
-import Summarys from '../components/Summarys'
+import Summarys from '../components/SummaryMost'
 import PositionsBar from '../components/PositionsBar'
 import MostChampions from '../components/MostChampions'
 
 import {
+	ContentsType,
 	LeagueArray,
 	LeagueObj,
 	MatchInfoArray,
 	MatchInfoObj,
-	PlayerObj,
 	RiotApiObj,
 	SummonerObj,
 	UserDocument,
@@ -24,7 +24,8 @@ import { DATA_DRAGON_VERSION, SUMMONER_PROFILE_ICON_URL } from '../constants'
 import CurrentRank from '../components/CurrentRank'
 import MostPlayed from '../components/MostPlayed'
 import Summary from '../components/Summary'
-import Footer from '../components/Footer'
+import Footer from '../components/layout/Footer'
+import ContentsSelectTab from '../components/layout/ContentsSelectTab'
 
 //
 
@@ -41,7 +42,8 @@ function Summoners() {
 	)
 	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
 	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
-
+	const [selectedContents, setSelectedContents] =
+		useState<ContentsType>('MatchHistorys')
 	///
 	///
 	///
@@ -240,16 +242,10 @@ function Summoners() {
 							</Info>
 						</Wrapper>
 					</ContentsHeader>
-					<InfoListTab>
-						<InfoList>
-							<li>
-								<InfoListItem selected={true}>종합</InfoListItem>
-							</li>
-							<li>
-								{/*<InfoListItem selected={false}>인게임 정보</InfoListItem>*/}
-							</li>
-						</InfoList>
-					</InfoListTab>
+					<ContentsSelectTab
+						setSelectedContents={setSelectedContents}
+						selectedContents={selectedContents}
+					/>
 				</>
 			)}
 

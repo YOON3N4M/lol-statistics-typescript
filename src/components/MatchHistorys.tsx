@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { MatchInfoObj, PlayerObj, UserDocument } from '../@types/types'
+import { MatchInfoObj, UserDocument } from '../@types/types'
 import { getMatchStatistics } from '../utils'
 import {
 	CHAMPION_ICON_URL,

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { MatchInfoArray, ParticipantInfo } from '../@types/types'
 import PositionsBar from './PositionsBar'
-import Summarys from './Summarys'
+import Summarys from './SummaryMost'
 
 interface Props {
 	mostPlayChampions: any

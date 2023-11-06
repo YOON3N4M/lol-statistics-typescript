@@ -1,4 +1,4 @@
-import { PlayerObj } from '../@types/types'
+import { ParticipantInfo } from '../@types/types'
 import { tierIcon } from '../constants'
 import championsData from '../data/championsData.json'
 import { variable } from '../styles/Globalstyles'
@@ -333,15 +333,15 @@ export function getMatchStatistics(
 	match: any,
 	searchedName: string | undefined,
 ) {
-	const currentPlayer: PlayerObj = match.info.participants.filter(
-		(player: PlayerObj) => player.summonerName === searchedName,
+	const currentPlayer: ParticipantInfo = match.info.participants.filter(
+		(player: ParticipantInfo) => player.summonerName === searchedName,
 	)[0]
 	if (!currentPlayer) return
 	const teamA = match.info.participants.filter(
-		(player: PlayerObj) => player.teamId === currentPlayer?.teamId,
+		(player: ParticipantInfo) => player.teamId === currentPlayer?.teamId,
 	)
 	const teamB = match.info.participants.filter(
-		(player: PlayerObj) => player.teamId !== currentPlayer?.teamId,
+		(player: ParticipantInfo) => player.teamId !== currentPlayer?.teamId,
 	)
 
 	const teamATotalKills = teamA.reduce(function add(sum: any, item: any) {
