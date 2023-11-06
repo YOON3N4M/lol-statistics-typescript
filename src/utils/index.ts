@@ -196,7 +196,9 @@ export function getSummonersSpellName(spellA: number, spellB: number) {
 		case 1:
 			a = 'SummonerBoost'
 			break
-
+		case 32:
+			a = 'SummonerSnowball'
+			break
 		case 39:
 			a = 'SummonerSnowURFSnowball_Mark'
 			break
