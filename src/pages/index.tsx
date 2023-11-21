@@ -10,9 +10,11 @@ import supIcon from '../img/lane/sup.svg'
 import geng from '../img/team/geng.png'
 import t1 from '../img/team/t1.png'
 import styled from 'styled-components'
+import { useRouter } from 'next/navigation'
 
 function Home() {
 	const [username, setUsername] = useState('')
+	const router = useRouter()
 
 	function onChange(e: any) {
 		setUsername(e.target.value)
@@ -24,14 +26,14 @@ function Home() {
 		if (username.trim() === '') {
 		} else if (username.length === 2) {
 			const usernameRe = `${username[0]} ${username[1]}`
-			navigate(`summoners/kr/${usernameRe}`)
+			router.push(`summoners/kr/${usernameRe}`)
 		} else {
-			navigate(`summoners/kr/${username}`)
+			router.push(`summoners/kr/${username}`)
 		}
 	}
 
 	function onClick(name: string) {
-		navigate(`summoners/kr/${name}`)
+		router.push(`summoners/kr/${name}`)
 	}
 
 	const sktMember = {
