@@ -2,8 +2,6 @@ import React from 'react'
 import Header from '../components/layout/Header'
 import { useState, useEffect } from 'react'
 
-import { useNavigate } from 'react-router-dom'
-
 import topIcon from '../img/lane/top.svg'
 import jgIcon from '../img/lane/jg.svg'
 import midIcon from '../img/lane/mid.svg'
@@ -12,11 +10,8 @@ import supIcon from '../img/lane/sup.svg'
 import geng from '../img/team/geng.png'
 import t1 from '../img/team/t1.png'
 import styled from 'styled-components'
-import { api } from '../utils/api'
-import { LeagueObj, SummonerObj } from '../@types/types'
 
 function Home() {
-	const navigate = useNavigate()
 	const [username, setUsername] = useState('')
 
 	function onChange(e: any) {

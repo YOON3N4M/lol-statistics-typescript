@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 
-import Header from '../components/layout/Header'
-import MatchHistorys from '../components/MatchHistorys'
-import Summarys from '../components/SummaryMost'
-import PositionsBar from '../components/PositionsBar'
-import MostChampions from '../components/MostChampions'
+import Header from '../../components/layout/Header'
+import MatchHistorys from '../../components/MatchHistorys'
+import Summarys from '../../components/SummaryMost'
+import PositionsBar from '../../components/PositionsBar'
+import MostChampions from '../../components/MostChampions'
 
 import {
 	ContentsType,
@@ -17,15 +17,15 @@ import {
 	RiotApiObj,
 	SummonerObj,
 	UserDocument,
-} from '../@types/types'
-import { firebaseAPI } from '../utils/firebaseApi'
-import { api } from '../utils/api'
-import { DATA_DRAGON_VERSION, SUMMONER_PROFILE_ICON_URL } from '../constants'
-import CurrentRank from '../components/CurrentRank'
-import MostPlayed from '../components/MostPlayed'
-import Summary from '../components/Summary'
-import Footer from '../components/layout/Footer'
-import ContentsSelectTab from '../components/layout/ContentsSelectTab'
+} from '../../@types/types'
+import { firebaseAPI } from '../../utils/firebaseApi'
+import { api } from '../../utils/api'
+import { DATA_DRAGON_VERSION, SUMMONER_PROFILE_ICON_URL } from '../../constants'
+import CurrentRank from '../../components/CurrentRank'
+import MostPlayed from '../../components/MostPlayed'
+import Summary from '../../components/Summary'
+import Footer from '../../components/layout/Footer'
+import ContentsSelectTab from '../../components/layout/ContentsSelectTab'
 
 //
 
