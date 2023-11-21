@@ -1,17 +1,17 @@
-import IRON from '../img/tier/iron.png'
-import BRONZE from '../img/tier/bronze.png'
-import SILVER from '../img/tier/silver.png'
-import GOLD from '../img/tier/gold.png'
-import PLATINUM from '../img/tier/platinum.png'
-import DIAMOND from '../img/tier/diamond.png'
-import MASTER from '../img/tier/master.png'
-import GRANDMASTER from '../img/tier/grandmaster.png'
-import CHALLENGER from '../img/tier/challenger.png'
-import EMERALD from '../img/tier/emerald.png'
-import { fixedChampionName } from '../utils'
+import IRON from '@/img/tier/iron.png'
+import BRONZE from '@/img/tier/bronze.png'
+import SILVER from '@/img/tier/silver.png'
+import GOLD from '@/img/tier/gold.png'
+import PLATINUM from '@/img/tier/platinum.png'
+import DIAMOND from '@/img/tier/diamond.png'
+import MASTER from '@/img/tier/master.png'
+import GRANDMASTER from '@/img/tier/grandmaster.png'
+import CHALLENGER from '@/img/tier/challenger.png'
+import EMERALD from '@/img/tier/emerald.png'
+import { fixedChampionName } from '@/utils'
 
 // KEY and ETC...
-export const API_KEY = process.env.REACT_APP_RIOT_API_KEY
+export const API_KEY = process.env.NEXT_PUBLIC_RIOT_API_KEY
 export const DATA_DRAGON_VERSION = '13.20.1'
 
 // API URL

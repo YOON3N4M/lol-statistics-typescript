@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ContentsType } from '../../@types/types'
+import { ContentsType } from '@/@types/types'
 
 interface ContentsSelectTabProps {
 	selectedContents: string
