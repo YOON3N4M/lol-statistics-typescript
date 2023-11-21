@@ -6,10 +6,7 @@ function Header() {
 	return (
 		<>
 			<StyledHeader>
-				<Link
-					style={{ textDecoration: 'none' }}
-					href={process.env.PUBLIC_URL + '/'}
-				>
+				<Link style={{ textDecoration: 'none' }} href="/">
 					<StyledLogo>OP.GG</StyledLogo>
 				</Link>
 			</StyledHeader>

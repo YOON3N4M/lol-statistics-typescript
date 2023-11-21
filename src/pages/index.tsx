@@ -2,13 +2,6 @@ import React from 'react'
 import Header from '../components/layout/Header'
 import { useState } from 'react'
 
-import topIcon from '@/img/lane/top.svg'
-import jgIcon from '@/img/lane/jg.svg'
-import midIcon from '@/img/lane/mid.svg'
-import adcIcon from '@/img/lane/adc.svg'
-import supIcon from '@/img/lane/sup.svg'
-import geng from '@/img/team/geng.png'
-import tonelogo from '@/img/team/t1.png'
 import styled from 'styled-components'
 import { useRouter } from 'next/navigation'
 

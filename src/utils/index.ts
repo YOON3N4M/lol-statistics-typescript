@@ -3,6 +3,12 @@ import { tierIcon } from '../constants'
 import championsData from '../data/championsData.json'
 import { variable } from '../styles/Globalstyles'
 
+export function extractSummonerName(pathname: string) {
+	const decoded = decodeURI(pathname)
+	const summonerName = decoded.substring(decoded.indexOf('kr/') + 3)
+	return summonerName
+}
+
 // 티어 표기의 로마 숫자를 아랍 숫자로 변환
 export function romeNumToArabNum(rome: string) {
 	switch (rome) {

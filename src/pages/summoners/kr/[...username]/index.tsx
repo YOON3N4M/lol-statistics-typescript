@@ -22,15 +22,14 @@ import Summary from '@/components/Summary'
 import Footer from '@/components/layout/Footer'
 import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
 import Header from '@/components/layout/Header'
-
-//
+import { usePathname } from 'next/navigation'
+import { extractSummonerName } from '@/utils'
 
 function Summoners() {
+	const pathname = usePathname()
+	const searchedSummonersName = extractSummonerName(pathname)
+
 	const matchQty = 15
-	const params = { summonersName: 'dd' }
-	const [searchedSummonersName, setSearchedSummonersName] = useState(
-		params?.summonersName,
-	)
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	// matchQty 만큼의 총 전적
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
