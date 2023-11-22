@@ -28,7 +28,7 @@ export interface UserDocument {
 	id?: string
 	name?: string
 	nameRe?: string
-	profileIconId?: number
+	profileIconId: number
 	puuid?: string
 	summonerLevel?: number
 	league1?: any

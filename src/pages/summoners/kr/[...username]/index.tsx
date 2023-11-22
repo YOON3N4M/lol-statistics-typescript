@@ -182,6 +182,7 @@ function Summoners() {
 			)
 			const requestAgain = await getDocumentFromFirebase()
 		}
+
 		existCheckUserOnFirebase()
 	}, [])
 
@@ -226,13 +227,13 @@ function Summoners() {
 									</ul>
 								</TierContainer>
 								<Name>{userDocument.name}</Name>
-								<RefeshBtn
+								<RefreshBtn
 									onClick={() => {
 										getRiotAPI()
 									}}
 								>
 									전적 갱신
-								</RefeshBtn>
+								</RefreshBtn>
 								<LastUpdate>최근 업데이트 : - </LastUpdate>
 							</Info>
 						</Wrapper>
@@ -354,7 +355,7 @@ const Name = styled.div`
 	font-size: 24px;
 	font-weight: bold;
 `
-const RefeshBtn = styled.button`
+const RefreshBtn = styled.button`
 	color: white;
 	border: 0px;
 	border-radius: 4px;

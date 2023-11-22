@@ -50,7 +50,7 @@ function Home() {
 			<Header />
 			<HomeContainer>
 				<LogoContainer>
-					<Logo className="home-logo">OP.GG</Logo>
+					{/* <Logo className="home-logo">OP.GG</Logo> */}
 				</LogoContainer>
 				<div>
 					<form onSubmit={onSubmit}>

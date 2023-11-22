@@ -8,6 +8,7 @@ import axios from 'axios'
 
 async function getSummonersInfo(summonersName: string) {
 	const res = await axios.get(SUMMONER_INFO_URL(summonersName))
+
 	return res.data
 }
 
