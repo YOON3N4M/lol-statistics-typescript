@@ -23,12 +23,12 @@
 
 # lol-statistics-typescript
 
-* ### V3 버전
-> 배포 : vercel <br><br>
+* ### V3 버전 ( 배포 | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/next) )
+> 배포 : vercel (예정) <br><br>
 > <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <br>
 
-* ### V2 버전 ( [배포](https://lol-statistic.firebaseapp.com/) )
+* ### V2 버전 ( [배포](https://lol-statistic.firebaseapp.com/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/main) )
 > 배포 : firebase hosting <br><br>
 > <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <br>
