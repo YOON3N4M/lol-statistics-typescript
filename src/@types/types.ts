@@ -24,13 +24,13 @@ export interface MatchInfoObj {
 export type MatchInfoArray = Array<MatchInfoObj> | undefined[] | undefined
 
 export interface UserDocument {
-	accountId?: string
-	id?: string
-	name?: string
+	accountId: string
+	id: string
+	name: string
 	nameRe?: string
 	profileIconId: number
-	puuid?: string
-	summonerLevel?: number
+	puuid: string
+	summonerLevel: number
 	league1?: any
 	league2?: any
 	matchHistory?: Array<string>
@@ -93,3 +93,8 @@ export interface ParticipantsData extends Array<ParticipantInfo[]> {
 }
 
 export type ContentsType = 'InGame' | 'MatchHistorys'
+
+export interface SearchResult {
+	existMatchInfoArr: any
+	unExistMatchIdArr: any
+}

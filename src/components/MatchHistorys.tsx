@@ -18,7 +18,7 @@ function MatchHistorys({ userDocument, match }: Props) {
 	const name = userDocument.name
 
 	const matchStatistics = getMatchStatistics(match, name)
-	console.log(match, matchStatistics?.matchStatistics.queueType)
+	// console.log(match, matchStatistics?.matchStatistics.queueType)
 
 	return (
 		<>

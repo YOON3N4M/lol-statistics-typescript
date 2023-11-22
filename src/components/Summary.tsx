@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
-	console.log(mostPlayChampions)
 	const flattedArr = mostPlayChampions.flat()
 	const winCount = flattedArr.filter(
 		(info: ParticipantInfo) => info.win === true,

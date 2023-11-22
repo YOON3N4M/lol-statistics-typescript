@@ -8,6 +8,7 @@ import {
 	MatchInfoArray,
 	MatchInfoObj,
 	RiotApiObj,
+	SearchResult,
 	SummonerObj,
 	UserDocument,
 } from '@/@types/types'
@@ -24,6 +25,11 @@ import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
 import Header from '@/components/layout/Header'
 import { usePathname } from 'next/navigation'
 import { extractSummonerName } from '@/utils'
+
+// export async function getServerSideProps() {
+// 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
+// 	return { props: { res } }
+// }
 
 function Summoners() {
 	const pathname = usePathname()
@@ -57,11 +63,16 @@ function Summoners() {
 		}, 3000)
 	}
 
-	async function getUserDocumentDB(): Promise<UserDocument | undefined> {
-		if (searchedSummonersName === undefined) return
-		const result = await firebaseAPI.getUserDocument(searchedSummonersName)
-		setUserDocument(result)
-		if (result) return result
+	async function getUserDocument(
+		summonerName: string,
+	): Promise<UserDocument | undefined> {
+		try {
+			const result = await firebaseAPI.getUserDocument(summonerName)
+			console.log(result)
+			return result
+		} catch {
+			alert('DB에서 소환사 조회에 실패')
+		}
 	}
 
 	async function getMatchDocumentDB(matchIDArr: string[] | undefined) {
@@ -96,52 +107,58 @@ function Summoners() {
 		return true
 	}
 
-	async function getRiotAPI() {
-		if (searchedSummonersName === undefined) return
-
+	async function getRiotAPI(summonerName: string) {
 		try {
-			const summonerInfo: SummonerObj = await api.getSummonersInfo(
-				searchedSummonersName,
-			)
+			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)
 			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
-			const matchInfo: string[] = await api.getMatchId(
+			const matchIdArr: string[] = await api.getMatchId(
 				summonerInfo.puuid,
 				matchQty,
 			)
-
-			if (matchInfo.length > 0) {
-				const result: any[] = await Promise.all(
-					matchInfo.map(async (matchID: string) => {
-						const res = await firebaseAPI.getMatchFromDB(matchID)
-
-						if (res === undefined) return matchID
-						return res
-					}),
-				)
-				const removeExist = result.filter((e) => typeof e === 'string')
-				const matchInfoResArr = await Promise.all(
-					removeExist.map(async (matchID: string) => {
-						const matchInfoRes = await api.getMatchInfo(matchID)
-						return matchInfoRes
-					}),
-				)
-
-				matchInfoResArr.map(async (matchInfoRes) => {
-					const firebaseRes = await firebaseAPI.postMatchInfoOnDB(matchInfoRes)
-				})
-
-				setMatchInfoArr(matchInfoResArr)
-			}
-
 			const result = {
 				summonerInfo,
 				leagueInfo,
-				matchInfo,
+				matchIdArr,
 			}
 			return result
 		} catch (error) {
 			console.log(error)
-			return error
+			return false
+		}
+	}
+
+	async function searchMatchId(matchIdArr: string[]) {
+		if (matchIdArr.length < 1) return
+		const searchResult = await Promise.all(
+			matchIdArr.map(async (matchID: string) => {
+				const res = await firebaseAPI.getMatchFromDB(matchID)
+				if (res === undefined) return matchID
+				return res
+			}),
+		)
+		const existMatchInfoArr = searchResult.filter((e) => typeof e !== 'string')
+		const unExistMatchIdArr = searchResult.filter((e) => typeof e === 'string')
+
+		return { existMatchInfoArr, unExistMatchIdArr }
+	}
+
+	// matchId중 DB에 없는 ID를 라이엇에 요청 후 받아온 데이터를 DB에 보내고
+	// DB에 존재하던 matchInfoArr에 합친 후, return
+	async function handleMatchInfo(searchResult: SearchResult) {
+		const { existMatchInfoArr, unExistMatchIdArr } = searchResult
+
+		if (unExistMatchIdArr.length === 0) {
+			return existMatchInfoArr
+		} else {
+			const getMatchInfoAndPost = await Promise.all(
+				unExistMatchIdArr.map(async (matchID: string) => {
+					const matchInfo = await api.getMatchInfo(matchID)
+					const firebaseRes = await firebaseAPI.postMatchInfoOnDB(matchInfo)
+					return matchInfo
+				}),
+			)
+			const mergedArr = [...existMatchInfoArr, ...getMatchInfoAndPost]
+			return mergedArr
 		}
 	}
 
@@ -167,37 +184,41 @@ function Summoners() {
 		setMostPlayChampions(mostList)
 	}
 
-	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
-	// riot API 요청 후 바로 firebase 재요청
+	// 전적 페이지 첫 진입시 동작
 	useEffect(() => {
-		async function existCheckUserOnFirebase() {
-			const isExist = await getDocumentFromFirebase()
+		async function initPage() {
+			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
+			const userDoc = await getUserDocument('멀록몰록말록물록')
+			if (!userDoc) {
+				//여기서
+			} else {
+				setUserDocument(userDoc)
+				console.log(userDoc)
+			}
 
-			if (isExist) return
-			const riotAPIResult: any = await getRiotAPI()
-			const postDB = await firebaseAPI.postUserDocumentOnDB(
-				riotAPIResult.summonerInfo,
-				riotAPIResult.leagueInfo,
-				riotAPIResult.matchInfo,
-			)
-			const requestAgain = await getDocumentFromFirebase()
+			const riotApiResult: any = await getRiotAPI('멀록몰록말록물록')
+			const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
+			const handleResult = await handleMatchInfo(searchResult)
+			setMatchInfoArr(handleResult)
+			// const isExist = await getDocumentFromFirebase()
+			// console.log(isExist, 'ss')
+			// if (isExist) return
+			// const riotAPIResult: any = await getRiotAPI()w
+			// const postDB = await firebaseAPI.postUserDocumentOnDB(
+			// 	riotAPIResult.summonerInfo,
+			// 	riotAPIResult.leagueInfo,
+			// 	riotAPIResult.matchInfo,
+			// )
+			// const requestAgain = await getDocumentFromFirebase()
 		}
 
-		existCheckUserOnFirebase()
+		initPage()
 	}, [])
 
-	useEffect(() => {
-		if (matchInfoArr?.length === 0) return
-		getMostChampionArr()
-	}, [matchInfoArr])
-
-	useEffect(() => {
-		if (userDocument?.matchHistory !== undefined) {
-			// userDocument.matchHistory.map((item) => getMatchFromDB(item));
-		} else {
-			//getUserDocument();
-		}
-	}, [])
+	// useEffect(() => {
+	// 	if (matchInfoArr?.length === 0) return
+	// 	getMostChampionArr()
+	// }, [matchInfoArr])
 
 	return (
 		<>
@@ -229,7 +250,7 @@ function Summoners() {
 								<Name>{userDocument.name}</Name>
 								<RefreshBtn
 									onClick={() => {
-										getRiotAPI()
+										// getRiotAPI()
 									}}
 								>
 									전적 갱신
