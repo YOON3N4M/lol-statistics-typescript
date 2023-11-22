@@ -3,7 +3,8 @@
 > 수정중에 있습니다. 
 > 
 > 4/1 1차적인 수정 완료. 미지원 기능 알람, 현재 랭크 표시 등 일부 기능 수정 예정
->
+
+
 > 10/23 전체 리팩토링 진행중... (목표는 아래와 같음)
 > > * 선언 없이 실행되던 로직들 함수로 분리 선언
 > > * API 관련 함수들 별도의 파일에 모두 분리후 재사용성 향상
@@ -14,18 +15,27 @@
 > > * 공통 types 별도의 파일에 분리 관리 (특정 컴포넌트 내에서만 쓰이는 type은 컴포넌트 내에서 관리)
 > > * 자주 사용되는 상수, 수시로 변경해야하는 버전 등의 값은 한번의 변경으로 모든 파일에 적용될 수 있게 constants 폴더내에서 관리
 > > * 웹표준에 어긋나는 마크업 수정
+
+> 11/21~ 넥스트 도입
 <br>
 <br>
 
 
 # lol-statistics-typescript
 
-현재 버전 배포 : https://lol-statistic.firebaseapp.com/
-> (react, typescript, firebase, styled-components 적용)
+* ### V3 버전
+> 배포 : vercel <br><br>
+> <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <br>
 
-기존 버전 배포 : https://yoon3n4m.github.io/lol-statistics/ & 저장소 :https://github.com/YOON3N4M/lol-statistics 
-> (react, javascript, redux)
+* ### V2 버전 ( [배포](https://lol-statistic.firebaseapp.com/) )
+> 배포 : firebase hosting <br><br>
+> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
+<br>
+
+* ### V1 버전 ( [배포](https://yoon3n4m.github.io/lol-statistics/) | [저장소](https://github.com/YOON3N4M/lol-statistics) )
+> 배포 : github pages <br><br>
+> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white">, <img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=javascript&logoColor=white">
 
 <br>
 
@@ -33,7 +43,7 @@
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">  <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <hr>
 
-### 🛠️해당 버전에서 개선된 점
+### 🛠️ V2 에서 개선된 점
 * db없이 작동하던 기존의 방식에서 API로 받아온 데이터를 db에 저장하며 활용 할 수 있게 됨
 > 기존엔 앱 실행시 항상 라이엇 API 요청을 보내 매번 새로운 데이터를 받아왔지만, 현재는 db에서 데이터를 조회한 후 존재하지 않을시 라이엇 API 요청을 하게 됨.
 > 이후 사용자 스스로 최신 데이터가 필요해지면 "전적 갱신" 버튼을 통해 라이엇 API 요청 과정을 통해 전적을 갱신 할 수 있게 됨.
