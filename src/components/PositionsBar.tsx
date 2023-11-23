@@ -1,10 +1,6 @@
+import { positionIcon } from '@/constants'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import topIcon from '../img/lane/top.svg'
-import jgIcon from '../img/lane/jg.svg'
-import midIcon from '../img/lane/mid.svg'
-import adcIcon from '../img/lane/adc.svg'
-import supIcon from '../img/lane/sup.svg'
 
 interface Props {
 	currentMatch: any
@@ -41,6 +37,8 @@ const Title = styled.div`
 `
 
 function PositionsBar({ currentMatch }: Props) {
+	const { topIcon, jgIcon, midIcon, adcIcon, supIcon } = positionIcon
+
 	const [positions, setPositions] = useState({
 		top: 0,
 		jungle: 0,
@@ -93,31 +91,31 @@ function PositionsBar({ currentMatch }: Props) {
 					<Bar>
 						<Gauge height={topP}></Gauge>
 					</Bar>
-					<PositionIcon src={topIcon.src} />
+					<PositionIcon src={topIcon} />
 				</li>
 				<li>
 					<Bar>
 						<Gauge height={jgP}></Gauge>
 					</Bar>
-					<PositionIcon src={jgIcon.src} />
+					<PositionIcon src={jgIcon} />
 				</li>
 				<li>
 					<Bar>
 						<Gauge height={midP}></Gauge>
 					</Bar>
-					<PositionIcon src={midIcon.src} />
+					<PositionIcon src={midIcon} />
 				</li>
 				<li>
 					<Bar>
 						<Gauge height={adcP}></Gauge>
 					</Bar>
-					<PositionIcon src={adcIcon.src} />
+					<PositionIcon src={adcIcon} />
 				</li>
 				<li>
 					<Bar>
 						<Gauge height={supP}></Gauge>
 					</Bar>
-					<PositionIcon src={supIcon.src} />
+					<PositionIcon src={supIcon} />
 				</li>
 			</PositionUl>
 		</>
