@@ -158,20 +158,21 @@ function Summoners() {
 	}
 
 	async function refresh() {
-		const riotApiResult: any = await getRiotAPI('동방은아')
+		const riotApiResult: any = await getRiotAPI(searchedSummonersName)
 		const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
 		const handleResult = await handleMatchInfo(searchResult)
 		setMatchInfoArr(handleResult)
 		console.log('갱신완료')
 	}
 
+	//첫 진입 시 닉네임 추출
 	useEffect(() => {
 		if (pathname === null) return
 		const extractedSummonerName = extractSummonerName(pathname)
 		setSearchedSummonersName(extractedSummonerName)
 	}, [pathname])
 
-	// 전적 페이지 첫 진입시 동작
+	// 닉네임 추출 후 첫 동작
 	useEffect(() => {
 		if (searchedSummonersName === '') return
 		async function initRefresh() {
