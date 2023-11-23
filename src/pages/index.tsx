@@ -1,23 +1,13 @@
 import React from 'react'
-import Header from '../components/Header'
-import { useState, useEffect } from 'react'
+import Header from '../components/layout/Header'
+import { useState } from 'react'
 
-import { useNavigate } from 'react-router-dom'
-
-import topIcon from '../img/lane/top.svg'
-import jgIcon from '../img/lane/jg.svg'
-import midIcon from '../img/lane/mid.svg'
-import adcIcon from '../img/lane/adc.svg'
-import supIcon from '../img/lane/sup.svg'
-import geng from '../img/team/geng.png'
-import t1 from '../img/team/t1.png'
 import styled from 'styled-components'
-import { api } from '../utils/api'
-import { LeagueObj, SummonerObj } from '../@types/types'
+import { useRouter } from 'next/navigation'
 
 function Home() {
-	const navigate = useNavigate()
 	const [username, setUsername] = useState('')
+	const router = useRouter()
 
 	function onChange(e: any) {
 		setUsername(e.target.value)
@@ -29,14 +19,14 @@ function Home() {
 		if (username.trim() === '') {
 		} else if (username.length === 2) {
 			const usernameRe = `${username[0]} ${username[1]}`
-			navigate(`summoners/kr/${usernameRe}`)
+			router.push(`summoners/kr/${usernameRe}`)
 		} else {
-			navigate(`summoners/kr/${username}`)
+			router.push(`summoners/kr/${username}`)
 		}
 	}
 
 	function onClick(name: string) {
-		navigate(`summoners/kr/${name}`)
+		router.push(`summoners/kr/${name}`)
 	}
 
 	const sktMember = {
@@ -60,7 +50,7 @@ function Home() {
 			<Header />
 			<HomeContainer>
 				<LogoContainer>
-					<Logo className="home-logo">OP.GG</Logo>
+					{/* <Logo className="home-logo">OP.GG</Logo> */}
 				</LogoContainer>
 				<div>
 					<form onSubmit={onSubmit}>
@@ -85,101 +75,6 @@ function Home() {
 						</SearchContainer>
 					</form>
 				</div>
-
-				<ProContainer>
-					<ProHeader>
-						<span>프로게이머 전적 바로가기</span>
-					</ProHeader>
-					<TeamContainer>
-						<Team>
-							<TeamHeader>
-								<div>
-									<Tone src={t1} />
-								</div>
-							</TeamHeader>
-							<PlayerContainer onClick={() => onClick(sktMember.top)}>
-								<div className="pro-lane">
-									<img src={topIcon} />
-								</div>
-								<Nickname>Zeus</Nickname>
-								<Name>최우제</Name>
-							</PlayerContainer>
-							<PlayerContainer onClick={() => onClick(sktMember.jg)}>
-								<div className="pro-lane">
-									<img src={jgIcon} />
-								</div>
-								<Nickname>Oner</Nickname>
-								<Name>문현준</Name>
-							</PlayerContainer>{' '}
-							<PlayerContainer onClick={() => onClick(sktMember.mid)}>
-								<div className="pro-lane">
-									<img src={midIcon} />
-								</div>
-								<Nickname>Faker</Nickname>
-								<Name>이상혁</Name>
-							</PlayerContainer>{' '}
-							<PlayerContainer onClick={() => onClick(sktMember.adc)}>
-								<div className="pro-lane">
-									{' '}
-									<img src={adcIcon} />
-								</div>
-								<Nickname>Gumayusi</Nickname>
-								<Name>이민형</Name>
-							</PlayerContainer>{' '}
-							<PlayerContainer onClick={() => onClick(sktMember.sup)}>
-								<div className="pro-lane">
-									<img src={supIcon} />
-								</div>
-								<Nickname>Keria</Nickname>
-								<Name>류민석</Name>
-							</PlayerContainer>
-						</Team>
-						<Team>
-							<TeamHeader>
-								{' '}
-								<div>
-									<Geng src={geng} />
-								</div>
-							</TeamHeader>
-							<PlayerContainer onClick={() => onClick(gengMember.top)}>
-								<div className="pro-lane">
-									<img src={topIcon} />
-								</div>
-								<Nickname>Doran</Nickname>
-								<Name>최현준</Name>
-							</PlayerContainer>
-							<PlayerContainer onClick={() => onClick(gengMember.jg)}>
-								<div className="pro-lane">
-									<img src={jgIcon} />
-								</div>
-								<Nickname>Peanut</Nickname>
-								<Name>한왕호</Name>
-							</PlayerContainer>{' '}
-							<PlayerContainer onClick={() => onClick(gengMember.mid)}>
-								<div className="pro-lane">
-									<img src={midIcon} />
-								</div>
-								<Nickname>Chovy</Nickname>
-								<Name>정지훈</Name>
-							</PlayerContainer>{' '}
-							<PlayerContainer onClick={() => onClick(gengMember.adc)}>
-								<div className="pro-lane">
-									{' '}
-									<img src={adcIcon} />
-								</div>
-								<Nickname>Payz</Nickname>
-								<Name>김수환</Name>
-							</PlayerContainer>{' '}
-							<PlayerContainer onClick={() => onClick(gengMember.sup)}>
-								<div className="pro-lane">
-									<img src={supIcon} />
-								</div>
-								<Nickname>Delight</Nickname>
-								<Name>유환중</Name>
-							</PlayerContainer>
-						</Team>
-					</TeamContainer>
-				</ProContainer>
 			</HomeContainer>
 		</>
 	)

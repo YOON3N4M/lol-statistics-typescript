@@ -1,55 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
-
-import Header from '../components/Header'
-import MatchHistorys from '../components/MatchHistorys'
-import Summarys from '../components/Summarys'
-import PositionsBar from '../components/PositionsBar'
-import MostChampions from '../components/MostChampions'
-
 import {
+	ContentsType,
 	LeagueArray,
 	LeagueObj,
 	MatchInfoArray,
 	MatchInfoObj,
-	PlayerObj,
 	RiotApiObj,
+	SearchResult,
 	SummonerObj,
 	UserDocument,
-} from '../@types/types'
-import { firebaseAPI } from '../utils/firebaseApi'
-import { api } from '../utils/api'
-import { DATA_DRAGON_VERSION, SUMMONER_PROFILE_ICON_URL } from '../constants'
-import CurrentRank from '../components/CurrentRank'
-import MostPlayed from '../components/MostPlayed'
-import Summary from '../components/Summary'
-import Footer from '../components/Footer'
+} from '@/@types/types'
+import { firebaseAPI } from '@/utils/firebaseApi'
+import { api } from '@/utils/api'
+import { SUMMONER_PROFILE_ICON_URL } from '@/constants'
 
-//
+import MatchHistorys from '@/components/MatchHistorys'
+import CurrentRank from '@/components/CurrentRank'
+import MostPlayed from '@/components/MostPlayed'
+import Summary from '@/components/Summary'
+import Footer from '@/components/layout/Footer'
+import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
+import Header from '@/components/layout/Header'
+import { usePathname } from 'next/navigation'
+import { extractSummonerName } from '@/utils'
+
+// export async function getServerSideProps() {
+// 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
+// 	return { props: { res } }
+// }
 
 function Summoners() {
-	const matchQty = 15
-	const params = useParams()
-	const [searchedSummonersName, setSearchedSummonersName] = useState(
-		params?.summonersName,
-	)
+	const pathname = usePathname()
+
+	const [searchedSummonersName, setSearchedSummonersName] = useState('')
+
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	// matchQty 만큼의 총 전적
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
 		[],
 	)
+	const matchQty = 15
 	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
 	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
-
+	const [selectedContents, setSelectedContents] =
+		useState<ContentsType>('MatchHistorys')
 	///
 	///
 	///
 	///
 	const [alarm, setAlarm] = useState(false)
-
-	//검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
-	const [currentMatch, setCurrentMatch] = useState<any>([])
 
 	//검색된 게임 포지션 비율
 	const [notFound, setNotFound] = useState(false)
@@ -60,91 +61,77 @@ function Summoners() {
 		}, 3000)
 	}
 
-	async function getUserDocumentDB(): Promise<UserDocument | undefined> {
-		if (searchedSummonersName === undefined) return
-		const result = await firebaseAPI.getUserDocument(searchedSummonersName)
-		setUserDocument(result)
-		if (result) return result
-	}
-
-	async function getMatchDocumentDB(matchIDArr: string[] | undefined) {
-		if (matchIDArr === undefined) return
-
-		const result: any[] = await Promise.all(
-			matchIDArr.map(async (matchID) => {
-				const res = await firebaseAPI.getMatchFromDB(matchID)
-
-				if (res === undefined) return
-				return res
-			}),
-		)
-		const removeUndefined = result.filter((e) => e !== undefined)
-
-		return removeUndefined
-	}
-
-	async function getDocumentFromFirebase() {
-		const userDocs = await getUserDocumentDB()
-
-		setUserDocument(userDocs)
-		if (userDocs === undefined) return false
-
-		const matchArr: MatchInfoArray | undefined = await getMatchDocumentDB(
-			userDocs.matchHistory,
-		)
-
-		if (matchArr === undefined) return
-		console.log(matchArr)
-		setMatchInfoArr(matchArr)
-		return true
-	}
-
-	async function getRiotAPI() {
-		if (searchedSummonersName === undefined) return
-
+	async function getUserDocument(
+		summonerName: string,
+	): Promise<UserDocument | undefined> {
 		try {
-			const summonerInfo: SummonerObj = await api.getSummonersInfo(
-				searchedSummonersName,
-			)
+			console.log(summonerName)
+			const result = await firebaseAPI.getUserDocument(summonerName)
+			console.log(result)
+			return result
+		} catch {
+			alert('DB에서 소환사 조회에 실패')
+		}
+	}
+
+	async function getRiotAPI(summonerName: string) {
+		try {
+			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)
 			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
-			const matchInfo: string[] = await api.getMatchId(
+			const matchIdArr: string[] = await api.getMatchId(
 				summonerInfo.puuid,
 				matchQty,
 			)
-
-			if (matchInfo.length > 0) {
-				const result: any[] = await Promise.all(
-					matchInfo.map(async (matchID: string) => {
-						const res = await firebaseAPI.getMatchFromDB(matchID)
-
-						if (res === undefined) return matchID
-						return res
-					}),
-				)
-				const removeExist = result.filter((e) => typeof e === 'string')
-				const matchInfoResArr = await Promise.all(
-					removeExist.map(async (matchID: string) => {
-						const matchInfoRes = await api.getMatchInfo(matchID)
-						return matchInfoRes
-					}),
-				)
-
-				matchInfoResArr.map(async (matchInfoRes) => {
-					const firebaseRes = await firebaseAPI.postMatchInfoOnDB(matchInfoRes)
-				})
-
-				setMatchInfoArr(matchInfoResArr)
-			}
-
 			const result = {
 				summonerInfo,
 				leagueInfo,
-				matchInfo,
+				matchIdArr,
 			}
+			const postDB = await firebaseAPI.postUserDocumentOnDB(
+				summonerInfo,
+				leagueInfo,
+				matchIdArr,
+			)
+			setUserDocument(postDB)
 			return result
 		} catch (error) {
 			console.log(error)
-			return error
+			return false
+		}
+	}
+
+	async function searchMatchId(matchIdArr?: string[]) {
+		if (matchIdArr === undefined || matchIdArr.length < 1) return []
+		const searchResult = await Promise.all(
+			matchIdArr.map(async (matchID: string) => {
+				const res = await firebaseAPI.getMatchFromDB(matchID)
+				if (res === undefined) return matchID
+				return res
+			}),
+		)
+		const existMatchInfoArr = searchResult.filter((e) => typeof e !== 'string')
+		const unExistMatchIdArr = searchResult.filter((e) => typeof e === 'string')
+
+		return { existMatchInfoArr, unExistMatchIdArr }
+	}
+
+	// matchId중 DB에 없는 ID를 라이엇에 요청 후 받아온 데이터를 DB에 보내고
+	// DB에 존재하던 matchInfoArr에 합친 후, return
+	async function handleMatchInfo(searchResult: SearchResult) {
+		const { existMatchInfoArr, unExistMatchIdArr } = searchResult
+
+		if (unExistMatchIdArr.length === 0) {
+			return existMatchInfoArr
+		} else {
+			const getMatchInfoAndPost = await Promise.all(
+				unExistMatchIdArr.map(async (matchID: string) => {
+					const matchInfo = await api.getMatchInfo(matchID)
+					const firebaseRes = await firebaseAPI.postMatchInfoOnDB(matchInfo)
+					return matchInfo
+				}),
+			)
+			const mergedArr = [...existMatchInfoArr, ...getMatchInfoAndPost]
+			return mergedArr
 		}
 	}
 
@@ -170,36 +157,50 @@ function Summoners() {
 		setMostPlayChampions(mostList)
 	}
 
-	//검색시 firebase DB 체크, 있으면 그대로 보여주고 없으면 riot API 요청 (전적 갱신과 같은 동작을 함)
-	// riot API 요청 후 바로 firebase 재요청
-	useEffect(() => {
-		async function existCheckUserOnFirebase() {
-			const isExist = await getDocumentFromFirebase()
+	async function refresh() {
+		const riotApiResult: any = await getRiotAPI(searchedSummonersName)
+		const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
+		const handleResult = await handleMatchInfo(searchResult)
+		setMatchInfoArr(handleResult)
+		console.log('갱신완료')
+	}
 
-			if (isExist) return
-			const riotAPIResult: any = await getRiotAPI()
-			const postDB = await firebaseAPI.postUserDocumentOnDB(
-				riotAPIResult.summonerInfo,
-				riotAPIResult.leagueInfo,
-				riotAPIResult.matchInfo,
-			)
-			const requestAgain = await getDocumentFromFirebase()
+	//첫 진입 시 닉네임 추출
+	useEffect(() => {
+		if (pathname === null) return
+		const extractedSummonerName = extractSummonerName(pathname)
+		setSearchedSummonersName(extractedSummonerName)
+	}, [pathname])
+
+	// 닉네임 추출 후 첫 동작
+	useEffect(() => {
+		if (searchedSummonersName === '') return
+		async function initRefresh() {
+			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
+			const userDoc = await getUserDocument(searchedSummonersName)
+			let handleResult
+			let searchResult: any
+			if (!userDoc) {
+				console.log('db에 존재하지 않는 소환사 입니다.')
+				const riotApiResult: any = await getRiotAPI(searchedSummonersName)
+				searchResult = await searchMatchId(riotApiResult.matchIdArr)
+				handleResult = await handleMatchInfo(searchResult)
+			} else {
+				console.log('db에 존재하는 소환사 입니다.')
+				setUserDocument(userDoc)
+				searchResult = await searchMatchId(userDoc.matchHistory)
+				handleResult = await handleMatchInfo(searchResult)
+			}
+			setMatchInfoArr(handleResult)
 		}
-		existCheckUserOnFirebase()
-	}, [])
+
+		initRefresh()
+	}, [searchedSummonersName])
 
 	useEffect(() => {
 		if (matchInfoArr?.length === 0) return
 		getMostChampionArr()
 	}, [matchInfoArr])
-
-	useEffect(() => {
-		if (userDocument?.matchHistory !== undefined) {
-			// userDocument.matchHistory.map((item) => getMatchFromDB(item));
-		} else {
-			//getUserDocument();
-		}
-	}, [])
 
 	return (
 		<>
@@ -229,27 +230,21 @@ function Summoners() {
 									</ul>
 								</TierContainer>
 								<Name>{userDocument.name}</Name>
-								<RefeshBtn
+								<RefreshBtn
 									onClick={() => {
-										getRiotAPI()
+										refresh()
 									}}
 								>
 									전적 갱신
-								</RefeshBtn>
+								</RefreshBtn>
 								<LastUpdate>최근 업데이트 : - </LastUpdate>
 							</Info>
 						</Wrapper>
 					</ContentsHeader>
-					<InfoListTab>
-						<InfoList>
-							<li>
-								<InfoListItem selected={true}>종합</InfoListItem>
-							</li>
-							<li>
-								{/*<InfoListItem selected={false}>인게임 정보</InfoListItem>*/}
-							</li>
-						</InfoList>
-					</InfoListTab>
+					<ContentsSelectTab
+						setSelectedContents={setSelectedContents}
+						selectedContents={selectedContents}
+					/>
 				</>
 			)}
 
@@ -363,7 +358,7 @@ const Name = styled.div`
 	font-size: 24px;
 	font-weight: bold;
 `
-const RefeshBtn = styled.button`
+const RefreshBtn = styled.button`
 	color: white;
 	border: 0px;
 	border-radius: 4px;

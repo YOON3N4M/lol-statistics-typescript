@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { MatchInfoArray, ParticipantInfo } from '../@types/types'
 import PositionsBar from './PositionsBar'
-import Summarys from './Summarys'
+import Summarys from './SummaryMost'
 
 interface Props {
 	mostPlayChampions: any
@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
-	console.log(mostPlayChampions)
 	const flattedArr = mostPlayChampions.flat()
 	const winCount = flattedArr.filter(
 		(info: ParticipantInfo) => info.win === true,

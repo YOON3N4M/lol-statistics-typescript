@@ -1,15 +1,7 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { MatchInfoObj, PlayerObj, UserDocument } from '../@types/types'
-import {
-	getCS,
-	getKDA,
-	getKillParticipationRate,
-	getMatchStatistics,
-	getQueueTypeName,
-	getRuneName,
-	getSummonersSpellName,
-} from '../utils'
+import { MatchInfoObj, UserDocument } from '../@types/types'
+import { getMatchStatistics } from '../utils'
 import {
 	CHAMPION_ICON_URL,
 	ITEM_ICON_URL,
@@ -26,7 +18,7 @@ function MatchHistorys({ userDocument, match }: Props) {
 	const name = userDocument.name
 
 	const matchStatistics = getMatchStatistics(match, name)
-	console.log(match, matchStatistics?.matchStatistics.queueType)
+	// console.log(match, matchStatistics?.matchStatistics.queueType)
 
 	return (
 		<>
@@ -136,11 +128,13 @@ function MatchHistorys({ userDocument, match }: Props) {
 											))}
 										</ItemUl>
 										<WardBox isWin={matchStatistics?.searchedPlayer.win}>
-											<WardIcon
-												src={ITEM_ICON_URL(
-													matchStatistics?.searchedPlayer.ward,
-												)}
-											/>
+											{matchStatistics?.searchedPlayer.ward !== 0 && (
+												<WardIcon
+													src={ITEM_ICON_URL(
+														matchStatistics?.searchedPlayer.ward,
+													)}
+												/>
+											)}
 										</WardBox>
 									</ItemContainer>
 								</BottomRow>

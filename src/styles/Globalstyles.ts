@@ -5,6 +5,7 @@ const color = {
 	sky: '#0093ff',
 	mint: '#00bba3',
 	red: '#d31a45',
+	gray: '#9AA4AF',
 }
 
 export const variable = {

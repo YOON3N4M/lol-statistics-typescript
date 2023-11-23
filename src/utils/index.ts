@@ -1,6 +1,13 @@
-import { PlayerObj } from '../@types/types'
+import { ParticipantInfo } from '../@types/types'
 import { tierIcon } from '../constants'
 import championsData from '../data/championsData.json'
+import { variable } from '../styles/Globalstyles'
+
+export function extractSummonerName(pathname: string) {
+	const decoded = decodeURI(pathname)
+	const summonerName = decoded.substring(decoded.indexOf('kr/') + 3)
+	return summonerName
+}
 
 // 티어 표기의 로마 숫자를 아랍 숫자로 변환
 export function romeNumToArabNum(rome: string) {
@@ -44,6 +51,11 @@ export function matchingTierImg(tier: string) {
 	}
 }
 
+// 승률
+export function getWinRate(wins: number, loses: number) {
+	return (wins / (wins + loses)) * 100
+}
+
 // 팀 전체킬 대비 특정 플레이어의 킬 관여율
 export function getKillParticipationRate(
 	totalKills: number,
@@ -66,6 +78,17 @@ export function getKDA(kills: number, deaths: number, assists: number) {
 	} else {
 		return ((kills + assists) / deaths).toFixed(2)
 	}
+}
+// 각 KDA 컬러
+export function getKDAColor(kda: number): string {
+	if (kda >= 5) {
+		return variable.color.orange
+	} else if (4 <= kda && kda < 5) {
+		return variable.color.sky
+	} else if (3 <= kda && kda < 4) {
+		return variable.color.mint
+	}
+	return variable.color.gray
 }
 
 // CS 계산 gameDuration 인자가 있으면 총 CS가 아닌 분당 CS return
@@ -179,7 +202,9 @@ export function getSummonersSpellName(spellA: number, spellB: number) {
 		case 1:
 			a = 'SummonerBoost'
 			break
-
+		case 32:
+			a = 'SummonerSnowball'
+			break
 		case 39:
 			a = 'SummonerSnowURFSnowball_Mark'
 			break
@@ -314,15 +339,15 @@ export function getMatchStatistics(
 	match: any,
 	searchedName: string | undefined,
 ) {
-	const currentPlayer: PlayerObj = match.info.participants.filter(
-		(player: PlayerObj) => player.summonerName === searchedName,
+	const currentPlayer: ParticipantInfo = match.info.participants.filter(
+		(player: ParticipantInfo) => player.summonerName === searchedName,
 	)[0]
 	if (!currentPlayer) return
 	const teamA = match.info.participants.filter(
-		(player: PlayerObj) => player.teamId === currentPlayer?.teamId,
+		(player: ParticipantInfo) => player.teamId === currentPlayer?.teamId,
 	)
 	const teamB = match.info.participants.filter(
-		(player: PlayerObj) => player.teamId !== currentPlayer?.teamId,
+		(player: ParticipantInfo) => player.teamId !== currentPlayer?.teamId,
 	)
 
 	const teamATotalKills = teamA.reduce(function add(sum: any, item: any) {

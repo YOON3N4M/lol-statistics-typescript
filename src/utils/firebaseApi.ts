@@ -14,7 +14,6 @@ import {
 	SummonerObj,
 	UserDocument,
 } from '../@types/types'
-import { match } from 'assert'
 
 async function getUserDocument(summonersName: string) {
 	const q = query(
@@ -43,6 +42,7 @@ async function postUserDocumentOnDB(
 	leagueInfo: LeagueObj[],
 	matchIdArr: string[],
 ) {
+	console.log(leagueInfo)
 	const soloRank = leagueInfo.find(
 		(league) => league.queueType === 'RANKED_SOLO_5x5',
 	)
@@ -64,6 +64,7 @@ async function postUserDocumentOnDB(
 	}
 
 	await setDoc(doc(dbService, 'user', summonerInfo.puuid), userDocumentRef)
+	return userDocumentRef
 }
 
 async function postMatchInfoOnDB(matchInfo: MatchInfoObj) {

@@ -23,14 +23,15 @@ export interface MatchInfoObj {
 }
 export type MatchInfoArray = Array<MatchInfoObj> | undefined[] | undefined
 
+//firebase
 export interface UserDocument {
-	accountId?: string
-	id?: string
-	name?: string
+	accountId: string
+	id: string
+	name: string
 	nameRe?: string
-	profileIconId?: number
-	puuid?: string
-	summonerLevel?: number
+	profileIconId: number
+	puuid: string
+	summonerLevel: number
 	league1?: any
 	league2?: any
 	matchHistory?: Array<string>
@@ -42,7 +43,7 @@ export interface RiotApiObj {
 	matchInfo: string[]
 }
 
-export interface PlayerObj {
+export interface ParticipantInfo {
 	championName: string
 	item0: number
 	item1: number
@@ -65,16 +66,6 @@ export interface PlayerObj {
 	neutralMinionsKilled: number
 	totalMinionsKilled: number
 	champLevel: number
-}
-
-export interface ParticipantInfo {
-	kills: number
-	deaths: number
-	assists: number
-	win: boolean
-	totalMinionsKilled: number
-	neutralMinionsKilled: number
-	championName: string
 }
 
 export interface LeagueInfo {
@@ -100,4 +91,11 @@ export interface LeagueInfo {
 }
 export interface ParticipantsData extends Array<ParticipantInfo[]> {
 	[index: number]: ParticipantInfo[]
+}
+
+export type ContentsType = 'InGame' | 'MatchHistorys'
+
+export interface SearchResult {
+	existMatchInfoArr: MatchInfoObj[]
+	unExistMatchIdArr: string[]
 }
