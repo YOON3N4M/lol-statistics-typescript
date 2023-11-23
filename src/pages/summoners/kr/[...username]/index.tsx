@@ -51,9 +51,6 @@ function Summoners() {
 	///
 	const [alarm, setAlarm] = useState(false)
 
-	//검색된 플레이어의 15게임 이내 플레이어 정보 - Summary 부분에 활용되는 정보임
-	const [currentMatch, setCurrentMatch] = useState<any>([])
-
 	//검색된 게임 포지션 비율
 	const [notFound, setNotFound] = useState(false)
 	function alarmFn() {
@@ -75,22 +72,6 @@ function Summoners() {
 		}
 	}
 
-	async function getMatchDocumentDB(matchIDArr: string[] | undefined) {
-		if (matchIDArr === undefined) return
-
-		const result: any[] = await Promise.all(
-			matchIDArr.map(async (matchID) => {
-				const res = await firebaseAPI.getMatchFromDB(matchID)
-
-				if (res === undefined) return
-				return res
-			}),
-		)
-		const removeUndefined = result.filter((e) => e !== undefined)
-
-		return removeUndefined
-	}
-
 	async function getRiotAPI(summonerName: string) {
 		try {
 			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)
@@ -104,6 +85,12 @@ function Summoners() {
 				leagueInfo,
 				matchIdArr,
 			}
+			const postDB = await firebaseAPI.postUserDocumentOnDB(
+				summonerInfo,
+				leagueInfo,
+				matchIdArr,
+			)
+			setUserDocument(postDB)
 			return result
 		} catch (error) {
 			console.log(error)
@@ -111,8 +98,8 @@ function Summoners() {
 		}
 	}
 
-	async function searchMatchId(matchIdArr: string[]) {
-		if (matchIdArr.length < 1) return
+	async function searchMatchId(matchIdArr?: string[]) {
+		if (matchIdArr === undefined || matchIdArr.length < 1) return []
 		const searchResult = await Promise.all(
 			matchIdArr.map(async (matchID: string) => {
 				const res = await firebaseAPI.getMatchFromDB(matchID)
@@ -168,41 +155,42 @@ function Summoners() {
 		setMostPlayChampions(mostList)
 	}
 
+	async function refresh() {
+		const riotApiResult: any = await getRiotAPI('동방은아')
+		const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
+		const handleResult = await handleMatchInfo(searchResult)
+		setMatchInfoArr(handleResult)
+		console.log('갱신완료')
+	}
+
 	// 전적 페이지 첫 진입시 동작
 	useEffect(() => {
 		async function initPage() {
 			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
-			const userDoc = await getUserDocument('멀록몰록말록물록')
+			const userDoc = await getUserDocument('동방은아')
+			let handleResult
+			let searchResult: any
 			if (!userDoc) {
-				//여기서
+				console.log('db에 존재하지 않는 소환사 입니다.')
+				const riotApiResult: any = await getRiotAPI('동방은아')
+				searchResult = await searchMatchId(riotApiResult.matchIdArr)
+				handleResult = await handleMatchInfo(searchResult)
 			} else {
+				console.log('db에 존재하는 소환사 입니다.')
 				setUserDocument(userDoc)
-				console.log(userDoc)
+				searchResult = await searchMatchId(userDoc.matchHistory)
+				handleResult = await handleMatchInfo(searchResult)
 			}
-
-			const riotApiResult: any = await getRiotAPI('멀록몰록말록물록')
-			const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
-			const handleResult = await handleMatchInfo(searchResult)
 			setMatchInfoArr(handleResult)
-			// const isExist = await getDocumentFromFirebase()
-			// console.log(isExist, 'ss')
-			// if (isExist) return
-			// const riotAPIResult: any = await getRiotAPI()w
-			// const postDB = await firebaseAPI.postUserDocumentOnDB(
-			// 	riotAPIResult.summonerInfo,
-			// 	riotAPIResult.leagueInfo,
-			// 	riotAPIResult.matchInfo,
-			// )
-			// const requestAgain = await getDocumentFromFirebase()
 		}
 
 		initPage()
 	}, [])
 
-	// useEffect(() => {
-	// 	if (matchInfoArr?.length === 0) return
-	// 	getMostChampionArr()
-	// }, [matchInfoArr])
+	useEffect(() => {
+		if (matchInfoArr?.length === 0) return
+		getMostChampionArr()
+	}, [matchInfoArr])
 
 	return (
 		<>
@@ -234,7 +222,7 @@ function Summoners() {
 								<Name>{userDocument.name}</Name>
 								<RefreshBtn
 									onClick={() => {
-										// getRiotAPI()
+										refresh()
 									}}
 								>
 									전적 갱신

@@ -64,6 +64,7 @@ async function postUserDocumentOnDB(
 	}
 
 	await setDoc(doc(dbService, 'user', summonerInfo.puuid), userDocumentRef)
+	return userDocumentRef
 }
 
 async function postMatchInfoOnDB(matchInfo: MatchInfoObj) {
