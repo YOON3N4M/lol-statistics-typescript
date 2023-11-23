@@ -91,22 +91,6 @@ function Summoners() {
 		return removeUndefined
 	}
 
-	async function getDocumentFromFirebase() {
-		const userDocs = await getUserDocumentDB()
-
-		setUserDocument(userDocs)
-		if (userDocs === undefined) return false
-
-		const matchArr: MatchInfoArray | undefined = await getMatchDocumentDB(
-			userDocs.matchHistory,
-		)
-
-		if (matchArr === undefined) return
-		console.log(matchArr)
-		setMatchInfoArr(matchArr)
-		return true
-	}
-
 	async function getRiotAPI(summonerName: string) {
 		try {
 			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)

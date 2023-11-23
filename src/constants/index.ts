@@ -41,15 +41,15 @@ export const SUMMONER_PROFILE_ICON_URL = (iconId: number) => {
 	return `http://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/profileicon/${iconId}.png`
 }
 
-export const SUMMONER_SPELL_ICON_URL = (spellId: string) => {
+export const SUMMONER_SPELL_ICON_URL = (spellId?: string) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/spell/${spellId}.png`
 }
 
-export const RUNE_ICON_URL = (runeId: string) => {
+export const RUNE_ICON_URL = (runeId?: string) => {
 	return `https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${runeId}.png`
 }
 
-export const ITEM_ICON_URL = (itemId: string) => {
+export const ITEM_ICON_URL = (itemId: number) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/item/${itemId}.png`
 }
 

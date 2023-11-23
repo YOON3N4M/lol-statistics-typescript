@@ -23,6 +23,7 @@ export interface MatchInfoObj {
 }
 export type MatchInfoArray = Array<MatchInfoObj> | undefined[] | undefined
 
+//firebase
 export interface UserDocument {
 	accountId: string
 	id: string
@@ -95,6 +96,6 @@ export interface ParticipantsData extends Array<ParticipantInfo[]> {
 export type ContentsType = 'InGame' | 'MatchHistorys'
 
 export interface SearchResult {
-	existMatchInfoArr: any
-	unExistMatchIdArr: any
+	existMatchInfoArr: MatchInfoObj[]
+	unExistMatchIdArr: string[]
 }
