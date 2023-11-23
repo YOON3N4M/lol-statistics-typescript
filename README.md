@@ -23,8 +23,8 @@
 
 # lol-statistics-typescript
 
-* ### V3 버전 ( 배포 | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/next) )
-> 배포 : vercel (예정) <br><br>
+* ### V3 버전 ( [배포](https://lol-statistics-typescript.vercel.app/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/next) )
+> 배포 : vercel (11/23 첫 배포) <br><br>
 > <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <br>
 
