@@ -14,7 +14,7 @@ import {
 } from '@/@types/types'
 import { firebaseAPI } from '@/utils/firebaseApi'
 import { api } from '@/utils/api'
-import { DATA_DRAGON_VERSION, SUMMONER_PROFILE_ICON_URL } from '@/constants'
+import { SUMMONER_PROFILE_ICON_URL } from '@/constants'
 
 import MatchHistorys from '@/components/MatchHistorys'
 import CurrentRank from '@/components/CurrentRank'
@@ -33,14 +33,15 @@ import { extractSummonerName } from '@/utils'
 
 function Summoners() {
 	const pathname = usePathname()
-	const searchedSummonersName = extractSummonerName(pathname)
 
-	const matchQty = 15
+	const [searchedSummonersName, setSearchedSummonersName] = useState('')
+
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	// matchQty 만큼의 총 전적
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
 		[],
 	)
+	const matchQty = 15
 	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
 	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
 	const [selectedContents, setSelectedContents] =
@@ -64,6 +65,7 @@ function Summoners() {
 		summonerName: string,
 	): Promise<UserDocument | undefined> {
 		try {
+			console.log(summonerName)
 			const result = await firebaseAPI.getUserDocument(summonerName)
 			console.log(result)
 			return result
@@ -163,16 +165,23 @@ function Summoners() {
 		console.log('갱신완료')
 	}
 
+	useEffect(() => {
+		if (pathname === null) return
+		const extractedSummonerName = extractSummonerName(pathname)
+		setSearchedSummonersName(extractedSummonerName)
+	}, [pathname])
+
 	// 전적 페이지 첫 진입시 동작
 	useEffect(() => {
-		async function initPage() {
+		if (searchedSummonersName === '') return
+		async function initRefresh() {
 			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
-			const userDoc = await getUserDocument('동방은아')
+			const userDoc = await getUserDocument(searchedSummonersName)
 			let handleResult
 			let searchResult: any
 			if (!userDoc) {
 				console.log('db에 존재하지 않는 소환사 입니다.')
-				const riotApiResult: any = await getRiotAPI('동방은아')
+				const riotApiResult: any = await getRiotAPI(searchedSummonersName)
 				searchResult = await searchMatchId(riotApiResult.matchIdArr)
 				handleResult = await handleMatchInfo(searchResult)
 			} else {
@@ -184,8 +193,8 @@ function Summoners() {
 			setMatchInfoArr(handleResult)
 		}
 
-		initPage()
-	}, [])
+		initRefresh()
+	}, [searchedSummonersName])
 
 	useEffect(() => {
 		if (matchInfoArr?.length === 0) return
