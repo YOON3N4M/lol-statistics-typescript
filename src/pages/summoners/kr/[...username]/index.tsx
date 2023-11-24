@@ -92,8 +92,8 @@ function Summoners() {
 				leagueInfo,
 				matchIdArr,
 			)
-			setUserDocument(postDB)
-			return result
+
+			return { result, postDB }
 		} catch (error) {
 			console.log(error)
 			return false
@@ -117,8 +117,10 @@ function Summoners() {
 
 	// matchId중 DB에 없는 ID를 라이엇에 요청 후 받아온 데이터를 DB에 보내고
 	// DB에 존재하던 matchInfoArr에 합친 후, return
-	async function handleMatchInfo(searchResult: SearchResult) {
+	async function checkExistMatch(searchResult: SearchResult) {
+		if (!searchResult) return
 		const { existMatchInfoArr, unExistMatchIdArr } = searchResult
+		console.log(searchResult, unExistMatchIdArr)
 
 		if (unExistMatchIdArr.length === 0) {
 			return existMatchInfoArr
@@ -157,11 +159,18 @@ function Summoners() {
 		setMostPlayChampions(mostList)
 	}
 
+	async function handleMatchInfo(matchIdArr?: string[]) {
+		console.log(matchIdArr)
+		const searchResult: any = await searchMatchId(matchIdArr)
+		const handleResult = await checkExistMatch(searchResult)
+		return handleResult
+	}
+
 	async function refresh() {
 		const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-		const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
-		const handleResult = await handleMatchInfo(searchResult)
-		setMatchInfoArr(handleResult)
+		const result: any = await handleMatchInfo(riotApiResult.result.matchIdArr)
+		setUserDocument(riotApiResult.postDB)
+		setMatchInfoArr(result)
 		console.log('갱신완료')
 	}
 
@@ -178,20 +187,19 @@ function Summoners() {
 		async function initRefresh() {
 			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
 			const userDoc = await getUserDocument(searchedSummonersName)
-			let handleResult
-			let searchResult: any
+
+			let matchInfos: any
 			if (!userDoc) {
 				console.log('db에 존재하지 않는 소환사 입니다.')
 				const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-				searchResult = await searchMatchId(riotApiResult.matchIdArr)
-				handleResult = await handleMatchInfo(searchResult)
+				setUserDocument(riotApiResult.postDB)
+				matchInfos = await handleMatchInfo(riotApiResult.result.matchIdArr)
 			} else {
 				console.log('db에 존재하는 소환사 입니다.')
 				setUserDocument(userDoc)
-				searchResult = await searchMatchId(userDoc.matchHistory)
-				handleResult = await handleMatchInfo(searchResult)
+				matchInfos = await handleMatchInfo(userDoc.matchHistory)
 			}
-			setMatchInfoArr(handleResult)
+			setMatchInfoArr(matchInfos)
 		}
 
 		initRefresh()
@@ -233,6 +241,10 @@ function Summoners() {
 								<RefreshBtn
 									onClick={() => {
 										refresh()
+										// setMatchInfoArr(undefined)
+										// setSearchedSummonersName('')
+										// setMostPlayChampions([])
+										// setUserDocument(undefined)
 									}}
 								>
 									전적 갱신
