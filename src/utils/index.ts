@@ -1,12 +1,33 @@
+import { InGameInfo } from '@/components/inGame/InGame'
 import { ParticipantInfo } from '../@types/types'
 import { tierIcon } from '../constants'
 import championsData from '../data/championsData.json'
 import { variable } from '../styles/Globalstyles'
+import { RefinedInGameInfo } from './../components/inGame/InGame'
 
 export function extractSummonerName(pathname: string) {
 	const decoded = decodeURI(pathname)
 	const summonerName = decoded.substring(decoded.indexOf('kr/') + 3)
 	return summonerName
+}
+
+export function calculatedTimeDiffer(unixTime: number) {
+	const start = new Date(unixTime)
+	const end = new Date()
+
+	const seconds = Math.floor((end.getTime() - start.getTime()) / 1000)
+	if (seconds < 60) return '방금 전'
+
+	const minutes = seconds / 60
+	if (minutes < 60) return `${Math.floor(minutes)}분 전`
+
+	const hours = minutes / 60
+	if (hours < 24) return `${Math.floor(hours)}시간 전`
+
+	const days = hours / 24
+	if (days < 7) return `${Math.floor(days)}일 전`
+
+	return `${start.toLocaleDateString()}`
 }
 
 // 티어 표기의 로마 숫자를 아랍 숫자로 변환
@@ -437,4 +458,81 @@ export function translateKorChampionName(championName: string) {
 	const koreanChampionName = championsObj[fixedChampionName(championName)].name
 
 	return koreanChampionName
+}
+
+export function refineInGameInfo(inGameInfo: InGameInfo) {
+	const {
+		bannedChampions,
+		gameId,
+		gameStartTime,
+		gameMode,
+		gameType,
+		mapId,
+		participants,
+		platformId,
+	} = inGameInfo
+
+	const refinedParticipants = participants.map((participant, idx) => {
+		let bannedChampion
+
+		switch (idx) {
+			case 0:
+				bannedChampion = bannedChampions[0]
+				break
+			case 1:
+				bannedChampion = bannedChampions[3]
+				break
+			case 2:
+				bannedChampion = bannedChampions[4]
+				break
+			case 3:
+				bannedChampion = bannedChampions[7]
+				break
+			case 4:
+				bannedChampion = bannedChampions[8]
+				break
+
+			case 5:
+				bannedChampion = bannedChampions[1]
+				break
+			case 6:
+				bannedChampion = bannedChampions[2]
+				break
+			case 7:
+				bannedChampion = bannedChampions[5]
+				break
+			case 8:
+				bannedChampion = bannedChampions[6]
+				break
+			case 9:
+				bannedChampion = bannedChampions[9]
+				break
+		}
+
+		const addBanToParticipant = {
+			...participant,
+			ban: bannedChampion,
+		}
+		return addBanToParticipant
+	})
+
+	const blueTeam = refinedParticipants.filter(
+		(participant) => participant.teamId === 100,
+	)
+
+	const purpleTeam = refinedParticipants.filter(
+		(participant) => participant.teamId === 200,
+	)
+
+	const result: any = {
+		blueTeam,
+		purpleTeam,
+		gameId,
+		gameStartTime,
+		gameMode,
+		gameType,
+		mapId,
+		platformId,
+	}
+	return result
 }

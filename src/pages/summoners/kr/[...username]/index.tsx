@@ -24,8 +24,8 @@ import Footer from '@/components/layout/Footer'
 import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
 import Header from '@/components/layout/Header'
 import { usePathname } from 'next/navigation'
-import { extractSummonerName } from '@/utils'
-import InGame from '@/components/InGame'
+import { calculatedTimeDiffer, extractSummonerName } from '@/utils'
+import InGame from '@/components/inGame/InGame'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -266,7 +266,10 @@ function Summoners() {
 								>
 									전적 갱신
 								</RefreshBtn>
-								<LastUpdate>최근 업데이트 : - </LastUpdate>
+								<LastUpdate>
+									최근 업데이트 :{' '}
+									{calculatedTimeDiffer(userDocument.lastRequestTime)}{' '}
+								</LastUpdate>
 							</Info>
 						</Wrapper>
 					</ContentsHeader>
@@ -317,7 +320,7 @@ function Summoners() {
 					)}
 				</>
 			) : (
-				<InGame />
+				<InGame summonerId={userDocument?.id} />
 			)}
 
 			<Footer></Footer>
