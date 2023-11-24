@@ -167,11 +167,24 @@ function Summoners() {
 	}
 
 	async function refresh() {
-		const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-		const result: any = await handleMatchInfo(riotApiResult.result.matchIdArr)
-		setUserDocument(riotApiResult.postDB)
-		setMatchInfoArr(result)
-		console.log('갱신완료')
+		if (!userDocument) return
+		const lastRequest = userDocument.lastRequestTime
+		const nowTime = new Date().getTime()
+		const timeDiffer = Math.abs((lastRequest - nowTime) / 1000)
+		console.log(timeDiffer)
+		// 3분
+		const timeLimit = 180
+		if (timeDiffer < timeLimit) {
+			const remainTime = Math.floor(timeLimit - timeDiffer)
+			console.log(remainTime)
+			alert(`전적 갱신은 180초마다 가능합니다. ${remainTime}초 남았습니다.`)
+		} else {
+			const riotApiResult: any = await getRiotAPI(searchedSummonersName)
+			const result: any = await handleMatchInfo(riotApiResult.result.matchIdArr)
+			setUserDocument(riotApiResult.postDB)
+			setMatchInfoArr(result)
+			console.log('갱신완료')
+		}
 	}
 
 	//첫 진입 시 닉네임 추출
