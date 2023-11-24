@@ -25,6 +25,7 @@ import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
 import Header from '@/components/layout/Header'
 import { usePathname } from 'next/navigation'
 import { extractSummonerName } from '@/utils'
+import InGame from '@/components/InGame'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -35,7 +36,6 @@ function Summoners() {
 	const pathname = usePathname()
 
 	const [searchedSummonersName, setSearchedSummonersName] = useState('')
-
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	// matchQty 만큼의 총 전적
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
@@ -276,39 +276,50 @@ function Summoners() {
 					/>
 				</>
 			)}
-
-			{userDocument !== undefined && (
+			{selectedContents === 'MatchHistorys' ? (
 				<>
-					<ContentsContainer>
-						<LeftContents>
-							<CurrentRank userDocument={userDocument} />
-							<MostPlayed mostPlayChampions={mostPlayChampions} />
-						</LeftContents>
-						<RightContents>
-							<MatchHistoryTab>
-								<MatchHistroyTabUl>
-									<MatchHistoryTabLi selected={true}>전체</MatchHistoryTabLi>
-									<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-									<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-									<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-								</MatchHistroyTabUl>
-							</MatchHistoryTab>
-							{/** */}
-							<Summary
-								matchInfoArr={matchInfoArr}
-								mostPlayChampions={mostPlayChampions}
-							/>
+					{userDocument !== undefined && (
+						<>
+							<ContentsContainer>
+								<LeftContents>
+									<CurrentRank userDocument={userDocument} />
+									<MostPlayed mostPlayChampions={mostPlayChampions} />
+								</LeftContents>
+								<RightContents>
+									<MatchHistoryTab>
+										<MatchHistroyTabUl>
+											<MatchHistoryTabLi selected={true}>
+												전체
+											</MatchHistoryTabLi>
+											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+										</MatchHistroyTabUl>
+									</MatchHistoryTab>
+									{/** */}
+									<Summary
+										matchInfoArr={matchInfoArr}
+										mostPlayChampions={mostPlayChampions}
+									/>
 
-							<MatchHistoryContainer>
-								{matchInfoArr &&
-									matchInfoArr.map((match: any) => (
-										<MatchHistorys match={match} userDocument={userDocument} />
-									))}
-							</MatchHistoryContainer>
-						</RightContents>
-					</ContentsContainer>
+									<MatchHistoryContainer>
+										{matchInfoArr &&
+											matchInfoArr.map((match: any) => (
+												<MatchHistorys
+													match={match}
+													userDocument={userDocument}
+												/>
+											))}
+									</MatchHistoryContainer>
+								</RightContents>
+							</ContentsContainer>
+						</>
+					)}
 				</>
+			) : (
+				<InGame />
 			)}
+
 			<Footer></Footer>
 		</>
 	)

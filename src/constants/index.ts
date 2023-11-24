@@ -36,8 +36,11 @@ export const MATCH_INFO_URL = (id: string) => {
 	return `https://asia.api.riotgames.com/lol/match/v5/matches/${id}?api_key=${API_KEY}`
 }
 
-// DataDragon
+export const INGAME_INFO_URL = (summonerId: string) => {
+	return `https://kr.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/${summonerId}?api_key=${API_KEY}`
+}
 
+// DataDragon
 export const CHAMPION_ICON_URL = (championName: string) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${fixedChampionName(
 		championName,
