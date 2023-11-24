@@ -41,7 +41,7 @@ function Summoners() {
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
 		[],
 	)
-	const matchQty = 15
+	const matchQty = 20
 	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
 	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
 	const [selectedContents, setSelectedContents] =
@@ -163,7 +163,11 @@ function Summoners() {
 		console.log(matchIdArr)
 		const searchResult: any = await searchMatchId(matchIdArr)
 		const handleResult = await checkExistMatch(searchResult)
-		return handleResult
+		const sortByTime = handleResult
+			?.slice()
+			.sort((a, b) => b.info.gameCreation - a.info.gameCreation)
+
+		return sortByTime
 	}
 
 	async function refresh() {

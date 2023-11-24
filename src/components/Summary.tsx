@@ -39,7 +39,7 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 		).toFixed(1),
 	)
 
-	const kdaAvg = totalKillsAvg + totalAssistsAvg / totalDeathsAvg
+	const kdaAvg = (totalKillsAvg + totalAssistsAvg) / totalDeathsAvg
 	return (
 		<SummaryContainer>
 			{mostPlayChampions.length !== 0 ? (
@@ -89,11 +89,11 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 								</KDA>
 								<SumRaito>{kdaAvg.toFixed(2)}: 1</SumRaito>
 								<KillPart>
-									킬관여{' '}
-									{/* {totalKillPartNum !== undefined
+									{/* 킬관여{' '}
+									{totalKillPartNum !== undefined
 								? Math.round(totalKillPartNum)
-								: 0} */}
-									%
+								: 0}
+									% */}
 								</KillPart>
 							</SumInfo>
 						</RatioKda>
