@@ -6,9 +6,11 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import TeamContainer from './TeamContainer'
+import { ContentsType } from '@/@types/types'
 
 interface Props {
 	summonerId?: string
+	setSelectedContents: React.Dispatch<React.SetStateAction<ContentsType>>
 }
 
 interface InGameParticipant {
@@ -56,7 +58,7 @@ export interface RefinedInGameInfo {
 	platformId: 'KR'
 }
 
-export default function InGame({ summonerId }: Props) {
+export default function InGame({ summonerId, setSelectedContents }: Props) {
 	const [inGameData, setInGameData] = useState<RefinedInGameInfo | undefined>()
 	const [isOnGame, setIsOnGame] = useState<true | false | undefined>(undefined)
 	useEffect(() => {
@@ -70,22 +72,28 @@ export default function InGame({ summonerId }: Props) {
 				setIsOnGame(true)
 			} catch (error) {
 				setIsOnGame(false)
+				alert('해당 플레이어는 현재 게임중이 아닙니다.')
+				setSelectedContents('MatchHistorys')
 			}
 		}
 		getAPI()
 	}, [])
 	return (
-		<StyledInGameContainer>
-			<StyledHeader>
-				<div>
-					<span className="queue-type">솔랭</span>
-					<span className="map">소환사의 협곡</span>
-					<span className="timer">06:49</span>
-				</div>
-				<div></div>
-			</StyledHeader>
-			<TeamContainer team={inGameData?.blueTeam} />
-		</StyledInGameContainer>
+		<>
+			{isOnGame && (
+				<StyledInGameContainer>
+					<StyledHeader>
+						<div>
+							<span className="queue-type">솔랭</span>
+							<span className="map">소환사의 협곡</span>
+							<span className="timer">06:49</span>
+						</div>
+						<div></div>
+					</StyledHeader>
+					<TeamContainer team={inGameData?.blueTeam} />
+				</StyledInGameContainer>
+			)}
+		</>
 	)
 }
 

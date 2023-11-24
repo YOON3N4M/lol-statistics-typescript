@@ -320,7 +320,10 @@ function Summoners() {
 					)}
 				</>
 			) : (
-				<InGame summonerId={userDocument?.id} />
+				<InGame
+					summonerId={userDocument?.id}
+					setSelectedContents={setSelectedContents}
+				/>
 			)}
 
 			<Footer></Footer>
