@@ -51,8 +51,8 @@ export const SUMMONER_PROFILE_ICON_URL = (iconId: number) => {
 	return `http://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/profileicon/${iconId}.png`
 }
 
-export const SUMMONER_SPELL_ICON_URL = (spellId?: string) => {
-	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/spell/${spellId}.png`
+export const SUMMONER_SPELL_ICON_URL = (spellName?: string) => {
+	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/spell/${spellName}.png`
 }
 
 export const RUNE_ICON_URL = (runeId?: string) => {

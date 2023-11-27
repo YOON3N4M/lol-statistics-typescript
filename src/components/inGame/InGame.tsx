@@ -62,21 +62,24 @@ export default function InGame({ summonerId, setSelectedContents }: Props) {
 	const [inGameData, setInGameData] = useState<RefinedInGameInfo | undefined>()
 	const [isOnGame, setIsOnGame] = useState<true | false | undefined>(undefined)
 	useEffect(() => {
-		async function getAPI() {
-			if (!summonerId) return
-			try {
-				const result: InGameInfo = await api.getInGameInfo(summonerId)
-				const refined: RefinedInGameInfo = refineInGameInfo(result)
-				console.log(refined)
-				setInGameData(refined)
-				setIsOnGame(true)
-			} catch (error) {
-				setIsOnGame(false)
-				alert('해당 플레이어는 현재 게임중이 아닙니다.')
-				setSelectedContents('MatchHistorys')
-			}
-		}
-		getAPI()
+		alert('현재 인게임 정보 기능이 수정 중 입니다.')
+		setSelectedContents('MatchHistorys')
+
+		// async function getAPI() {
+		// 	if (!summonerId) return
+		// 	try {
+		// 		const result: InGameInfo = await api.getInGameInfo(summonerId)
+		// 		const refined: RefinedInGameInfo = refineInGameInfo(result)
+		// 		console.log(refined)
+		// 		setInGameData(refined)
+		// 		setIsOnGame(true)
+		// 	} catch (error) {
+		// 		setIsOnGame(false)
+		// 		alert('해당 플레이어는 현재 게임중이 아닙니다.')
+		// 		setSelectedContents('MatchHistorys')
+		// 	}
+		// }
+		// getAPI()
 	}, [])
 	return (
 		<>
