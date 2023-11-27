@@ -29,22 +29,6 @@ function Home() {
 		router.push(`summoners/kr/${name}`)
 	}
 
-	const sktMember = {
-		top: '우 제',
-		jg: '잘가요 굿바이',
-		mid: 'Hide on bush',
-		adc: 'T1 Gumayusi',
-		sup: '역천괴',
-	}
-
-	const gengMember = {
-		top: '어리고싶다',
-		jg: 'XiaoHuaSheng7',
-		mid: 'GOOD GAME GG XD',
-		adc: '으끄으끄',
-		sup: '무성은고기먹을래',
-	}
-
 	return (
 		<>
 			<Header />

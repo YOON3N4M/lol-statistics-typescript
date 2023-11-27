@@ -39,7 +39,7 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 		).toFixed(1),
 	)
 
-	const kdaAvg = totalKillsAvg + totalAssistsAvg / totalDeathsAvg
+	const kdaAvg = (totalKillsAvg + totalAssistsAvg) / totalDeathsAvg
 	return (
 		<SummaryContainer>
 			{mostPlayChampions.length !== 0 ? (
@@ -89,11 +89,11 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 								</KDA>
 								<SumRaito>{kdaAvg.toFixed(2)}: 1</SumRaito>
 								<KillPart>
-									킬관여{' '}
-									{/* {totalKillPartNum !== undefined
+									{/* 킬관여{' '}
+									{totalKillPartNum !== undefined
 								? Math.round(totalKillPartNum)
-								: 0} */}
-									%
+								: 0}
+									% */}
 								</KillPart>
 							</SumInfo>
 						</RatioKda>
@@ -112,7 +112,7 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 				</>
 			) : (
 				<NoHistory>
-					전적 정보가 없습니다. 전적이 있다면 전적 갱신을 시도 해보세요.
+					{/* 전적 정보가 없습니다. 전적이 있다면 전적 갱신을 시도 해보세요. */}
 				</NoHistory>
 			)}
 		</SummaryContainer>

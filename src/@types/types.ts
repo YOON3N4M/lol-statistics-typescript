@@ -35,6 +35,7 @@ export interface UserDocument {
 	league1?: any
 	league2?: any
 	matchHistory?: Array<string>
+	lastRequestTime: number
 }
 
 export interface RiotApiObj {

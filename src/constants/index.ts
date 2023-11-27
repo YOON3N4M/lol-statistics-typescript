@@ -1,3 +1,5 @@
+import { fixedChampionName } from '@/utils'
+
 import IRON from '@/img/tier/iron.png'
 import BRONZE from '@/img/tier/bronze.png'
 import SILVER from '@/img/tier/silver.png'
@@ -8,7 +10,12 @@ import MASTER from '@/img/tier/master.png'
 import GRANDMASTER from '@/img/tier/grandmaster.png'
 import CHALLENGER from '@/img/tier/challenger.png'
 import EMERALD from '@/img/tier/emerald.png'
-import { fixedChampionName } from '@/utils'
+
+import TOP_ICON from '@/img/lane/top.svg'
+import JG_ICON from '@/img/lane/jg.svg'
+import MID_ICON from '@/img/lane/mid.svg'
+import ADC_ICON from '@/img/lane/adc.svg'
+import SUP_ICON from '@/img/lane/sup.svg'
 
 // KEY and ETC...
 export const API_KEY = process.env.NEXT_PUBLIC_RIOT_API_KEY
@@ -29,8 +36,11 @@ export const MATCH_INFO_URL = (id: string) => {
 	return `https://asia.api.riotgames.com/lol/match/v5/matches/${id}?api_key=${API_KEY}`
 }
 
-// DataDragon
+export const INGAME_INFO_URL = (summonerId: string) => {
+	return `https://kr.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/${summonerId}?api_key=${API_KEY}`
+}
 
+// DataDragon
 export const CHAMPION_ICON_URL = (championName: string) => {
 	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${fixedChampionName(
 		championName,
@@ -41,8 +51,8 @@ export const SUMMONER_PROFILE_ICON_URL = (iconId: number) => {
 	return `http://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/profileicon/${iconId}.png`
 }
 
-export const SUMMONER_SPELL_ICON_URL = (spellId?: string) => {
-	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/spell/${spellId}.png`
+export const SUMMONER_SPELL_ICON_URL = (spellName?: string) => {
+	return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/spell/${spellName}.png`
 }
 
 export const RUNE_ICON_URL = (runeId?: string) => {
@@ -77,4 +87,12 @@ export const tierIcon = {
 	GRANDMASTER: GRANDMASTER.src,
 	//@ts-ignore
 	CHALLENGER: CHALLENGER.src,
+}
+
+export const positionIcon = {
+	topIcon: TOP_ICON.src,
+	jgIcon: JG_ICON.src,
+	midIcon: MID_ICON.src,
+	adcIcon: ADC_ICON.src,
+	supIcon: SUP_ICON.src,
 }

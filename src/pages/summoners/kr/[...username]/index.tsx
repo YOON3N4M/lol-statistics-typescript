@@ -24,7 +24,9 @@ import Footer from '@/components/layout/Footer'
 import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
 import Header from '@/components/layout/Header'
 import { usePathname } from 'next/navigation'
-import { extractSummonerName } from '@/utils'
+import { calculatedTimeDiffer, extractSummonerName } from '@/utils'
+import InGame from '@/components/inGame/InGame'
+import RefreshButton from '@/components/RefreshButton'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -34,14 +36,14 @@ import { extractSummonerName } from '@/utils'
 function Summoners() {
 	const pathname = usePathname()
 
+	const [loadingPercentage, setLoadingPercenTage] = useState(100)
 	const [searchedSummonersName, setSearchedSummonersName] = useState('')
-
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	// matchQty 만큼의 총 전적
 	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
 		[],
 	)
-	const matchQty = 15
+	const matchQty = 20
 	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
 	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
 	const [selectedContents, setSelectedContents] =
@@ -76,12 +78,16 @@ function Summoners() {
 
 	async function getRiotAPI(summonerName: string) {
 		try {
+			setLoadingPercenTage(0)
 			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)
+			setLoadingPercenTage(20)
 			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
+			setLoadingPercenTage(40)
 			const matchIdArr: string[] = await api.getMatchId(
 				summonerInfo.puuid,
 				matchQty,
 			)
+			setLoadingPercenTage(60)
 			const result = {
 				summonerInfo,
 				leagueInfo,
@@ -92,8 +98,8 @@ function Summoners() {
 				leagueInfo,
 				matchIdArr,
 			)
-			setUserDocument(postDB)
-			return result
+			setLoadingPercenTage(100)
+			return { result, postDB }
 		} catch (error) {
 			console.log(error)
 			return false
@@ -117,8 +123,10 @@ function Summoners() {
 
 	// matchId중 DB에 없는 ID를 라이엇에 요청 후 받아온 데이터를 DB에 보내고
 	// DB에 존재하던 matchInfoArr에 합친 후, return
-	async function handleMatchInfo(searchResult: SearchResult) {
+	async function checkExistMatch(searchResult: SearchResult) {
+		if (!searchResult) return
 		const { existMatchInfoArr, unExistMatchIdArr } = searchResult
+		console.log(searchResult, unExistMatchIdArr)
 
 		if (unExistMatchIdArr.length === 0) {
 			return existMatchInfoArr
@@ -157,12 +165,36 @@ function Summoners() {
 		setMostPlayChampions(mostList)
 	}
 
+	async function handleMatchInfo(matchIdArr?: string[]) {
+		console.log(matchIdArr)
+		const searchResult: any = await searchMatchId(matchIdArr)
+		const handleResult = await checkExistMatch(searchResult)
+		const sortByTime = handleResult
+			?.slice()
+			.sort((a, b) => b.info.gameCreation - a.info.gameCreation)
+
+		return sortByTime
+	}
+
 	async function refresh() {
-		const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-		const searchResult: any = await searchMatchId(riotApiResult.matchIdArr)
-		const handleResult = await handleMatchInfo(searchResult)
-		setMatchInfoArr(handleResult)
-		console.log('갱신완료')
+		if (!userDocument) return
+		const lastRequest = userDocument.lastRequestTime
+		const nowTime = new Date().getTime()
+		const timeDiffer = Math.abs((lastRequest - nowTime) / 1000)
+		console.log(timeDiffer)
+		// 3분
+		const timeLimit = 180
+		if (timeDiffer < timeLimit) {
+			const remainTime = Math.floor(timeLimit - timeDiffer)
+			console.log(remainTime)
+			alert(`전적 갱신은 180초마다 가능합니다. ${remainTime}초 남았습니다.`)
+		} else {
+			const riotApiResult: any = await getRiotAPI(searchedSummonersName)
+			const result: any = await handleMatchInfo(riotApiResult.result.matchIdArr)
+			setUserDocument(riotApiResult.postDB)
+			setMatchInfoArr(result)
+			console.log('갱신완료')
+		}
 	}
 
 	//첫 진입 시 닉네임 추출
@@ -178,20 +210,20 @@ function Summoners() {
 		async function initRefresh() {
 			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
 			const userDoc = await getUserDocument(searchedSummonersName)
-			let handleResult
-			let searchResult: any
+
+			let matchInfos: any
 			if (!userDoc) {
 				console.log('db에 존재하지 않는 소환사 입니다.')
 				const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-				searchResult = await searchMatchId(riotApiResult.matchIdArr)
-				handleResult = await handleMatchInfo(searchResult)
+				setUserDocument(riotApiResult.postDB)
+				matchInfos = await handleMatchInfo(riotApiResult.result.matchIdArr)
+				setLoadingPercenTage(100)
 			} else {
 				console.log('db에 존재하는 소환사 입니다.')
 				setUserDocument(userDoc)
-				searchResult = await searchMatchId(userDoc.matchHistory)
-				handleResult = await handleMatchInfo(searchResult)
+				matchInfos = await handleMatchInfo(userDoc.matchHistory)
 			}
-			setMatchInfoArr(handleResult)
+			setMatchInfoArr(matchInfos)
 		}
 
 		initRefresh()
@@ -230,14 +262,25 @@ function Summoners() {
 									</ul>
 								</TierContainer>
 								<Name>{userDocument.name}</Name>
-								<RefreshBtn
+								{/* <RefreshBtn
 									onClick={() => {
 										refresh()
+										// setMatchInfoArr(undefined)
+										// setSearchedSummonersName('')
+										// setMostPlayChampions([])
+										// setUserDocument(undefined)
 									}}
 								>
 									전적 갱신
-								</RefreshBtn>
-								<LastUpdate>최근 업데이트 : - </LastUpdate>
+								</RefreshBtn> */}
+								<RefreshButton
+									loadingPercentage={loadingPercentage}
+									refresh={refresh}
+								/>
+								<LastUpdate>
+									최근 업데이트 :{' '}
+									{calculatedTimeDiffer(userDocument.lastRequestTime)}{' '}
+								</LastUpdate>
 							</Info>
 						</Wrapper>
 					</ContentsHeader>
@@ -247,39 +290,53 @@ function Summoners() {
 					/>
 				</>
 			)}
-
-			{userDocument !== undefined && (
+			{selectedContents === 'MatchHistorys' ? (
 				<>
-					<ContentsContainer>
-						<LeftContents>
-							<CurrentRank userDocument={userDocument} />
-							<MostPlayed mostPlayChampions={mostPlayChampions} />
-						</LeftContents>
-						<RightContents>
-							<MatchHistoryTab>
-								<MatchHistroyTabUl>
-									<MatchHistoryTabLi selected={true}>전체</MatchHistoryTabLi>
-									<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-									<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-									<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-								</MatchHistroyTabUl>
-							</MatchHistoryTab>
-							{/** */}
-							<Summary
-								matchInfoArr={matchInfoArr}
-								mostPlayChampions={mostPlayChampions}
-							/>
+					{userDocument !== undefined && (
+						<>
+							<ContentsContainer>
+								<LeftContents>
+									<CurrentRank userDocument={userDocument} />
+									<MostPlayed mostPlayChampions={mostPlayChampions} />
+								</LeftContents>
+								<RightContents>
+									<MatchHistoryTab>
+										<MatchHistroyTabUl>
+											<MatchHistoryTabLi selected={true}>
+												전체
+											</MatchHistoryTabLi>
+											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
+										</MatchHistroyTabUl>
+									</MatchHistoryTab>
+									{/** */}
+									<Summary
+										matchInfoArr={matchInfoArr}
+										mostPlayChampions={mostPlayChampions}
+									/>
 
-							<MatchHistoryContainer>
-								{matchInfoArr &&
-									matchInfoArr.map((match: any) => (
-										<MatchHistorys match={match} userDocument={userDocument} />
-									))}
-							</MatchHistoryContainer>
-						</RightContents>
-					</ContentsContainer>
+									<MatchHistoryContainer>
+										{matchInfoArr &&
+											matchInfoArr.map((match: any) => (
+												<MatchHistorys
+													match={match}
+													userDocument={userDocument}
+												/>
+											))}
+									</MatchHistoryContainer>
+								</RightContents>
+							</ContentsContainer>
+						</>
+					)}
 				</>
+			) : (
+				<InGame
+					summonerId={userDocument?.id}
+					setSelectedContents={setSelectedContents}
+				/>
 			)}
+
 			<Footer></Footer>
 		</>
 	)

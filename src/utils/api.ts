@@ -1,4 +1,5 @@
 import {
+	INGAME_INFO_URL,
 	LEAGUE_INFO_URL,
 	MATCH_ID_URL,
 	MATCH_INFO_URL,
@@ -27,9 +28,15 @@ async function getMatchInfo(id: string) {
 	return res.data
 }
 
+async function getInGameInfo(summonerId: string) {
+	const res = await axios.get(INGAME_INFO_URL(summonerId))
+	return res.data
+}
+
 export const api = {
 	getSummonersInfo,
 	getLeagueInfo,
 	getMatchId,
 	getMatchInfo,
+	getInGameInfo
 }

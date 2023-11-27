@@ -21,7 +21,7 @@ export default function MostPlayed({ mostPlayChampions }: Props) {
 						<MostChampions champions={champions} />
 					))}
 				</MostChampionContainer>
-				<More>더 보기</More>
+				{/* <More>더 보기</More> */}
 			</MostPlayedBox>
 		</>
 	)

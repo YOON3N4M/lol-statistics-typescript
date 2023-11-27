@@ -42,7 +42,7 @@ async function postUserDocumentOnDB(
 	leagueInfo: LeagueObj[],
 	matchIdArr: string[],
 ) {
-	console.log(leagueInfo)
+	const lastRequestTime = new Date().getTime()
 	const soloRank = leagueInfo.find(
 		(league) => league.queueType === 'RANKED_SOLO_5x5',
 	)
@@ -61,6 +61,7 @@ async function postUserDocumentOnDB(
 		matchHistory: matchIdArr || [],
 		league1: soloRank || null,
 		league2: freeRank || null,
+		lastRequestTime,
 	}
 
 	await setDoc(doc(dbService, 'user', summonerInfo.puuid), userDocumentRef)

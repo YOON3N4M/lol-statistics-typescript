@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
 import { MatchInfoObj, UserDocument } from '../@types/types'
-import { getMatchStatistics } from '../utils'
+import { calculatedTimeDiffer, getMatchStatistics } from '../utils'
 import {
 	CHAMPION_ICON_URL,
 	ITEM_ICON_URL,
@@ -19,7 +19,6 @@ function MatchHistorys({ userDocument, match }: Props) {
 
 	const matchStatistics = getMatchStatistics(match, name)
 	// console.log(match, matchStatistics?.matchStatistics.queueType)
-
 	return (
 		<>
 			{matchStatistics?.matchStatistics.queueType !== undefined && (
@@ -30,7 +29,11 @@ function MatchHistorys({ userDocument, match }: Props) {
 								<Type isWin={matchStatistics?.searchedPlayer.win}>
 									{matchStatistics?.matchStatistics.queueType}
 								</Type>
-								<Timestamp>-시간 전</Timestamp>
+								<Timestamp>
+									{calculatedTimeDiffer(
+										matchStatistics.matchStatistics.gameCreation,
+									)}
+								</Timestamp>
 								<Horizontal></Horizontal>
 								<Result isWin={matchStatistics?.searchedPlayer.win}>
 									{matchStatistics?.searchedPlayer.win ? '승리' : '패배'}
@@ -150,7 +153,11 @@ function MatchHistorys({ userDocument, match }: Props) {
 													/>
 												</PartIconBox>
 												<PartNameBox>
-													<PartName>{item.summonerName}</PartName>
+													<PartName
+														$isPlayer={item.summonerName === userDocument.name}
+													>
+														{item.summonerName}
+													</PartName>
 												</PartNameBox>
 											</PartLi>
 										),
@@ -163,7 +170,11 @@ function MatchHistorys({ userDocument, match }: Props) {
 												<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
 											</PartIconBox>
 											<PartNameBox>
-												<PartName>{item.summonerName}</PartName>
+												<PartName
+													$isPlayer={item.summonerName === userDocument.name}
+												>
+													{item.summonerName}
+												</PartName>
 											</PartNameBox>
 										</PartLi>
 									))}
@@ -389,13 +400,14 @@ const PartLi = styled.li`
 	text-align: left;
 	white-space: nowrap;
 `
-const PartName = styled.a`
+const PartName = styled.a<{ $isPlayer: boolean }>`
 	color: inherit;
 	display: block;
 	font-size: 12px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	font-weight: ${(props) => props.$isPlayer && 'bold'};
 `
 const PartNameB = styled.b`
 	color: inherit;

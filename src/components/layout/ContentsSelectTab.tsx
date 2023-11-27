@@ -18,7 +18,7 @@ export default function ContentsSelectTab(props: ContentsSelectTabProps) {
 				<InfoList>
 					<li>
 						<InfoListItem
-							contents="MatchHistorys"
+							$selected={selectedContents === 'MatchHistorys'}
 							onClick={() => handleSelectChange('MatchHistorys')}
 						>
 							종합
@@ -26,7 +26,7 @@ export default function ContentsSelectTab(props: ContentsSelectTabProps) {
 					</li>
 					<li>
 						<InfoListItem
-							contents="InGame"
+							$selected={selectedContents === 'InGame'}
 							onClick={() => handleSelectChange('InGame')}
 						>
 							인게임 정보
@@ -59,7 +59,7 @@ const InfoList = styled.ul`
 	width: 1080px;
 	margin: 0 auto;
 `
-const InfoListItem = styled.span<{ contents: string }>`
+const InfoListItem = styled.span<{ $selected: boolean }>`
 	text-align: center;
 	display: block;
 	min-width: 60px;
@@ -69,7 +69,7 @@ const InfoListItem = styled.span<{ contents: string }>`
 	font-size: 14px;
 	border-radius: 4px;
 	cursor: pointer;
-	background-color: ${(props: any) => (props.selected ? '#ecf2ff' : 'none')};
-	font-weight: ${(props: any) => (props.selected ? 700 : '')};
-	color: ${(props: any) => (props.selected ? '#4171d6' : '')};
+	background-color: ${(props: any) => (props.$selected ? '#ecf2ff' : 'none')};
+	font-weight: ${(props: any) => (props.$selected ? 700 : '')};
+	color: ${(props: any) => (props.$selected ? '#4171d6' : '')};
 `
