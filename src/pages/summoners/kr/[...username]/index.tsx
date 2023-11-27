@@ -26,6 +26,7 @@ import Header from '@/components/layout/Header'
 import { usePathname } from 'next/navigation'
 import { calculatedTimeDiffer, extractSummonerName } from '@/utils'
 import InGame from '@/components/inGame/InGame'
+import RefreshButton from '@/components/RefreshButton'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -35,6 +36,7 @@ import InGame from '@/components/inGame/InGame'
 function Summoners() {
 	const pathname = usePathname()
 
+	const [loadingPercentage, setLoadingPercenTage] = useState(100)
 	const [searchedSummonersName, setSearchedSummonersName] = useState('')
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	// matchQty 만큼의 총 전적
@@ -76,12 +78,16 @@ function Summoners() {
 
 	async function getRiotAPI(summonerName: string) {
 		try {
+			setLoadingPercenTage(0)
 			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)
+			setLoadingPercenTage(20)
 			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
+			setLoadingPercenTage(40)
 			const matchIdArr: string[] = await api.getMatchId(
 				summonerInfo.puuid,
 				matchQty,
 			)
+			setLoadingPercenTage(60)
 			const result = {
 				summonerInfo,
 				leagueInfo,
@@ -92,7 +98,7 @@ function Summoners() {
 				leagueInfo,
 				matchIdArr,
 			)
-
+			setLoadingPercenTage(100)
 			return { result, postDB }
 		} catch (error) {
 			console.log(error)
@@ -211,6 +217,7 @@ function Summoners() {
 				const riotApiResult: any = await getRiotAPI(searchedSummonersName)
 				setUserDocument(riotApiResult.postDB)
 				matchInfos = await handleMatchInfo(riotApiResult.result.matchIdArr)
+				setLoadingPercenTage(100)
 			} else {
 				console.log('db에 존재하는 소환사 입니다.')
 				setUserDocument(userDoc)
@@ -255,7 +262,7 @@ function Summoners() {
 									</ul>
 								</TierContainer>
 								<Name>{userDocument.name}</Name>
-								<RefreshBtn
+								{/* <RefreshBtn
 									onClick={() => {
 										refresh()
 										// setMatchInfoArr(undefined)
@@ -265,7 +272,11 @@ function Summoners() {
 									}}
 								>
 									전적 갱신
-								</RefreshBtn>
+								</RefreshBtn> */}
+								<RefreshButton
+									loadingPercentage={loadingPercentage}
+									refresh={refresh}
+								/>
 								<LastUpdate>
 									최근 업데이트 :{' '}
 									{calculatedTimeDiffer(userDocument.lastRequestTime)}{' '}

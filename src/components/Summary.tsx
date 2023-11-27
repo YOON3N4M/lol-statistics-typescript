@@ -112,7 +112,7 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 				</>
 			) : (
 				<NoHistory>
-					전적 정보가 없습니다. 전적이 있다면 전적 갱신을 시도 해보세요.
+					{/* 전적 정보가 없습니다. 전적이 있다면 전적 갱신을 시도 해보세요. */}
 				</NoHistory>
 			)}
 		</SummaryContainer>
