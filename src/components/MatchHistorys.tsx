@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
 import { MatchInfoObj, UserDocument } from '../@types/types'
-import { getMatchStatistics } from '../utils'
+import { calculatedTimeDiffer, getMatchStatistics } from '../utils'
 import {
 	CHAMPION_ICON_URL,
 	ITEM_ICON_URL,
@@ -30,7 +30,11 @@ function MatchHistorys({ userDocument, match }: Props) {
 								<Type isWin={matchStatistics?.searchedPlayer.win}>
 									{matchStatistics?.matchStatistics.queueType}
 								</Type>
-								<Timestamp>-시간 전</Timestamp>
+								<Timestamp>
+									{calculatedTimeDiffer(
+										matchStatistics.matchStatistics.gameCreation,
+									)}
+								</Timestamp>
 								<Horizontal></Horizontal>
 								<Result isWin={matchStatistics?.searchedPlayer.win}>
 									{matchStatistics?.searchedPlayer.win ? '승리' : '패배'}

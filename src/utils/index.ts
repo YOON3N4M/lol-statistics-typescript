@@ -27,7 +27,11 @@ export function calculatedTimeDiffer(unixTime: number) {
 	const days = hours / 24
 	if (days < 7) return `${Math.floor(days)}일 전`
 
-	return `${start.toLocaleDateString()}`
+	const weeks = days / 7
+	if (weeks < 5) return `${Math.floor(weeks)}주 전`
+
+	const months = weeks / 4
+	return `${Math.floor(months)}달 전`
 }
 
 // 티어 표기의 로마 숫자를 아랍 숫자로 변환
@@ -360,6 +364,7 @@ export function getMatchStatistics(
 	match: any,
 	searchedName: string | undefined,
 ) {
+	console.log(match)
 	const currentPlayer: ParticipantInfo = match.info.participants.filter(
 		(player: ParticipantInfo) => player.summonerName === searchedName,
 	)[0]
@@ -442,6 +447,7 @@ export function getMatchStatistics(
 		gameDurationTime,
 		teamA,
 		teamB,
+		gameCreation: match.info.gameCreation,
 	}
 	return { searchedPlayer, matchStatistics }
 }
