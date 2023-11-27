@@ -11,6 +11,7 @@ import { dbService } from '../fBase'
 import {
 	LeagueObj,
 	MatchInfoObj,
+	RiotId,
 	SummonerObj,
 	UserDocument,
 } from '../@types/types'
@@ -19,6 +20,21 @@ async function getUserDocument(summonersName: string) {
 	const q = query(
 		collection(dbService, 'user'),
 		where('nameRe', '==', summonersName?.replace(/ /g, '')),
+	)
+
+	const querySnapshot = await getDocs(q)
+	let result
+	querySnapshot.forEach((doc) => {
+		result = doc.data()
+	})
+
+	return result
+}
+
+async function getUserDocumentByRiotId(riotId: RiotId) {
+	const q = query(
+		collection(dbService, 'user'),
+		where('riotId', '==', `${riotId.name}#${riotId.tag}`),
 	)
 
 	const querySnapshot = await getDocs(q)
@@ -80,4 +96,5 @@ export const firebaseAPI = {
 	getMatchFromDB,
 	postUserDocumentOnDB,
 	postMatchInfoOnDB,
+	getUserDocumentByRiotId,
 }

@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import styled from 'styled-components'
 import { useRouter } from 'next/navigation'
+import RecentSearched from '@/components/RecentSearched'
+import { handleRiotId } from '@/utils'
 
 function Home() {
 	const [username, setUsername] = useState('')
@@ -15,13 +17,17 @@ function Home() {
 
 	function onSubmit(e: any) {
 		e.preventDefault()
-		// 닉네임이 두 글자일 경우 정상적인 소환사 조회가 불가능하여, 사이에 공백을 넣어서 처리함.
-		if (username.trim() === '') {
-		} else if (username.length === 2) {
-			const usernameRe = `${username[0]} ${username[1]}`
-			router.push(`summoners/kr/${usernameRe}`)
+		const inputValue = handleRiotId(username, '#')
+
+		if (inputValue.tag === undefined) {
+			if (inputValue.name.length === 2) {
+				const handleBlank = `${inputValue.name[0]} ${inputValue.name[1]}`
+				router.push(`summoners/kr/${handleBlank}-KR1`)
+			} else {
+				router.push(`summoners/kr/${inputValue.name}-KR1`)
+			}
 		} else {
-			router.push(`summoners/kr/${username}`)
+			router.push(`summoners/kr/${inputValue.name}-${inputValue.tag}`)
 		}
 	}
 
@@ -59,6 +65,7 @@ function Home() {
 						</SearchContainer>
 					</form>
 				</div>
+				<RecentSearched />
 			</HomeContainer>
 		</>
 	)

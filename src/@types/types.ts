@@ -1,3 +1,24 @@
+export interface RiotId {
+	name: string
+	tag: string
+}
+
+export interface RiotAccount {
+	gameName: string
+	puuid: string
+	tagLine: string
+}
+
+export interface Summoner {
+	accountId: string
+	id: string
+	name: string
+	profileIconId: number
+	puuid: string
+	summonerLevel: number
+}
+
+////
 export interface SummonerObj {
 	accountId: string
 	id: string

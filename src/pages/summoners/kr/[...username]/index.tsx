@@ -7,8 +7,11 @@ import {
 	LeagueObj,
 	MatchInfoArray,
 	MatchInfoObj,
+	RiotAccount,
 	RiotApiObj,
+	RiotId,
 	SearchResult,
+	Summoner,
 	SummonerObj,
 	UserDocument,
 } from '@/@types/types'
@@ -24,9 +27,14 @@ import Footer from '@/components/layout/Footer'
 import ContentsSelectTab from '@/components/layout/ContentsSelectTab'
 import Header from '@/components/layout/Header'
 import { usePathname } from 'next/navigation'
-import { calculatedTimeDiffer, extractSummonerName } from '@/utils'
+import {
+	calculatedTimeDiffer,
+	extractSummonerName,
+	handleRiotId,
+} from '@/utils'
 import InGame from '@/components/inGame/InGame'
 import RefreshButton from '@/components/RefreshButton'
+import axios from 'axios'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -35,311 +43,40 @@ import RefreshButton from '@/components/RefreshButton'
 
 function Summoners() {
 	const pathname = usePathname()
-
-	const [loadingPercentage, setLoadingPercenTage] = useState(100)
-	const [searchedSummonersName, setSearchedSummonersName] = useState('')
-	const [userDocument, setUserDocument] = useState<UserDocument>()
-	// matchQty 만큼의 총 전적
-	const [matchInfoArr, setMatchInfoArr] = useState<MatchInfoArray | undefined>(
-		[],
-	)
 	const matchQty = 20
-	// matchQty 만큼의 총 전적 중 검색된 플레이어의 15게임 정보 (챔피언, kda 등등)
-	const [mostPlayChampions, setMostPlayChampions] = useState<any>([])
-	const [selectedContents, setSelectedContents] =
-		useState<ContentsType>('MatchHistorys')
-	///
-	///
-	///
-	///
-	const [alarm, setAlarm] = useState(false)
 
-	//검색된 게임 포지션 비율
-	const [notFound, setNotFound] = useState(false)
-	function alarmFn() {
-		setAlarm(true)
-		setTimeout(() => {
-			setAlarm(false)
-		}, 3000)
-	}
-
-	async function getUserDocument(
-		summonerName: string,
-	): Promise<UserDocument | undefined> {
-		try {
-			console.log(summonerName)
-			const result = await firebaseAPI.getUserDocument(summonerName)
-			console.log(result)
-			return result
-		} catch {
-			alert('DB에서 소환사 조회에 실패')
-		}
-	}
-
-	async function getRiotAPI(summonerName: string) {
-		try {
-			setLoadingPercenTage(0)
-			const summonerInfo: SummonerObj = await api.getSummonersInfo(summonerName)
-			setLoadingPercenTage(20)
-			const leagueInfo: LeagueObj[] = await api.getLeagueInfo(summonerInfo.id)
-			setLoadingPercenTage(40)
-			const matchIdArr: string[] = await api.getMatchId(
-				summonerInfo.puuid,
-				matchQty,
-			)
-			setLoadingPercenTage(60)
-			const result = {
-				summonerInfo,
-				leagueInfo,
-				matchIdArr,
-			}
-			const postDB = await firebaseAPI.postUserDocumentOnDB(
-				summonerInfo,
-				leagueInfo,
-				matchIdArr,
-			)
-			setLoadingPercenTage(100)
-			return { result, postDB }
-		} catch (error) {
-			console.log(error)
-			return false
-		}
-	}
-
-	async function searchMatchId(matchIdArr?: string[]) {
-		if (matchIdArr === undefined || matchIdArr.length < 1) return []
-		const searchResult = await Promise.all(
-			matchIdArr.map(async (matchID: string) => {
-				const res = await firebaseAPI.getMatchFromDB(matchID)
-				if (res === undefined) return matchID
-				return res
-			}),
-		)
-		const existMatchInfoArr = searchResult.filter((e) => typeof e !== 'string')
-		const unExistMatchIdArr = searchResult.filter((e) => typeof e === 'string')
-
-		return { existMatchInfoArr, unExistMatchIdArr }
-	}
-
-	// matchId중 DB에 없는 ID를 라이엇에 요청 후 받아온 데이터를 DB에 보내고
-	// DB에 존재하던 matchInfoArr에 합친 후, return
-	async function checkExistMatch(searchResult: SearchResult) {
-		if (!searchResult) return
-		const { existMatchInfoArr, unExistMatchIdArr } = searchResult
-		console.log(searchResult, unExistMatchIdArr)
-
-		if (unExistMatchIdArr.length === 0) {
-			return existMatchInfoArr
-		} else {
-			const getMatchInfoAndPost = await Promise.all(
-				unExistMatchIdArr.map(async (matchID: string) => {
-					const matchInfo = await api.getMatchInfo(matchID)
-					const firebaseRes = await firebaseAPI.postMatchInfoOnDB(matchInfo)
-					return matchInfo
-				}),
-			)
-			const mergedArr = [...existMatchInfoArr, ...getMatchInfoAndPost]
-			return mergedArr
-		}
-	}
-
-	function getMostChampionArr() {
-		if (!matchInfoArr) return
-		const filtered = matchInfoArr?.map(
-			(game) =>
-				game?.info.participants.filter(
-					(player: any) => player.summonerName === userDocument?.name,
-				)[0],
+	async function getRiotApi(riotId: RiotId) {
+		const accountRes: RiotAccount = await api.getAccountByNextApi(riotId)
+		const summonerRes: Summoner = await api.getSummonerByPuuid(accountRes.puuid)
+		const leagueRes = await api.getLeagueInfo(summonerRes.id)
+		const matchIdsRes: string[] = await api.getMatchId(
+			summonerRes.puuid,
+			matchQty,
 		)
 
-		const removeUndefined: any = filtered?.filter((item) => item !== undefined)
-		const most = removeUndefined.reduce((acc: any, obj: any) => {
-			const key = obj.championName
-			acc[key] = (acc[key] || []).concat(obj)
-			return acc
-		}, {})
-		const mostList = Object.values(most).sort(
-			(a: any, b: any) => b.length - a.length,
-		)
-
-		setMostPlayChampions(mostList)
-	}
-
-	async function handleMatchInfo(matchIdArr?: string[]) {
-		console.log(matchIdArr)
-		const searchResult: any = await searchMatchId(matchIdArr)
-		const handleResult = await checkExistMatch(searchResult)
-		const sortByTime = handleResult
-			?.slice()
-			.sort((a, b) => b.info.gameCreation - a.info.gameCreation)
-
-		return sortByTime
-	}
-
-	async function refresh() {
-		if (!userDocument) return
-		const lastRequest = userDocument.lastRequestTime
-		const nowTime = new Date().getTime()
-		const timeDiffer = Math.abs((lastRequest - nowTime) / 1000)
-		console.log(timeDiffer)
-		// 3분
-		const timeLimit = 180
-		if (timeDiffer < timeLimit) {
-			const remainTime = Math.floor(timeLimit - timeDiffer)
-			console.log(remainTime)
-			alert(`전적 갱신은 180초마다 가능합니다. ${remainTime}초 남았습니다.`)
-		} else {
-			const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-			const result: any = await handleMatchInfo(riotApiResult.result.matchIdArr)
-			setUserDocument(riotApiResult.postDB)
-			setMatchInfoArr(result)
-			console.log('갱신완료')
-		}
+		return { accountRes, summonerRes, leagueRes, matchIdsRes }
 	}
 
 	//첫 진입 시 닉네임 추출
 	useEffect(() => {
 		if (pathname === null) return
-		const extractedSummonerName = extractSummonerName(pathname)
-		setSearchedSummonersName(extractedSummonerName)
-	}, [pathname])
 
-	// 닉네임 추출 후 첫 동작
-	useEffect(() => {
-		if (searchedSummonersName === '') return
-		async function initRefresh() {
-			// 1. 검색된 닉네임으로 DB체크 (있으면 UserDocumnet, 없으면 undefined)
-			const userDoc = await getUserDocument(searchedSummonersName)
+		async function initAction() {
+			const extractedSummonerName = extractSummonerName(pathname)
 
-			let matchInfos: any
-			if (!userDoc) {
-				console.log('db에 존재하지 않는 소환사 입니다.')
-				const riotApiResult: any = await getRiotAPI(searchedSummonersName)
-				setUserDocument(riotApiResult.postDB)
-				matchInfos = await handleMatchInfo(riotApiResult.result.matchIdArr)
-				setLoadingPercenTage(100)
-			} else {
-				console.log('db에 존재하는 소환사 입니다.')
-				setUserDocument(userDoc)
-				matchInfos = await handleMatchInfo(userDoc.matchHistory)
+			const riotId = handleRiotId(extractedSummonerName, '-')
+			const test = { tag: 'test', name: 'tests' }
+
+			const userResult = await firebaseAPI.getUserDocumentByRiotId(test)
+			if (!userResult) {
+				const riotApiResult = await getRiotApi(riotId)
 			}
-			setMatchInfoArr(matchInfos)
 		}
 
-		initRefresh()
-	}, [searchedSummonersName])
+		initAction()
+	}, [pathname])
 
-	useEffect(() => {
-		if (matchInfoArr?.length === 0) return
-		getMostChampionArr()
-	}, [matchInfoArr])
-
-	return (
-		<>
-			<Header />
-			{notFound ? (
-				<NotFoundMsg>
-					등록되지 않은 소환사 입니다. 오타를 확인 후 다시 검색 해주세요.
-				</NotFoundMsg>
-			) : null}
-
-			{userDocument !== undefined && (
-				<>
-					<ContentsHeader>
-						<Wrapper>
-							<ProfileIconContainer>
-								<ProfileIcon
-									src={SUMMONER_PROFILE_ICON_URL(userDocument.profileIconId)}
-								/>
-								<Level>{userDocument.summonerLevel}</Level>
-							</ProfileIconContainer>
-							<Info>
-								<TierContainer>
-									<ul>
-										<TierLi>
-											<Year></Year>
-										</TierLi>
-									</ul>
-								</TierContainer>
-								<Name>{userDocument.name}</Name>
-								{/* <RefreshBtn
-									onClick={() => {
-										refresh()
-										// setMatchInfoArr(undefined)
-										// setSearchedSummonersName('')
-										// setMostPlayChampions([])
-										// setUserDocument(undefined)
-									}}
-								>
-									전적 갱신
-								</RefreshBtn> */}
-								<RefreshButton
-									loadingPercentage={loadingPercentage}
-									refresh={refresh}
-								/>
-								<LastUpdate>
-									최근 업데이트 :{' '}
-									{calculatedTimeDiffer(userDocument.lastRequestTime)}{' '}
-								</LastUpdate>
-							</Info>
-						</Wrapper>
-					</ContentsHeader>
-					<ContentsSelectTab
-						setSelectedContents={setSelectedContents}
-						selectedContents={selectedContents}
-					/>
-				</>
-			)}
-			{selectedContents === 'MatchHistorys' ? (
-				<>
-					{userDocument !== undefined && (
-						<>
-							<ContentsContainer>
-								<LeftContents>
-									<CurrentRank userDocument={userDocument} />
-									<MostPlayed mostPlayChampions={mostPlayChampions} />
-								</LeftContents>
-								<RightContents>
-									<MatchHistoryTab>
-										<MatchHistroyTabUl>
-											<MatchHistoryTabLi selected={true}>
-												전체
-											</MatchHistoryTabLi>
-											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-											<MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
-										</MatchHistroyTabUl>
-									</MatchHistoryTab>
-									{/** */}
-									<Summary
-										matchInfoArr={matchInfoArr}
-										mostPlayChampions={mostPlayChampions}
-									/>
-
-									<MatchHistoryContainer>
-										{matchInfoArr &&
-											matchInfoArr.map((match: any) => (
-												<MatchHistorys
-													match={match}
-													userDocument={userDocument}
-												/>
-											))}
-									</MatchHistoryContainer>
-								</RightContents>
-							</ContentsContainer>
-						</>
-					)}
-				</>
-			) : (
-				<InGame
-					summonerId={userDocument?.id}
-					setSelectedContents={setSelectedContents}
-				/>
-			)}
-
-			<Footer></Footer>
-		</>
-	)
+	return <></>
 }
 
 export default Summoners
