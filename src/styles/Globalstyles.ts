@@ -6,6 +6,7 @@ const color = {
 	mint: '#00bba3',
 	red: '#d31a45',
 	gray: '#9AA4AF',
+	border: '#ebeef1',
 }
 
 export const variable = {

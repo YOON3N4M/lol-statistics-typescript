@@ -1,53 +1,74 @@
 import styled from 'styled-components'
 import { LeagueInfo, UserDocument } from '../@types/types'
 import { matchingTierImg, romeNumToArabNum } from '../utils'
+import { useState, useEffect } from 'react'
 
 interface Props {
 	userDocument: UserDocument
 }
 
 export default function CurrentRank({ userDocument }: Props) {
-	const { league1, league2 } = userDocument
-	const soloTier =
-		league1.tier.toLowerCase().charAt(0).toUpperCase() +
-		league1.tier.toLowerCase().substring(1)
-	const soloRank = romeNumToArabNum(league1.rank)
+	const [leagues, setLeagues] = useState<any>([])
+
+	function refineLeague(league: LeagueInfo) {
+		const tier =
+			league.tier.toLowerCase().charAt(0).toUpperCase() +
+			league.tier.toLowerCase().substring(1)
+		const rank = romeNumToArabNum(league.rank)
+		return { league, tier, rank }
+	}
+
+	useEffect(() => {
+		if (userDocument.league1) {
+			setLeagues((prev: any) => [...prev, refineLeague(userDocument.league1)])
+		}
+		if (userDocument.league2) {
+			setLeagues((prev: any) => [...prev, refineLeague(userDocument.league2)])
+		}
+	}, [])
 
 	return (
 		<>
-			<CurrentRankContainer>
-				<CurrentRankHeader>
-					<span>솔로랭크</span>
-				</CurrentRankHeader>
-				{league1 !== null ? (
+			{leagues.map((league: any) => (
+				<CurrentRankContainer>
+					<CurrentRankHeader>
+						<span>
+							{league.league.queueType === 'RANKED_SOLO_5x5'
+								? '솔로랭크'
+								: '자유랭크'}
+						</span>
+					</CurrentRankHeader>
+
 					<CurrentRankContents>
 						<CurrentTierImgContainer>
 							<CurrentTierImg
-								src={matchingTierImg(league1.tier)}
-								alt={soloTier}
+								src={matchingTierImg(league.league.tier)}
+								alt={league.tier}
 							/>
 						</CurrentTierImgContainer>
 						<CurrentTierContainer>
 							<CurrentTier>
-								{soloTier} {soloRank}
+								{league.tier} {league.rank}
 							</CurrentTier>
-							<CurrentLp>{league1.leaguePoints} LP</CurrentLp>
+							<CurrentLp>{league.league.leaguePoints} LP</CurrentLp>
 						</CurrentTierContainer>
 						<WinLoseContainer>
 							<WinLose>
-								{league1.wins}승 {league1.losses}패
+								{league.league.wins}승 {league.league.losses}패
 							</WinLose>
 							<WinRate>
 								승률{` `}
 								{Math.ceil(
-									(league1.wins / (league1.wins + league1.losses)) * 100,
+									(league.league.wins /
+										(league.league.wins + league.league.losses)) *
+										100,
 								)}
 								%
 							</WinRate>
 						</WinLoseContainer>
 					</CurrentRankContents>
-				) : null}
-			</CurrentRankContainer>
+				</CurrentRankContainer>
+			))}
 		</>
 	)
 }

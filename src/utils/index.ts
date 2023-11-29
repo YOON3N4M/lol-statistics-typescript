@@ -1,9 +1,27 @@
 import { InGameInfo } from '@/components/inGame/InGame'
-import { ParticipantInfo } from '../@types/types'
+import { ParticipantInfo, RiotId } from '../@types/types'
 import { tierIcon } from '../constants'
 import championsData from '../data/championsData.json'
 import { variable } from '../styles/Globalstyles'
 import { RefinedInGameInfo } from './../components/inGame/InGame'
+
+export function handleRiotId(riotId: string, sign: string) {
+	const parts = riotId.split(sign)
+	const name = parts[0]
+	const tag = parts[1]
+
+	if (tag === undefined) {
+		return {
+			name,
+			tag: 'KR1',
+		}
+	} else {
+		return {
+			name,
+			tag,
+		}
+	}
+}
 
 export function extractSummonerName(pathname: string) {
 	const decoded = decodeURI(pathname)
@@ -364,7 +382,6 @@ export function getMatchStatistics(
 	match: any,
 	searchedName: string | undefined,
 ) {
-	console.log(match)
 	const currentPlayer: ParticipantInfo = match.info.participants.filter(
 		(player: ParticipantInfo) => player.summonerName === searchedName,
 	)[0]

@@ -6,7 +6,7 @@ import MostChampions from './MostChampions'
 interface Props {
 	mostPlayChampions: ParticipantsData
 }
-export default function MostPlayed({ mostPlayChampions }: Props) {
+export default function MostSeven({ mostPlayChampions }: Props) {
 	const most7 = mostPlayChampions.slice(0, 7)
 	return (
 		<>

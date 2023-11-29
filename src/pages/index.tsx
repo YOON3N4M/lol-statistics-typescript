@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/layout/Header'
-import { useState } from 'react'
 
 import styled from 'styled-components'
 import { useRouter } from 'next/navigation'
+import RecentSearched from '@/components/RecentSearched'
+import { handleRiotId } from '@/utils'
+import { variable } from '@/styles/Globalstyles'
 
 function Home() {
 	const [username, setUsername] = useState('')
+	const [isToolTip, setIsToolTip] = useState(false)
+	const [translatedName, setTranslatedName] = useState('')
 	const router = useRouter()
 
 	function onChange(e: any) {
@@ -15,19 +19,39 @@ function Home() {
 
 	function onSubmit(e: any) {
 		e.preventDefault()
-		// 닉네임이 두 글자일 경우 정상적인 소환사 조회가 불가능하여, 사이에 공백을 넣어서 처리함.
-		if (username.trim() === '') {
-		} else if (username.length === 2) {
-			const usernameRe = `${username[0]} ${username[1]}`
-			router.push(`summoners/kr/${usernameRe}`)
+		const inputValue = handleRiotId(username, '#')
+
+		if (inputValue.tag === undefined) {
+			if (inputValue.name.length === 2) {
+				const handleBlank = `${inputValue.name[0]} ${inputValue.name[1]}`
+				router.push(`summoners/kr/${handleBlank}-KR1`)
+			} else {
+				router.push(`summoners/kr/${inputValue.name}-KR1`)
+			}
 		} else {
-			router.push(`summoners/kr/${username}`)
+			router.push(`summoners/kr/${inputValue.name}-${inputValue.tag}`)
 		}
 	}
 
 	function onClick(name: string) {
 		router.push(`summoners/kr/${name}`)
 	}
+
+	function translateName(name: string) {
+		const nickname = name.split('#')[0]
+		const tag = name.split('#')[1]
+		if (!tag) {
+			setTranslatedName('')
+		} else if (tag === 'KR1') {
+			setTranslatedName('')
+		} else {
+			setTranslatedName(name)
+		}
+	}
+
+	useEffect(() => {
+		translateName(username)
+	}, [username])
 
 	return (
 		<>
@@ -51,7 +75,46 @@ function Home() {
 									className="search-input"
 									placeholder="소환사명..."
 									value={username}
+									onFocus={() => {
+										setIsToolTip(true)
+									}}
+									onBlur={() => setIsToolTip(true)}
 								></SearchInput>
+								{isToolTip && (
+									<StyledToolTip>
+										<p className="notice">
+											현재 대소문자를 정확히 입력해야만 정상적인 검색이 가능
+											합니다.
+										</p>
+										{translatedName === '' ? (
+											<div className="head">
+												<div>
+													<span className="tip">
+														기존 닉네임 검색 ( 이름#KR1 )
+													</span>
+												</div>
+												<div>
+													{username !== '' && (
+														<span className="translate">
+															{username.split('#')[0]}#KR1
+														</span>
+													)}
+												</div>
+											</div>
+										) : (
+											<div className="head">
+												<div>
+													<span className="tip">
+														Riot ID 검색 ( 이름#태그 )
+													</span>
+												</div>
+												<div>
+													<span className="translate">{translatedName}</span>
+												</div>
+											</div>
+										)}
+									</StyledToolTip>
+								)}
 							</InputContainer>
 							<SearchBtn onClick={onSubmit} className="search-btn">
 								.GG
@@ -59,12 +122,50 @@ function Home() {
 						</SearchContainer>
 					</form>
 				</div>
+				<RecentSearched />
 			</HomeContainer>
 		</>
 	)
 }
 
 export default Home
+
+const StyledToolTip = styled.div`
+	position: absolute;
+	margin-top: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	background-color: white;
+	z-index: 3000;
+	padding: 10px 10px;
+	border: 1px solid ${variable.color.border};
+
+	transform: translateY(2px);
+	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
+	.notice {
+		font-size: 12px;
+		color: ${variable.color.gray};
+		font-weight: bold;
+	}
+	.head {
+		.tip {
+			font-size: 12px;
+			background-color: #f7f7f9;
+			padding: 1px 2px;
+			color: ${variable.color.gray};
+			border-radius: 4px;
+		}
+		.translate {
+			font-size: 13px;
+			color: gray;
+			font-weight: bold;
+			cursor: pointer;
+		}
+	}
+	.head + .head {
+		margin-top: 5px;
+	}
+`
 
 const HomeContainer = styled.div`
 	width: 100%;
@@ -138,6 +239,7 @@ const SearchBtn = styled.button`
 	background-color: rgb(0, 0, 0, 0);
 `
 const InputContainer = styled.div`
+	position: relative;
 	width: 420px;
 	height: 40px;
 `
