@@ -78,7 +78,7 @@ function Home() {
 									onFocus={() => {
 										setIsToolTip(true)
 									}}
-									onBlur={() => setIsToolTip(true)}
+									onBlur={() => setIsToolTip(false)}
 								></SearchInput>
 								{isToolTip && (
 									<StyledToolTip>
