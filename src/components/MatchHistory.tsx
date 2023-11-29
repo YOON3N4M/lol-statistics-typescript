@@ -14,7 +14,7 @@ interface Props {
 	match: MatchInfoObj
 }
 
-function MatchHistorys({ userDocument, match }: Props) {
+function MatchHistory({ userDocument, match }: Props) {
 	const name = userDocument.name
 
 	const matchStatistics = getMatchStatistics(match, name)
@@ -429,4 +429,4 @@ const DetailBtn = styled.button<{ isWin?: any }>`
 	background-color: ${(props: any) => (props.isWin ? '#d5e3ff' : '#ffd8d9')};
 `
 
-export default MatchHistorys
+export default MatchHistory

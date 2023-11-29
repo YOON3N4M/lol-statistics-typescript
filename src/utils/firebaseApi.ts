@@ -11,6 +11,7 @@ import { dbService } from '../fBase'
 import {
 	LeagueObj,
 	MatchInfoObj,
+	RiotAccount,
 	RiotId,
 	SummonerObj,
 	UserDocument,
@@ -57,6 +58,7 @@ async function postUserDocumentOnDB(
 	summonerInfo: SummonerObj,
 	leagueInfo: LeagueObj[],
 	matchIdArr: string[],
+	riotAccount: RiotAccount,
 ) {
 	const lastRequestTime = new Date().getTime()
 	const soloRank = leagueInfo.find(
@@ -78,6 +80,7 @@ async function postUserDocumentOnDB(
 		league1: soloRank || null,
 		league2: freeRank || null,
 		lastRequestTime,
+		riotId: `${riotAccount.gameName}#${riotAccount.tagLine}`,
 	}
 
 	await setDoc(doc(dbService, 'user', summonerInfo.puuid), userDocumentRef)

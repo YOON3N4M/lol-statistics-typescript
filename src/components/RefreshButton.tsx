@@ -1,26 +1,32 @@
+import { RiotId } from '@/@types/types'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 interface Props {
-	loadingPercentage: number
-	refresh: () => Promise<void>
+	loadingPercent: number
+	refresh: (riotId: RiotId) => Promise<void>
+	riotId: RiotId
 }
 
 type LoadingStatus = '전적 갱신' | '갱신중...' | '갱신 완료!'
 
-export default function RefreshButton({ loadingPercentage, refresh }: Props) {
+export default function RefreshButton({
+	loadingPercent,
+	refresh,
+	riotId,
+}: Props) {
 	const [isLoading, setIsLoading] = useState(false)
 	const [text, setText] = useState<LoadingStatus>('전적 갱신')
 	function handleRefresh() {
-		if (loadingPercentage !== 100) {
+		if (loadingPercent !== 100) {
 			alert('갱신이 진행 중 입니다. 잠시만 기다려주세요.')
 		}
-		refresh()
+		refresh(riotId)
 		setText('갱신중...')
 	}
 
 	useEffect(() => {
-		if (loadingPercentage === 100) {
+		if (loadingPercent === 100) {
 			setIsLoading(false)
 			if (text === '갱신중...') setText('갱신 완료!')
 			setTimeout(() => {
@@ -29,16 +35,16 @@ export default function RefreshButton({ loadingPercentage, refresh }: Props) {
 		} else {
 			setIsLoading(true)
 		}
-	}, [loadingPercentage])
+	}, [loadingPercent])
 
 	return (
-		<RefreshBtn onClick={handleRefresh} $loadingPercentage={loadingPercentage}>
+		<RefreshBtn onClick={handleRefresh} $loadingPercent={loadingPercent}>
 			<span>{text}</span>
 		</RefreshBtn>
 	)
 }
 
-const RefreshBtn = styled.button<{ $loadingPercentage: number }>`
+const RefreshBtn = styled.button<{ $loadingPercent: number }>`
 	color: white;
 	border: 0px;
 	border-radius: 4px;
@@ -50,8 +56,8 @@ const RefreshBtn = styled.button<{ $loadingPercentage: number }>`
 	margin-top: 50px;
 	background: linear-gradient(
 		to right,
-		#5383e8 ${(props) => props.$loadingPercentage}%,
-		gray ${(props) => 100 - props.$loadingPercentage}%
+		#5383e8 ${(props) => props.$loadingPercent}%,
+		gray ${(props) => 100 - props.$loadingPercent}%
 	);
 	transition: background 0.5s ease;
 `

@@ -382,7 +382,6 @@ export function getMatchStatistics(
 	match: any,
 	searchedName: string | undefined,
 ) {
-	console.log(match)
 	const currentPlayer: ParticipantInfo = match.info.participants.filter(
 		(player: ParticipantInfo) => player.summonerName === searchedName,
 	)[0]
