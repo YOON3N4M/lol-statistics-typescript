@@ -90,71 +90,7 @@ const LeftContents = styled.div`
 	min-height: 870px;
 	font-size: 12px;
 `
-const CurrentRankContainer = styled.div`
-	margin-bottom: 8px;
-`
-const CurrentRankHeader = styled.div`
-	background-color: white;
-	margin-top: 8px;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
-	display: flex;
-	justify-content: space-between;
-	line-height: 35px;
-	padding: 0 12px;
-	font-size: 14px;
-`
-const CurrentRankContents = styled.div`
-	display: flex;
-	align-items: center;
-	padding: 12px;
-	border-top: 1px solid;
-	border-color: #ebeef1;
-	width: 308px;
-	height: 97px;
-	background-color: white;
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
-`
-const CurrentTierImg = styled.img`
-	width: 60px;
-`
-const CurrentTierImgContainer = styled.div`
-	background-color: #f7f7f9;
-	width: 72px;
-	height: 72px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-`
-const CurrnetTierContainer = styled.div`
-	flex: 1 1 0%;
-	position: relative;
-	margin-left: 16px;
-`
-const CurrentTier = styled.div`
-	font-size: 20px;
-	font-weight: bold;
-`
-const CurrentLp = styled.div`
-	line-height: 16px;
-	margin-top: 2px;
-	font-size: 12px;
-	color: #758592;
-`
-const WinLoseContainer = styled.div`
-	font-size: 12px;
-	color: #9aa4af;
-`
-const WinLose = styled.div`
-	line-height: 26px;
-	color: #9aa4af;
-`
-const WinRate = styled.div`
-	margin-top: 2px;
-	line-height: 16px;
-`
+
 // 개요 ,전적 등이 보여지는 우측 컴포넌트
 const RightContents = styled.div`
 	display: inline-block;

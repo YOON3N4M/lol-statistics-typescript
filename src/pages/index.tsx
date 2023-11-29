@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/layout/Header'
-import { useState } from 'react'
 
 import styled from 'styled-components'
 import { useRouter } from 'next/navigation'
 import RecentSearched from '@/components/RecentSearched'
 import { handleRiotId } from '@/utils'
+import { variable } from '@/styles/Globalstyles'
 
 function Home() {
 	const [username, setUsername] = useState('')
+	const [isToolTip, setIsToolTip] = useState(false)
+	const [translatedName, setTranslatedName] = useState('')
 	const router = useRouter()
 
 	function onChange(e: any) {
@@ -35,6 +37,22 @@ function Home() {
 		router.push(`summoners/kr/${name}`)
 	}
 
+	function translateName(name: string) {
+		const nickname = name.split('#')[0]
+		const tag = name.split('#')[1]
+		if (!tag) {
+			setTranslatedName('')
+		} else if (tag === 'KR1') {
+			setTranslatedName('')
+		} else {
+			setTranslatedName(name)
+		}
+	}
+
+	useEffect(() => {
+		translateName(username)
+	}, [username])
+
 	return (
 		<>
 			<Header />
@@ -57,7 +75,42 @@ function Home() {
 									className="search-input"
 									placeholder="소환사명..."
 									value={username}
+									onFocus={() => {
+										setIsToolTip(true)
+									}}
+									onBlur={() => setIsToolTip(true)}
 								></SearchInput>
+								{isToolTip && (
+									<StyledToolTip>
+										{translatedName === '' ? (
+											<div className="head">
+												<div>
+													<span className="tip">
+														기존 닉네임 검색 ( 이름#KR1 )
+													</span>
+												</div>
+												<div>
+													{username !== '' && (
+														<span className="translate">
+															{username.split('#')[0]}#KR1
+														</span>
+													)}
+												</div>
+											</div>
+										) : (
+											<div className="head">
+												<div>
+													<span className="tip">
+														Riot ID 검색 ( 이름#태그 )
+													</span>
+												</div>
+												<div>
+													<span className="translate">{translatedName}</span>
+												</div>
+											</div>
+										)}
+									</StyledToolTip>
+								)}
 							</InputContainer>
 							<SearchBtn onClick={onSubmit} className="search-btn">
 								.GG
@@ -72,6 +125,38 @@ function Home() {
 }
 
 export default Home
+
+const StyledToolTip = styled.div`
+	position: absolute;
+	margin-top: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	background-color: white;
+	z-index: 3000;
+	padding: 10px 10px;
+	border: 1px solid ${variable.color.border};
+
+	transform: translateY(2px);
+	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
+	.head {
+		.tip {
+			font-size: 12px;
+			background-color: #f7f7f9;
+			padding: 1px 2px;
+			color: ${variable.color.gray};
+			border-radius: 4px;
+		}
+		.translate {
+			font-size: 13px;
+			color: gray;
+			font-weight: bold;
+			cursor: pointer;
+		}
+	}
+	.head + .head {
+		margin-top: 5px;
+	}
+`
 
 const HomeContainer = styled.div`
 	width: 100%;
@@ -145,6 +230,7 @@ const SearchBtn = styled.button`
 	background-color: rgb(0, 0, 0, 0);
 `
 const InputContainer = styled.div`
+	position: relative;
 	width: 420px;
 	height: 40px;
 `
