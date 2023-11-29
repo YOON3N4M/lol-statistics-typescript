@@ -88,9 +88,22 @@ const StyledRecentContainer = styled.div`
 	background-color: white;
 	border-radius: 4px;
 	overflow: hidden;
+	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
 	.user-wrap {
 		overflow-y: scroll;
 		height: 400px;
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background-color: #88888875;
+			border-radius: 6px;
+		}
+
+		::-webkit-scrollbar-track {
+			background-color: #f1f1f1;
+		}
 	}
 `
 
