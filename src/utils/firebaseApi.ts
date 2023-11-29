@@ -47,6 +47,16 @@ async function getUserDocumentByRiotId(riotId: RiotId) {
 	return result
 }
 
+async function getUserCollection() {
+	const querySnapshot = await getDocs(collection(dbService, 'user'))
+	const result: any = []
+	querySnapshot.forEach((doc) => {
+		result.push(doc.data())
+	})
+
+	return result
+}
+
 async function getMatchFromDB(MatchID: string) {
 	const docRef = doc(dbService, 'match', MatchID)
 	const docSnap = await getDoc(docRef)
@@ -100,4 +110,5 @@ export const firebaseAPI = {
 	postUserDocumentOnDB,
 	postMatchInfoOnDB,
 	getUserDocumentByRiotId,
+	getUserCollection,
 }
