@@ -43,7 +43,7 @@ async function getInGameInfo(summonerId: string) {
 
 async function getAccountByRiotId(riotId: RiotId) {
 	const res = await axios.get(ACCOUNT_BY_RIOT_ID_URL(riotId.name, riotId.tag))
-
+	console.log(res)
 	return res.data
 }
 
@@ -51,7 +51,7 @@ async function getAccountByNextApi(riotId: RiotId) {
 	const nextUrl = '/api/account'
 	const res = await axios(nextUrl, { params: riotId })
 
-	return res.data
+	return { ...res.data, tagLine: riotId.tag, gameName: riotId.name }
 }
 
 export const api = {

@@ -34,6 +34,7 @@ function Summoners() {
 		useState<ContentsType>('MatchHistorys')
 
 	async function getRiotApi(riotId: RiotId) {
+		console.log('라이엇')
 		const accountRes: RiotAccount = await api.getAccountByNextApi(riotId)
 		setLoadingPercent(20)
 		const summonerRes: Summoner = await api.getSummonerByPuuid(accountRes.puuid)
@@ -56,6 +57,7 @@ function Summoners() {
 			riotApiResult.matchIdsRes,
 			riotApiResult.accountRes,
 		)
+		console.log(riotApiResult.accountRes)
 		setUserDocument(postFirebaseResult)
 		const matchInfoResult = await handleMatchInfo(
 			postFirebaseResult.matchHistory,
@@ -128,6 +130,13 @@ function Summoners() {
 
 		initAction()
 	}, [pathname])
+
+	useEffect(() => {
+		if (selectedContents === 'InGame') {
+			alert('현재 인게임 정보 기능은 수정중에 있습니다.')
+			setSelectedContents('MatchHistorys')
+		}
+	}, [selectedContents])
 
 	return (
 		<>

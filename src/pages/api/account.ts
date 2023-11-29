@@ -12,6 +12,7 @@ export default async function handler(
 			const accountResult = await api.getAccountByRiotId(riotId)
 
 			res.status(200).json(accountResult)
+			console.log(accountResult)
 		} catch (err) {
 			res.status(500).json({ message: '500, 등록 실패' })
 		}
