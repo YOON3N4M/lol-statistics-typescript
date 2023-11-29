@@ -32,67 +32,76 @@ export default function RecentSearched() {
 			<StyledRecentHeader>
 				<h2>최근 갱신 (KR)</h2>
 			</StyledRecentHeader>
-			{recentlyUser?.map((user) => {
-				const riotId = handleRiotId(user.riotId, '#')
-				const tier =
-					user.league1.tier.toLowerCase().charAt(0).toUpperCase() +
-					user.league1.tier.toLowerCase().substring(1)
-				const rank = romeNumToArabNum(user.league1.rank)
+			<div className="user-wrap">
+				{recentlyUser?.map((user) => {
+					const riotId = handleRiotId(user.riotId, '#')
+					const tier =
+						user.league1.tier.toLowerCase().charAt(0).toUpperCase() +
+						user.league1.tier.toLowerCase().substring(1)
+					const rank = romeNumToArabNum(user.league1.rank)
 
-				return (
-					<StyledUserContainer onClick={() => goSelectUser(riotId)}>
-						<div className="summoner">
-							<div>
-								<img src={SUMMONER_PROFILE_ICON_URL(user.profileIconId)} />
-							</div>
-							<div className="level">
-								<span>{user.summonerLevel}</span>
-							</div>
-						</div>
-						<div className="riot-id">
-							<h3>
-								{riotId.name} <span>#{riotId.tag}</span>
-							</h3>
-							<span className="region">KR</span>
-						</div>
-						<div className="rank">
-							<div className="badge">
+					return (
+						<StyledUserContainer onClick={() => goSelectUser(riotId)}>
+							<div className="summoner">
 								<div>
-									<img src={matchingTierImg(user.league1.tier)}></img>
+									<img src={SUMMONER_PROFILE_ICON_URL(user.profileIconId)} />
+								</div>
+								<div className="level">
+									<span>{user.summonerLevel}</span>
 								</div>
 							</div>
-							<div className="point">
-								<div>
-									<span>
-										{tier} {rank}
-									</span>
-								</div>
-								<div>{user.league1.leaguePoints}LP</div>
+							<div className="riot-id">
+								<h3>
+									{riotId.name} <span>#{riotId.tag}</span>
+								</h3>
+								<span className="region">KR</span>
 							</div>
-						</div>
-						<div className="blank"></div>
-					</StyledUserContainer>
-				)
-			})}
+							<div className="rank">
+								<div className="badge">
+									<div>
+										<img src={matchingTierImg(user.league1.tier)}></img>
+									</div>
+								</div>
+								<div className="point">
+									<div>
+										<span>
+											{tier} {rank}
+										</span>
+									</div>
+									<div>{user.league1.leaguePoints}LP</div>
+								</div>
+							</div>
+							<div className="blank"></div>
+						</StyledUserContainer>
+					)
+				})}
+			</div>
 		</StyledRecentContainer>
 	)
 }
 
 const StyledRecentContainer = styled.div`
+	position: relative;
 	margin-top: 50px;
 	width: 1024px;
 	max-height: 500px;
 	background-color: white;
 	border-radius: 4px;
-
-	overflow-y: scroll;
+	overflow: hidden;
+	.user-wrap {
+		overflow-y: scroll;
+		height: 400px;
+	}
 `
 
 const StyledRecentHeader = styled.div`
+	position: sticky;
 	width: 100%;
 	padding: 5px 10px;
 	//border-bottom: 1px solid ${variable.color.border};
 	box-sizing: border-box;
+	z-index: 1000;
+	background-color: white;
 	h2 {
 		font-size: 15px;
 	}
