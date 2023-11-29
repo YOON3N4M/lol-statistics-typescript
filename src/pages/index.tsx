@@ -82,6 +82,10 @@ function Home() {
 								></SearchInput>
 								{isToolTip && (
 									<StyledToolTip>
+										<p className="notice">
+											현재 대소문자를 정확히 입력해야만 정상적인 검색이 가능
+											합니다.
+										</p>
 										{translatedName === '' ? (
 											<div className="head">
 												<div>
@@ -138,6 +142,11 @@ const StyledToolTip = styled.div`
 
 	transform: translateY(2px);
 	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
+	.notice {
+		font-size: 12px;
+		color: ${variable.color.gray};
+		font-weight: bold;
+	}
 	.head {
 		.tip {
 			font-size: 12px;
