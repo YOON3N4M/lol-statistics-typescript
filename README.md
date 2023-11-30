@@ -26,11 +26,25 @@
 * ### V3 버전 ( [배포](https://lol-match-histroy.vercel.app/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/next) )
 > 배포 : vercel (11/23 첫 배포) <br><br>
 > <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
+>
+> * vercel 배포, 개발 브랜치 (next), 배포 브랜치 (main) 분리
+> * 절대 경로 설정
+> * Riot id 시스템 변경에 따라 검색 방식 변경 (account api 추가)
+> * 최근 검색 플레이어 추가
+> * 전적 검색시 보이던 여러 버그들 수정
+> * 전적 갱신 제한 시간 추가
+> * 시간 표시 관련
 <br>
 
 * ### V2 버전 ( [배포](https://lol-statistic.firebaseapp.com/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/main) )
 > 배포 : firebase hosting <br><br>
 > <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
+>
+> * 전체적으로 리팩토링
+> * 챔피언 이름 한글화
+> * RIOT API, Firebase API 각각의 함수로 분리 정리 (utils/api.ts , utils/firebaseApi)
+> * 재사용률이 높은 상수들 개별 정의 (api, img url 등)  (constants/index.ts)
+> * 재사용률이 높은 계산 함수, 추출 함수 개별 정의 (utils/index.ts)
 <br>
 
 * ### V1 버전 ( [배포](https://yoon3n4m.github.io/lol-statistics/) | [저장소](https://github.com/YOON3N4M/lol-statistics) )
