@@ -180,7 +180,6 @@ const StyledUserContainer = styled.div`
 	}
 
 	.rank {
-		width: 160px;
 		display: flex;
 		.badge {
 			display: flex;
@@ -219,7 +218,7 @@ const StyledUserContainer = styled.div`
 		}
 	}
 	.blank {
-		margin-left: 100px;
+		margin-left: auto;
 		font-size: 12px;
 		color: ${variable.color.gray};
 	}
