@@ -6,14 +6,16 @@ interface Props {
 	loadingPercent: number
 	refresh: (riotId: RiotId) => Promise<void>
 	riotId: RiotId
+	lastRequestTime: number
 }
 
-type LoadingStatus = '전적 갱신' | '갱신중...' | '갱신 완료!'
+type LoadingStatus = '전적 갱신' | '갱신중...' | '갱신 완료'
 
 export default function RefreshButton({
 	loadingPercent,
 	refresh,
 	riotId,
+	lastRequestTime,
 }: Props) {
 	const [isLoading, setIsLoading] = useState(false)
 	const [text, setText] = useState<LoadingStatus>('전적 갱신')
@@ -21,14 +23,23 @@ export default function RefreshButton({
 		if (loadingPercent !== 100) {
 			alert('갱신이 진행 중 입니다. 잠시만 기다려주세요.')
 		}
-		refresh(riotId)
-		setText('갱신중...')
+
+		const nowTime = new Date().getTime()
+		const timeDiffer = Math.abs((lastRequestTime - nowTime) / 1000)
+		const timeLimit = 180
+		const remainTime = Math.floor(timeLimit - timeDiffer)
+		if (timeDiffer < timeLimit) {
+			alert(`전적 갱신은 180초마다 가능합니다. ${remainTime}초 남았습니다.`)
+		} else {
+			refresh(riotId)
+			setText('갱신중...')
+		}
 	}
 
 	useEffect(() => {
 		if (loadingPercent === 100) {
 			setIsLoading(false)
-			if (text === '갱신중...') setText('갱신 완료!')
+			if (text === '갱신중...') setText('갱신 완료')
 			setTimeout(() => {
 				setText('전적 갱신')
 			}, 180000)

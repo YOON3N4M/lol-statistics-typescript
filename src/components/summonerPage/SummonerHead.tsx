@@ -50,6 +50,7 @@ export default function SummonerHead({
 							loadingPercent={loadingPercent}
 							refresh={refresh}
 							riotId={handleRiotId(userDocument.riotId, '#')}
+							lastRequestTime={userDocument.lastRequestTime}
 						/>
 						<LastUpdate>
 							최근 업데이트 :{' '}
