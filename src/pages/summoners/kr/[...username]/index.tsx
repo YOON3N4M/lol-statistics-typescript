@@ -17,6 +17,7 @@ import { extractSummonerName, handleRiotId } from '@/utils'
 import SummonerHead from '@/components/summonerPage/SummonerHead'
 import SummonerBody from '@/components/summonerPage/SummonerBody'
 import Header from '@/components/layout/Header'
+import { variable } from '@/styles/Globalstyles'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -27,6 +28,7 @@ function Summoners() {
 	const pathname = usePathname()
 	const matchQty = 20
 
+	const [status, setStatus] = useState(false)
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	const [matchInfoArr, setMatchInfoArr] = useState<any>()
 	const [loadingPercent, setLoadingPercent] = useState<number>(100)
@@ -34,23 +36,29 @@ function Summoners() {
 		useState<ContentsType>('MatchHistorys')
 
 	async function getRiotApi(riotId: RiotId) {
-		console.log('라이엇')
-		const accountRes: RiotAccount = await api.getAccountByNextApi(riotId)
-		setLoadingPercent(20)
-		const summonerRes: Summoner = await api.getSummonerByPuuid(accountRes.puuid)
-		setLoadingPercent(40)
-		const leagueRes = await api.getLeagueInfo(summonerRes.id)
-		setLoadingPercent(100)
-		const matchIdsRes: string[] = await api.getMatchId(
-			summonerRes.puuid,
-			matchQty,
-		)
-
-		return { accountRes, summonerRes, leagueRes, matchIdsRes }
+		try {
+			const accountRes: RiotAccount = await api.getAccountByNextApi(riotId)
+			setLoadingPercent(20)
+			const summonerRes: Summoner = await api.getSummonerByPuuid(
+				accountRes.puuid,
+			)
+			setLoadingPercent(40)
+			const leagueRes = await api.getLeagueInfo(summonerRes.id)
+			setLoadingPercent(100)
+			const matchIdsRes: string[] = await api.getMatchId(
+				summonerRes.puuid,
+				matchQty,
+			)
+			setStatus(true)
+			return { accountRes, summonerRes, leagueRes, matchIdsRes }
+		} catch {
+			setStatus(false)
+		}
 	}
 
 	async function refresh(riotId: RiotId) {
 		const riotApiResult = await getRiotApi(riotId)
+		if (!riotApiResult) return
 		const postFirebaseResult = await firebaseAPI.postUserDocumentOnDB(
 			riotApiResult.summonerRes,
 			riotApiResult.leagueRes,
@@ -123,6 +131,7 @@ function Summoners() {
 				const matchInfoResult = await handleMatchInfo(userResult.matchHistory)
 				setUserDocument(userResult)
 				setMatchInfoArr(matchInfoResult)
+				setStatus(true)
 			} else {
 				const refreshRes = await refresh(riotId)
 			}
@@ -141,23 +150,78 @@ function Summoners() {
 	return (
 		<>
 			<Header />
-			{userDocument && (
-				<>
-					<SummonerHead
-						userDocument={userDocument}
-						selectedContents={selectedContents}
-						setSelectedContents={setSelectedContents}
-						refresh={refresh}
-						loadingPercent={loadingPercent}
-					/>
-					<SummonerBody
-						userDocument={userDocument}
-						matchInfoArr={matchInfoArr}
-					/>
-				</>
-			)}
+			<StyledSummonerContainer>
+				{!status && (
+					<StyledErrorContainer>
+						<h3>KR 지역 내 검색결과가 없습니다.</h3>
+						<p>변경된 RIOT ID 시스템에 따라 재시도 해주세요.</p>
+						<div className="body">
+							<div>
+								<h4>기존 닉네임 검색</h4>
+								<span className="name">Hide on bush#KR1</span>
+								<span>태그 생략가능</span>
+							</div>
+							<div>
+								<h4>RIOT ID 검색</h4>
+								<span className="name">허거덩#0303</span>
+								<span>태그까지 필수 입력</span>
+							</div>
+						</div>
+					</StyledErrorContainer>
+				)}
+				{userDocument && (
+					<>
+						<SummonerHead
+							userDocument={userDocument}
+							selectedContents={selectedContents}
+							setSelectedContents={setSelectedContents}
+							refresh={refresh}
+							loadingPercent={loadingPercent}
+						/>
+						<SummonerBody
+							userDocument={userDocument}
+							matchInfoArr={matchInfoArr}
+						/>
+					</>
+				)}
+			</StyledSummonerContainer>
 		</>
 	)
 }
 
 export default Summoners
+
+const StyledSummonerContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+`
+
+const StyledErrorContainer = styled.div`
+	margin: 0 auto;
+	margin-top: 50px;
+	padding: 5px 50px;
+	box-sizing: border-box;
+	width: 1024px;
+	min-height: 300px;
+	background-color: white;
+	border-radius: 4px;
+	h3 {
+		text-align: center;
+	}
+	p {
+		text-align: center;
+		color: ${variable.color.gray};
+	}
+
+	.body {
+		margin-top: 40px;
+	}
+	.name {
+		background-color: #f7f7f9;
+		color: #4d4d4d;
+		padding: 2px 4px;
+		border-radius: 4px;
+		font-weight: 600;
+		margin-right: 5px;
+	}
+`
