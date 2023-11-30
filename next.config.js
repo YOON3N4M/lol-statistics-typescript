@@ -2,6 +2,15 @@
 
 const nextConfig = {
 	reactStrictMode: false,
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'http',
+				hostname: 'ddragon.leagueoflegends.com',
+				port: '',
+			},
+		],
+	},
 	env: {
 		API_KEY: process.env.NEXT_PUBLIC_API_KEY,
 		AUTH_DOMAIN: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
