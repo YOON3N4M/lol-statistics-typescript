@@ -40,10 +40,14 @@ export default function RecentSearched() {
 			<div className="user-wrap">
 				{recentlyUser?.map((user) => {
 					const riotId = handleRiotId(user.riotId, '#')
-					const tier =
-						user.league1.tier.toLowerCase().charAt(0).toUpperCase() +
-						user.league1.tier.toLowerCase().substring(1)
-					const rank = romeNumToArabNum(user.league1.rank)
+					let tier
+					let rank
+					if (user.league1) {
+						tier =
+							user.league1.tier.toLowerCase().charAt(0).toUpperCase() +
+							user.league1.tier.toLowerCase().substring(1)
+						rank = romeNumToArabNum(user.league1.rank)
+					}
 
 					return (
 						<StyledUserContainer onClick={() => goSelectUser(riotId)}>
@@ -62,19 +66,23 @@ export default function RecentSearched() {
 								<span className="region">KR</span>
 							</div>
 							<div className="rank">
-								<div className="badge">
-									<div>
-										<img src={matchingTierImg(user.league1.tier)}></img>
-									</div>
-								</div>
-								<div className="point">
-									<div>
-										<span>
-											{tier} {rank}
-										</span>
-									</div>
-									<div>{user.league1.leaguePoints}LP</div>
-								</div>
+								{user.league1 && (
+									<>
+										<div className="badge">
+											<div>
+												<img src={matchingTierImg(user.league1.tier)}></img>
+											</div>
+										</div>
+										<div className="point">
+											<div>
+												<span>
+													{tier} {rank}
+												</span>
+											</div>
+											<div>{user.league1.leaguePoints}LP</div>
+										</div>
+									</>
+								)}
 							</div>
 							<div className="blank">
 								<span>{calculatedTimeDiffer(user.lastRequestTime)}</span>
