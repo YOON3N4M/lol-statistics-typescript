@@ -43,7 +43,9 @@ export default function SummonerHead({
 							<span className="riot-id">
 								{riotId.name} <span>#{riotId.tag}</span>
 							</span>
-							<span className="prev-nickname">prev. {userDocument.name}</span>
+							{riotId.tag !== 'KR1' && (
+								<span className="prev-nickname">prev. {userDocument.name}</span>
+							)}
 						</Name>
 
 						<RefreshButton

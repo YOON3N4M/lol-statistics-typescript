@@ -1,5 +1,10 @@
 import { RiotId, UserDocument } from '@/@types/types'
-import { handleRiotId, matchingTierImg, romeNumToArabNum } from '@/utils'
+import {
+	calculatedTimeDiffer,
+	handleRiotId,
+	matchingTierImg,
+	romeNumToArabNum,
+} from '@/utils'
 import { firebaseAPI } from '@/utils/firebaseApi'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -71,7 +76,9 @@ export default function RecentSearched() {
 									<div>{user.league1.leaguePoints}LP</div>
 								</div>
 							</div>
-							<div className="blank"></div>
+							<div className="blank">
+								<span>{calculatedTimeDiffer(user.lastRequestTime)}</span>
+							</div>
 						</StyledUserContainer>
 					)
 				})}
@@ -173,6 +180,7 @@ const StyledUserContainer = styled.div`
 	}
 
 	.rank {
+		width: 160px;
 		display: flex;
 		.badge {
 			display: flex;
@@ -211,9 +219,8 @@ const StyledUserContainer = styled.div`
 		}
 	}
 	.blank {
-		width: 50px;
-		height: 100%;
-		background-color: #f7f7f9;
-		left: 100%;
+		margin-left: 100px;
+		font-size: 12px;
+		color: ${variable.color.gray};
 	}
 `
