@@ -28,7 +28,7 @@ function Summoners() {
 	const pathname = usePathname()
 	const matchQty = 20
 
-	const [status, setStatus] = useState(false)
+	const [status, setStatus] = useState(true)
 	const [userDocument, setUserDocument] = useState<UserDocument>()
 	const [matchInfoArr, setMatchInfoArr] = useState<any>()
 	const [loadingPercent, setLoadingPercent] = useState<number>(100)
