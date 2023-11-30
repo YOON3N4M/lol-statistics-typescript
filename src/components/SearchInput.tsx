@@ -22,12 +22,12 @@ export default function SearchInput() {
 		if (inputValue.tag === undefined) {
 			if (inputValue.name.length === 2) {
 				const handleBlank = `${inputValue.name[0]} ${inputValue.name[1]}`
-				router.push(`summoners/kr/${handleBlank}-KR1`)
+				router.push(`/summoners/kr/${handleBlank}-KR1`)
 			} else {
-				router.push(`summoners/kr/${inputValue.name}-KR1`)
+				router.push(`/summoners/kr/${inputValue.name}-KR1`)
 			}
 		} else {
-			router.push(`summoners/kr/${inputValue.name}-${inputValue.tag}`)
+			router.push(`/summoners/kr/${inputValue.name}-${inputValue.tag}`)
 		}
 	}
 
@@ -51,7 +51,7 @@ export default function SearchInput() {
 			<form onSubmit={onSubmit}>
 				<StyledSearchInput
 					onChange={onChange}
-					placeholder="소환사명..."
+					placeholder="플레이어 이름 + 태그"
 					value={username}
 					onFocus={() => {
 						setIsToolTip(true)
@@ -98,7 +98,7 @@ const StyledContainer = styled.div`
 	position: relative;
 `
 const StyledSearchInput = styled.input`
-	width: 100%;
+	width: 90%;
 	border: 0px;
 	outline: none;
 	font-size: 14px;
@@ -116,6 +116,7 @@ const StyledToolTip = styled.div`
 
 	transform: translateY(2px);
 	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
+	overflow: hidden;
 	.notice {
 		font-size: 12px;
 		color: ${variable.color.gray};

@@ -119,6 +119,8 @@ function Summoners() {
 
 	//첫 진입 시 닉네임 추출
 	useEffect(() => {
+		setUserDocument(undefined)
+		setMatchInfoArr(undefined)
 		if (pathname === null) return
 
 		async function initAction() {
