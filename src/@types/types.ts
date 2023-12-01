@@ -42,6 +42,31 @@ export interface MatchInfoObj {
 	info?: any
 	metadata?: any
 }
+
+export interface RefinedTeamStats {
+	totalKills: number
+	totalBaronKills: number
+	totalTurretKills: number
+	totalDragonKills: number
+	totalGold: number
+	totalDealtToChampion: number
+}
+
+export interface RefinedMatchInfo {
+	queueType: string
+	gameDurationTime: string
+	teamA: RefinedParticipantInfo[]
+	teamAStats: RefinedTeamStats
+	teamB: RefinedParticipantInfo[]
+	teamBStats: RefinedTeamStats
+	gameDurationTimeNum: number
+	win: boolean
+	gameCreation: number
+}
+export interface RefinedMatchStatistics {
+	currentPlayer: RefinedParticipantInfo
+	refinedMatchInfo: RefinedMatchInfo
+}
 export type MatchInfoArray = Array<MatchInfoObj> | undefined[] | undefined
 
 //firebase
@@ -67,6 +92,8 @@ export interface RiotApiObj {
 }
 
 export interface ParticipantInfo {
+	riotIdGameName: string
+	riotIdTagline: 'KR1' | string
 	championName: string
 	item0: number
 	item1: number
@@ -89,6 +116,46 @@ export interface ParticipantInfo {
 	neutralMinionsKilled: number
 	totalMinionsKilled: number
 	champLevel: number
+	physicalDamageDealtToChampions: number
+	magicDamageDealtToChampions: number
+	totalDamageTaken: number
+	wardsKilled: number
+	wardsPlaced: number
+	goldEarned: number
+	dragonKills: number
+	baronKills: number
+	turretKills: number
+	championId: number
+}
+
+export interface RefinedParticipantInfo {
+	riotIdGameName: string
+	riotIdTagline: 'KR1' | string
+	championName: string
+	kda: number
+	cs: number
+	kills: number
+	deaths: number
+	assists: number
+	teamId: number
+	//csPerMin,
+	summonersSpell: { a: SummonerSpell; b: SummonerSpell }
+	rune: { main: MainRune; sub: SubRune }
+	dealtToChampion: number
+	totalDamageTaken: number
+	visionWardsBoughtInGame: number
+	wardsKilled: number
+	wardsPlaced: number
+	items: number[]
+	item6: number
+	goldEarned: number
+	dragonKills: number
+	baronKills: number
+	turretKills: number
+
+	win: boolean
+	champLevel: number
+	championId: number
 }
 
 export interface LeagueInfo {
@@ -122,3 +189,7 @@ export interface SearchResult {
 	existMatchInfoArr: MatchInfoObj[]
 	unExistMatchIdArr: string[]
 }
+
+type SummonerSpell = 'SummonerSmite' | 'SummonerFlash' | string
+type MainRune = 'Precision/Conqueror/Conqueror' | string
+type SubRune = '7203_Whimsy' | string
