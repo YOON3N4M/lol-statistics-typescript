@@ -12,7 +12,8 @@ import {
 	ITEM_ICON_URL,
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
-} from '../constants'
+} from '@/constants'
+import Link from 'next/link'
 
 interface Props {
 	userDocument: UserDocument
@@ -136,7 +137,11 @@ function MatchHistory({ userDocument, match }: Props) {
 											<PartName
 												$isPlayer={item.riotIdGameName === userDocument.name}
 											>
-												{item.riotIdGameName}
+												<Link
+													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
+												>
+													{item.riotIdGameName}
+												</Link>
 											</PartName>
 										</PartNameBox>
 									</PartLi>
@@ -152,7 +157,11 @@ function MatchHistory({ userDocument, match }: Props) {
 											<PartName
 												$isPlayer={item.riotIdGameName === userDocument.name}
 											>
-												{item.riotIdGameName}
+												<Link
+													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
+												>
+													{item.riotIdGameName}
+												</Link>
 											</PartName>
 										</PartNameBox>
 									</PartLi>
@@ -384,6 +393,10 @@ const PartName = styled.a<{ $isPlayer: boolean }>`
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	font-weight: ${(props) => props.$isPlayer && 'bold'};
+	a {
+		text-decoration: none;
+		color: #75859d;
+	}
 `
 const PartNameB = styled.b`
 	color: inherit;
