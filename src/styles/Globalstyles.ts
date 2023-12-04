@@ -11,6 +11,7 @@ const color = {
 	selectFontBlue: '#4171d6',
 	selectBgRed: 'rgb(255, 241, 243)',
 	selectFontRed: 'rgb(211, 26, 69)',
+	fontBlack: '#202D37',
 }
 
 export const variable = {

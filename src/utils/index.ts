@@ -437,7 +437,7 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 	const dealtToChampion =
 		physicalDamageDealtToChampions + magicDamageDealtToChampions
 	const items = [item0, item1, item2, item3, item4, item5]
-	console.log('dddsad')
+
 	return {
 		riotIdGameName: riotIdGameName ? riotIdGameName : summonerName,
 		riotIdTagline,
@@ -529,7 +529,7 @@ export function getMatchStatistics(match: any, searchedName: string) {
 		match.info.participants.map((participant: ParticipantInfo) =>
 			getRefinedParticipant(participant),
 		)
-	console.log(refinedParticipants)
+	//	console.log(refinedParticipants)
 	const currentPlayer: RefinedParticipantInfo = refinedParticipants.filter(
 		(participant: RefinedParticipantInfo) =>
 			searchedName === participant.riotIdGameName,

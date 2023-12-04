@@ -2,6 +2,7 @@ import { RefinedMatchStatistics } from '@/@types/types'
 import styled from 'styled-components'
 import { useState } from 'react'
 import { variable } from '@/styles/Globalstyles'
+import DetailTable from './DetailTable'
 
 interface Props {
 	matchStatistics: RefinedMatchStatistics
@@ -11,7 +12,7 @@ type DetailContents = '종합' | '팀 분석'
 
 export default function MatchDetail({ matchStatistics }: Props) {
 	const [content, setContents] = useState<DetailContents>('종합')
-	console.log(matchStatistics)
+
 	return (
 		<StyledDetail>
 			<div className="tab">
@@ -22,13 +23,18 @@ export default function MatchDetail({ matchStatistics }: Props) {
 				>
 					종합
 				</StyledTabButton>
-				<StyledTabButton
+				{/* <StyledTabButton
 					onClick={() => setContents('팀 분석')}
 					$isSelected={content === '팀 분석'}
 					$win={matchStatistics.refinedMatchInfo.win}
 				>
 					팀 분석
-				</StyledTabButton>
+				</StyledTabButton> */}
+			</div>
+			<div className="detail-wrap">
+				<DetailTable team={matchStatistics.refinedMatchInfo.teamA} />
+				<div className="summary"></div>
+				<table></table>
 			</div>
 		</StyledDetail>
 	)
@@ -36,7 +42,7 @@ export default function MatchDetail({ matchStatistics }: Props) {
 
 const StyledDetail = styled.div`
 	width: 100%;
-	height: 100px;
+
 	margin-top: 4px;
 	//background-color: white;
 	.tab {
@@ -47,6 +53,9 @@ const StyledDetail = styled.div`
 		display: flex;
 		gap: 2px;
 		box-sizing: border-box;
+	}
+
+	.detail-table {
 	}
 `
 
