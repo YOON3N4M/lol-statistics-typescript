@@ -152,7 +152,7 @@ export interface RefinedParticipantInfo {
 	dragonKills: number
 	baronKills: number
 	turretKills: number
-
+	summonerName: string
 	win: boolean
 	champLevel: number
 	championId: number

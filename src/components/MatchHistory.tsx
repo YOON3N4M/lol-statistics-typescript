@@ -45,10 +45,10 @@ function MatchHistory({ userDocument, match }: Props) {
 		items,
 		item6,
 	} = currentPlayer
-	console.log(matchStatistics)
+
 	return (
 		<>
-			<>
+			{currentPlayer && (
 				<Match isWin={win}>
 					<GameContainer>
 						<Game>
@@ -173,7 +173,7 @@ function MatchHistory({ userDocument, match }: Props) {
 						<DetailBtn isWin={win}></DetailBtn>
 					</Detail>
 				</Match>
-			</>
+			)}
 		</>
 	)
 }
