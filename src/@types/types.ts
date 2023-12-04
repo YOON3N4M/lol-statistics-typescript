@@ -193,3 +193,21 @@ export interface SearchResult {
 type SummonerSpell = 'SummonerSmite' | 'SummonerFlash' | string
 type MainRune = 'Precision/Conqueror/Conqueror' | string
 type SubRune = '7203_Whimsy' | string
+export type QueueTypeStr =
+	| '일반'
+	| '솔랭'
+	| '일반'
+	| '자유 5:5 랭크'
+	| '무작위 총력전'
+	| '빠른 대전'
+	| '격전'
+	| '입문'
+	| '초보'
+	| '중급'
+	| '모두 무작위 U.R.F.'
+	| '포로왕'
+	| '단일 챔피언'
+	| '돌격 넥서스'
+	| '궁극기 주문서'
+	| '튜토리얼'
+	| '없음'

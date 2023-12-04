@@ -1,6 +1,7 @@
 import { InGameInfo } from '@/components/inGame/InGame'
 import {
 	ParticipantInfo,
+	QueueTypeStr,
 	RefinedMatchInfo,
 	RefinedParticipantInfo,
 	RiotId,
@@ -153,7 +154,8 @@ export function getCS(
 }
 
 // 큐 타입 코드에 따른 큐 타입 이름 대치
-export function getQueueTypeName(queueType: number) {
+export function getQueueTypeName(queueType: number): QueueTypeStr {
+	console.log(queueType)
 	switch (queueType) {
 		case 400:
 			return '일반'
@@ -169,7 +171,8 @@ export function getQueueTypeName(queueType: number) {
 
 		case 450:
 			return '무작위 총력전'
-
+		case 490:
+			return '빠른 대전'
 		case 700:
 			return '격전'
 
