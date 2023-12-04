@@ -1,13 +1,20 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { MatchInfoObj, UserDocument } from '../@types/types'
-import { calculatedTimeDiffer, getMatchStatistics } from '../utils'
+import {
+	MatchInfoObj,
+	RefinedMatchStatistics,
+	RefinedParticipantInfo,
+	UserDocument,
+} from '../@types/types'
+import { calculatedTimeDiffer, getMatchStatistics, handleRiotId } from '@/utils'
 import {
 	CHAMPION_ICON_URL,
 	ITEM_ICON_URL,
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
-} from '../constants'
+} from '@/constants'
+import Link from 'next/link'
+import MatchDetail from './MatchDetail'
 
 interface Props {
 	userDocument: UserDocument
@@ -15,187 +22,176 @@ interface Props {
 }
 
 function MatchHistory({ userDocument, match }: Props) {
-	const name = userDocument.name
+	const [showDetail, setShowDetail] = useState(false)
+	const name = handleRiotId(userDocument.riotId, '#').name
 
-	const matchStatistics = getMatchStatistics(match, name)
-	// console.log(match, matchStatistics?.matchStatistics.queueType)
+	const matchStatistics: RefinedMatchStatistics = getMatchStatistics(
+		match,
+		name,
+	)
+	const { currentPlayer, refinedMatchInfo } = matchStatistics
+	const { gameCreation, queueType, gameDurationTime, teamA, teamB } =
+		refinedMatchInfo
+	const {
+		win,
+		championName,
+		champLevel,
+		summonersSpell,
+		rune,
+		kills,
+		deaths,
+		assists,
+		kda,
+		visionWardsBoughtInGame,
+		cs,
+		items,
+		item6,
+	} = currentPlayer
+
 	return (
 		<>
-			{matchStatistics?.matchStatistics.queueType !== undefined && (
-				<>
-					<Match isWin={matchStatistics?.searchedPlayer.win}>
-						<GameContainer>
-							<Game>
-								<Type isWin={matchStatistics?.searchedPlayer.win}>
-									{matchStatistics?.matchStatistics.queueType}
-								</Type>
-								<Timestamp>
-									{calculatedTimeDiffer(
-										matchStatistics.matchStatistics.gameCreation,
-									)}
-								</Timestamp>
-								<Horizontal></Horizontal>
-								<Result isWin={matchStatistics?.searchedPlayer.win}>
-									{matchStatistics?.searchedPlayer.win ? '승리' : '패배'}
-								</Result>
-								<Length>{`${matchStatistics?.matchStatistics.gameDurationTime}분`}</Length>
-							</Game>
-							<GameInfo>
-								<TopRow>
-									<Champion>
-										<ChampionIconBox>
-											<ChampionIcon
-												src={CHAMPION_ICON_URL(
-													matchStatistics?.searchedPlayer.championName,
-												)}
-											></ChampionIcon>
-											<ChampionLevel>
-												{matchStatistics?.searchedPlayer.level}
-											</ChampionLevel>
-										</ChampionIconBox>
-										<SpellContainer>
-											<SpellBox>
-												<SpellIcon
-													src={SUMMONER_SPELL_ICON_URL(
-														matchStatistics?.searchedPlayer.summonersSpell.a,
-													)}
-												/>
-											</SpellBox>
-											<SpellBox>
-												<SpellIcon
-													src={SUMMONER_SPELL_ICON_URL(
-														matchStatistics?.searchedPlayer.summonersSpell.b,
-													)}
-												/>
-											</SpellBox>
-										</SpellContainer>
-										<RuneContainer>
-											<MainRune>
-												<RuneIcon
-													src={RUNE_ICON_URL(
-														matchStatistics?.searchedPlayer.rune.main,
-													)}
-												/>
-											</MainRune>
-											<RuneIcon
-												src={RUNE_ICON_URL(
-													matchStatistics?.searchedPlayer.rune.sub,
-												)}
+			<MatchContainer>
+				<Match isWin={win}>
+					<GameContainer>
+						<Game>
+							<Type isWin={win}>{queueType}</Type>
+							<Timestamp>{calculatedTimeDiffer(gameCreation)}</Timestamp>
+							<Horizontal></Horizontal>
+							<Result isWin={win}>{win ? '승리' : '패배'}</Result>
+							<Length>{`${gameDurationTime}분`}</Length>
+						</Game>
+						<GameInfo>
+							<TopRow>
+								<Champion>
+									<ChampionIconBox>
+										<ChampionIcon
+											src={CHAMPION_ICON_URL(championName)}
+										></ChampionIcon>
+										<ChampionLevel>{champLevel}</ChampionLevel>
+									</ChampionIconBox>
+									<SpellContainer>
+										<SpellBox>
+											<SpellIcon
+												src={SUMMONER_SPELL_ICON_URL(summonersSpell.a)}
 											/>
-										</RuneContainer>
-									</Champion>
-									<KDAContainer>
-										<KDA>
-											<KDASpan red={false}>
-												{matchStatistics?.searchedPlayer.kills}
-											</KDASpan>
-											/
-											<KDASpan red={true}>
-												{matchStatistics?.searchedPlayer.deaths}
-											</KDASpan>
-											/
-											<KDASpan red={false}>
-												{matchStatistics?.searchedPlayer.assists}
-											</KDASpan>
-										</KDA>
-										<Ratio>
-											<span>{matchStatistics?.searchedPlayer.kda}</span> 평점
-										</Ratio>
-									</KDAContainer>
-									<Stats>
-										<Stat color="red">
-											킬관여{' '}
-											{matchStatistics?.searchedPlayer.searchedPlayersKillPart}%
-										</Stat>
-										<Stat color="gray">
-											제어와드 {matchStatistics?.searchedPlayer.pinkWardQty}
-										</Stat>
-										<Stat color="gray">
-											cs {matchStatistics?.searchedPlayer.cs}(
-											{matchStatistics?.searchedPlayer.csPerMin})
-										</Stat>
-										<Stat color="gray"></Stat>
-									</Stats>
-								</TopRow>
-								<BottomRow>
-									<ItemContainer>
-										<ItemUl>
-											{matchStatistics?.searchedPlayer.items.map((item) => (
-												<li>
-													<ItemBox isWin={matchStatistics?.searchedPlayer.win}>
-														{item !== 0 && (
-															<ItemIcon src={ITEM_ICON_URL(item)} />
-														)}
-													</ItemBox>
-												</li>
-											))}
-										</ItemUl>
-										<WardBox isWin={matchStatistics?.searchedPlayer.win}>
-											{matchStatistics?.searchedPlayer.ward !== 0 && (
-												<WardIcon
-													src={ITEM_ICON_URL(
-														matchStatistics?.searchedPlayer.ward,
-													)}
-												/>
-											)}
-										</WardBox>
-									</ItemContainer>
-								</BottomRow>
-							</GameInfo>
-							<PartContainer>
-								<ul>
-									{matchStatistics?.matchStatistics.teamA.map(
-										(item: any, index: any) => (
-											<PartLi>
-												<PartIconBox>
-													<PartIcon
-														src={CHAMPION_ICON_URL(item.championName)}
-													/>
-												</PartIconBox>
-												<PartNameBox>
-													<PartName
-														$isPlayer={item.summonerName === userDocument.name}
-													>
-														{item.summonerName}
-													</PartName>
-												</PartNameBox>
-											</PartLi>
-										),
-									)}
-								</ul>
-								<ul>
-									{matchStatistics?.matchStatistics.teamB.map((item: any) => (
-										<PartLi>
-											<PartIconBox>
-												<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
-											</PartIconBox>
-											<PartNameBox>
-												<PartName
-													$isPlayer={item.summonerName === userDocument.name}
+										</SpellBox>
+										<SpellBox>
+											<SpellIcon
+												src={SUMMONER_SPELL_ICON_URL(summonersSpell.b)}
+											/>
+										</SpellBox>
+									</SpellContainer>
+									<RuneContainer>
+										<MainRune>
+											<RuneIcon src={RUNE_ICON_URL(rune.main)} />
+										</MainRune>
+										<RuneIcon src={RUNE_ICON_URL(rune.sub)} />
+									</RuneContainer>
+								</Champion>
+								<KDAContainer>
+									<KDA>
+										<KDASpan red={false}>{kills}</KDASpan>/
+										<KDASpan red={true}>{deaths}</KDASpan>/
+										<KDASpan red={false}>{assists}</KDASpan>
+									</KDA>
+									<Ratio>
+										<span>{kda}</span> 평점
+									</Ratio>
+								</KDAContainer>
+								<Stats>
+									<Stat color="red">
+										킬관여{' '}
+										{/* {matchStatistics?.searchedPlayer.searchedPlayersKillPart}% */}
+									</Stat>
+									<Stat color="gray">제어와드 {visionWardsBoughtInGame}</Stat>
+									<Stat color="gray">
+										cs {cs}
+										{/* {matchStatistics?.searchedPlayer.csPerMin}) */}
+									</Stat>
+									<Stat color="gray"></Stat>
+								</Stats>
+							</TopRow>
+							<BottomRow>
+								<ItemContainer>
+									<ItemUl>
+										{items.map((item: number) => (
+											<li>
+												<ItemBox isWin={win}>
+													{item !== 0 && <ItemIcon src={ITEM_ICON_URL(item)} />}
+												</ItemBox>
+											</li>
+										))}
+									</ItemUl>
+									<WardBox isWin={win}>
+										{item6 !== 0 && <WardIcon src={ITEM_ICON_URL(item6)} />}
+									</WardBox>
+								</ItemContainer>
+							</BottomRow>
+						</GameInfo>
+						<PartContainer>
+							<ul>
+								{teamA.map((item: RefinedParticipantInfo, index: any) => (
+									<PartLi>
+										<PartIconBox>
+											<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
+										</PartIconBox>
+										<PartNameBox>
+											<PartName
+												$isPlayer={item.riotIdGameName === userDocument.name}
+											>
+												<Link
+													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
 												>
-													{item.summonerName}
-												</PartName>
-											</PartNameBox>
-										</PartLi>
-									))}
-								</ul>
-							</PartContainer>
-						</GameContainer>
-						<Detail>
-							<DetailBtn
-								isWin={matchStatistics?.searchedPlayer.win}
-							></DetailBtn>
-						</Detail>
-					</Match>
-				</>
-			)}
+													{item.riotIdGameName}
+												</Link>
+											</PartName>
+										</PartNameBox>
+									</PartLi>
+								))}
+							</ul>
+							<ul>
+								{teamB.map((item: RefinedParticipantInfo) => (
+									<PartLi>
+										<PartIconBox>
+											<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
+										</PartIconBox>
+										<PartNameBox>
+											<PartName
+												$isPlayer={item.riotIdGameName === userDocument.name}
+											>
+												<Link
+													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
+												>
+													{item.riotIdGameName}
+												</Link>
+											</PartName>
+										</PartNameBox>
+									</PartLi>
+								))}
+							</ul>
+						</PartContainer>
+					</GameContainer>
+					<Detail>
+						<DetailBtn
+							isWin={win}
+							onClick={() => setShowDetail((prev) => !prev)}
+						></DetailBtn>
+					</Detail>
+				</Match>
+				{showDetail && <MatchDetail matchStatistics={matchStatistics} />}
+			</MatchContainer>
 		</>
 	)
 }
 
+const MatchContainer = styled.div`
+	position: relative;
+	margin-top: 8px;
+`
+
 const Match = styled.li<{ isWin?: any }>`
 	height: 96px;
-	margin-bottom: 8px;
+
 	border-radius: 4px;
 	display: flex;
 	justify-content: space-between;
@@ -408,6 +404,10 @@ const PartName = styled.a<{ $isPlayer: boolean }>`
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	font-weight: ${(props) => props.$isPlayer && 'bold'};
+	a {
+		text-decoration: none;
+		color: #75859d;
+	}
 `
 const PartNameB = styled.b`
 	color: inherit;

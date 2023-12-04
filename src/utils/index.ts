@@ -1,9 +1,15 @@
 import { InGameInfo } from '@/components/inGame/InGame'
-import { ParticipantInfo, RiotId } from '../@types/types'
+import {
+	ParticipantInfo,
+	RefinedMatchInfo,
+	RefinedParticipantInfo,
+	RiotId,
+} from '../@types/types'
 import { tierIcon } from '../constants'
 import championsData from '../data/championsData.json'
 import { variable } from '../styles/Globalstyles'
 import { RefinedInGameInfo } from './../components/inGame/InGame'
+import { ParticipantsData } from './../@types/types'
 
 export function handleRiotId(riotId: string, sign: string) {
 	const parts = riotId.split(sign)
@@ -123,8 +129,8 @@ export function getKDA(kills: number, deaths: number, assists: number) {
 	}
 }
 // 각 KDA 컬러
-export function getKDAColor(kda: number): string {
-	if (kda >= 5) {
+export function getKDAColor(kda: any): string {
+	if (kda >= 5 || kda === 'Perfect') {
 		return variable.color.orange
 	} else if (4 <= kda && kda < 5) {
 		return variable.color.sky
@@ -196,7 +202,7 @@ export function getQueueTypeName(queueType: number) {
 		case 2020:
 			return '튜토리얼'
 		default:
-			break
+			return '없음'
 	}
 }
 
@@ -378,95 +384,184 @@ export function getRuneName(mainRune: number, subRune: number) {
 	return { main, sub }
 }
 
-export function getMatchStatistics(
-	match: any,
-	searchedName: string | undefined,
-) {
-	const currentPlayer: ParticipantInfo = match.info.participants.filter(
-		(player: ParticipantInfo) => player.summonerName === searchedName,
+export function getRefinedParticipant(participant: ParticipantInfo) {
+	const {
+		kills,
+		deaths,
+		assists,
+		championName,
+		neutralMinionsKilled,
+		totalMinionsKilled,
+		summoner1Id,
+		summoner2Id,
+		physicalDamageDealtToChampions,
+		magicDamageDealtToChampions,
+		totalDamageTaken,
+		visionWardsBoughtInGame,
+		wardsKilled,
+		wardsPlaced,
+		riotIdGameName,
+		riotIdTagline,
+		teamId,
+		item0,
+		item1,
+		item2,
+		item3,
+		summonerName,
+
+		item4,
+		item5,
+		item6,
+		goldEarned,
+		dragonKills,
+		baronKills,
+		turretKills,
+		win,
+		champLevel,
+		championId,
+	} = participant
+	const kda = getKDA(kills, deaths, assists)
+	const cs = getCS(neutralMinionsKilled, totalMinionsKilled)
+	// const csPerMin = getCS(
+	// 	neutralMinionsKilled,
+	// 	totalMinionsKilled,
+	// 	gameDurationTimeNum,
+	// )
+
+	const summonersSpell = getSummonersSpellName(summoner1Id, summoner2Id)
+	const rune = getRuneName(
+		participant.perks.styles[0].selections[0].perk,
+		participant.perks.styles[1].style,
+	)
+
+	const dealtToChampion =
+		physicalDamageDealtToChampions + magicDamageDealtToChampions
+	const items = [item0, item1, item2, item3, item4, item5]
+	console.log('dddsad')
+	return {
+		riotIdGameName: riotIdGameName ? riotIdGameName : summonerName,
+		riotIdTagline,
+		championName,
+		kda,
+		cs,
+		kills,
+		deaths,
+		assists,
+		//csPerMin,
+		summonersSpell,
+		rune,
+		dealtToChampion,
+		totalDamageTaken,
+		visionWardsBoughtInGame,
+		wardsKilled,
+		wardsPlaced,
+		teamId,
+		items,
+		item6,
+		goldEarned,
+		dragonKills,
+		baronKills,
+		turretKills,
+		win,
+		champLevel,
+		championId,
+		summonerName,
+	}
+}
+
+export function getRefinedTeamStats(team: RefinedParticipantInfo[]) {
+	const totalKills = team.reduce(function add(
+		sum: any,
+		item: RefinedParticipantInfo,
+	) {
+		return sum + item.kills
+	},
+	0)
+	const totalBaronKills = team.reduce(function add(
+		sum: any,
+		item: RefinedParticipantInfo,
+	) {
+		return sum + item.baronKills
+	},
+	0)
+	const totalTurretKills = team.reduce(function add(
+		sum: any,
+		item: RefinedParticipantInfo,
+	) {
+		return sum + item.turretKills
+	},
+	0)
+	const totalDragonKills = team.reduce(function add(
+		sum: any,
+		item: RefinedParticipantInfo,
+	) {
+		return sum + item.dragonKills
+	},
+	0)
+	const totalGold = team.reduce(function add(
+		sum: any,
+		item: RefinedParticipantInfo,
+	) {
+		return sum + item.goldEarned
+	},
+	0)
+	const totalDealtToChampion = team.reduce(function add(
+		sum: any,
+		item: RefinedParticipantInfo,
+	) {
+		return sum + item.dealtToChampion
+	},
+	0)
+	return {
+		totalKills,
+		totalBaronKills,
+		totalTurretKills,
+		totalDragonKills,
+		totalGold,
+		totalDealtToChampion,
+	}
+}
+
+export function getMatchStatistics(match: any, searchedName: string) {
+	//console.log(match.info.participants)
+	// 모든 플레이어 정제 스탯 추출
+	const refinedParticipants: RefinedParticipantInfo[] =
+		match.info.participants.map((participant: ParticipantInfo) =>
+			getRefinedParticipant(participant),
+		)
+	console.log(refinedParticipants)
+	const currentPlayer: RefinedParticipantInfo = refinedParticipants.filter(
+		(participant: RefinedParticipantInfo) =>
+			searchedName === participant.riotIdGameName,
 	)[0]
-	if (!currentPlayer) return
-	const teamA = match.info.participants.filter(
-		(player: ParticipantInfo) => player.teamId === currentPlayer?.teamId,
+
+	//양팀 정보
+	const teamA = refinedParticipants.filter(
+		(player: RefinedParticipantInfo) => player.teamId === currentPlayer?.teamId,
 	)
-	const teamB = match.info.participants.filter(
-		(player: ParticipantInfo) => player.teamId !== currentPlayer?.teamId,
+	const teamB = refinedParticipants.filter(
+		(player: RefinedParticipantInfo) => player.teamId !== currentPlayer?.teamId,
 	)
-
-	const teamATotalKills = teamA.reduce(function add(sum: any, item: any) {
-		return sum + item.kills
-	}, 0)
-
-	const teamBTotalKills = teamB.reduce(function add(sum: any, item: any) {
-		return sum + item.kills
-	}, 0)
-
-	const searchedPlayersKillPart = getKillParticipationRate(
-		teamATotalKills,
-		currentPlayer.kills,
-		currentPlayer.assists,
-	)
-
+	const teamAStats = getRefinedTeamStats(teamA)
+	const teamBStats = getRefinedTeamStats(teamB)
+	//게임 정보
 	const gameDurationTime = (match.info.gameDuration / 60).toFixed(0)
 	const gameDurationTimeNum = Number(match.info.gameDuration / 60)
 	const win = currentPlayer.win
-	const championName = currentPlayer.championName
-	const kda = getKDA(
-		currentPlayer.kills,
-		currentPlayer.deaths,
-		currentPlayer.assists,
-	)
-	const cs = getCS(
-		currentPlayer.neutralMinionsKilled,
-		currentPlayer.totalMinionsKilled,
-	)
-	const csPerMin = getCS(
-		currentPlayer.neutralMinionsKilled,
-		currentPlayer.totalMinionsKilled,
-		gameDurationTimeNum,
-	)
 	const queueType = getQueueTypeName(match.info.queueId)
-	const summonersSpell = getSummonersSpellName(
-		currentPlayer.summoner1Id,
-		currentPlayer.summoner2Id,
-	)
-	const rune = getRuneName(
-		currentPlayer.perks.styles[0].selections[0].perk,
-		currentPlayer.perks.styles[1].style,
-	)
 
-	const searchedPlayer = {
-		summonersSpell,
-		rune,
-		csPerMin,
-		cs,
-		kda,
-		championName,
-		win,
-		searchedPlayersKillPart,
-		level: currentPlayer.champLevel,
-		kills: currentPlayer.kills,
-		deaths: currentPlayer.deaths,
-		assists: currentPlayer.assists,
-		pinkWardQty: currentPlayer.visionWardsBoughtInGame,
-		items: [
-			currentPlayer.item0,
-			currentPlayer.item1,
-			currentPlayer.item2,
-			currentPlayer.item3,
-			currentPlayer.item4,
-			currentPlayer.item5,
-		],
-		ward: currentPlayer.item6,
-	}
-	const matchStatistics = {
+	const refinedMatchInfo: RefinedMatchInfo = {
 		queueType,
 		gameDurationTime,
 		teamA,
+		teamAStats,
 		teamB,
+		teamBStats,
+		gameDurationTimeNum,
+		win,
 		gameCreation: match.info.gameCreation,
 	}
-	return { searchedPlayer, matchStatistics }
+	return { currentPlayer, refinedMatchInfo }
 }
 
 // API에서 받아오는 피들스틱의 이름을 다른 api 요청시에 사용하면 에러가 나서 해당 부분 처리
