@@ -1,11 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
-import {
-	MatchInfoObj,
-	RefinedMatchStatistics,
-	RefinedParticipantInfo,
-	UserDocument,
-} from '../@types/types'
+import Link from 'next/link'
+
 import { calculatedTimeDiffer, getMatchStatistics, handleRiotId } from '@/utils'
 import {
 	CHAMPION_ICON_URL,
@@ -13,8 +9,14 @@ import {
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
 } from '@/constants'
-import Link from 'next/link'
 import MatchDetail from './MatchDetail'
+
+import {
+	MatchInfoObj,
+	RefinedMatchStatistics,
+	RefinedParticipantInfo,
+	UserDocument,
+} from '../../@types/types'
 
 interface Props {
 	userDocument: UserDocument
