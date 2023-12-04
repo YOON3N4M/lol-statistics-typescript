@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import { LeagueInfo, UserDocument } from '../@types/types'
-import { matchingTierImg, romeNumToArabNum } from '../utils'
+import { LeagueInfo, UserDocument } from '@/@types/types'
+import { matchingTierImg, romeNumToArabNum } from '@/utils'
 import { useState, useEffect } from 'react'
 
 interface Props {

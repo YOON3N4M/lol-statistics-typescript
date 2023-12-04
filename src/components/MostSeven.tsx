@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import { ParticipantsData } from '../@types/types'
+import { ParticipantsData } from '@/@types/types'
 import MostChampions from './MostChampions'
 
 interface Props {

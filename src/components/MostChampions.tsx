@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { ParticipantInfo } from '../@types/types'
-import { CHAMPION_ICON_URL } from '../constants'
-import { variable } from '../styles/Globalstyles'
-import { getKDA, getKDAColor, translateKorChampionName } from '../utils'
+import { ParticipantInfo } from '@/@types/types'
+import { CHAMPION_ICON_URL } from '@/constants'
+import { variable } from '@/styles/Globalstyles'
+import { getKDA, getKDAColor, translateKorChampionName } from '@/utils'
 
 interface Props {
 	champions: ParticipantInfo[]

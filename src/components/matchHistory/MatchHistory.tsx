@@ -9,14 +9,14 @@ import {
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
 } from '@/constants'
-import MatchDetail from './MatchDetail'
+import MatchDetail from '@/components/matchHistory/MatchDetail'
 
 import {
 	MatchInfoObj,
 	RefinedMatchStatistics,
 	RefinedParticipantInfo,
 	UserDocument,
-} from '../../@types/types'
+} from '@/@types/types'
 
 interface Props {
 	userDocument: UserDocument
