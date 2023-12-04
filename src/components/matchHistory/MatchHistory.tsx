@@ -66,9 +66,14 @@ function MatchHistory({ userDocument, match }: Props) {
 							<TopRow>
 								<Champion>
 									<ChampionIconBox>
-										<ChampionIcon
-											src={CHAMPION_ICON_URL(championName)}
-										></ChampionIcon>
+										<a
+											target="_"
+											href={`https://www.op.gg/champions/${championName.toLowerCase()}/build`}
+										>
+											<ChampionIcon
+												src={CHAMPION_ICON_URL(championName)}
+											></ChampionIcon>
+										</a>
 										<ChampionLevel>{champLevel}</ChampionLevel>
 									</ChampionIconBox>
 									<SpellContainer>

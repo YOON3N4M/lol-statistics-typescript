@@ -38,7 +38,7 @@ export default function DetailTable({ team }: Props) {
 				<td className="champion">
 					<a
 						target="_"
-						href={`https://www.op.gg/champions/${championName}/build`}
+						href={`https://www.op.gg/champions/${championName.toLowerCase()}/build`}
 					>
 						<div>
 							<img src={CHAMPION_ICON_URL(fixedChampionName(championName))} />
