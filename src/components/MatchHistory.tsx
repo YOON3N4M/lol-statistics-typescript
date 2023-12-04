@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
 	MatchInfoObj,
@@ -6,7 +6,7 @@ import {
 	RefinedParticipantInfo,
 	UserDocument,
 } from '../@types/types'
-import { calculatedTimeDiffer, getMatchStatistics } from '../utils'
+import { calculatedTimeDiffer, getMatchStatistics } from '@/utils'
 import {
 	CHAMPION_ICON_URL,
 	ITEM_ICON_URL,
@@ -14,6 +14,7 @@ import {
 	SUMMONER_SPELL_ICON_URL,
 } from '@/constants'
 import Link from 'next/link'
+import MatchDetail from './MatchDetail'
 
 interface Props {
 	userDocument: UserDocument
@@ -21,6 +22,7 @@ interface Props {
 }
 
 function MatchHistory({ userDocument, match }: Props) {
+	const [showDetail, setShowDetail] = useState(false)
 	const name = userDocument.name
 
 	const matchStatistics: RefinedMatchStatistics = getMatchStatistics(
@@ -48,7 +50,7 @@ function MatchHistory({ userDocument, match }: Props) {
 
 	return (
 		<>
-			{currentPlayer && (
+			<MatchContainer>
 				<Match isWin={win}>
 					<GameContainer>
 						<Game>
@@ -170,17 +172,26 @@ function MatchHistory({ userDocument, match }: Props) {
 						</PartContainer>
 					</GameContainer>
 					<Detail>
-						<DetailBtn isWin={win}></DetailBtn>
+						<DetailBtn
+							isWin={win}
+							onClick={() => setShowDetail((prev) => !prev)}
+						></DetailBtn>
 					</Detail>
 				</Match>
-			)}
+				{showDetail && <MatchDetail matchStatistics={matchStatistics} />}
+			</MatchContainer>
 		</>
 	)
 }
 
+const MatchContainer = styled.div`
+	position: relative;
+	margin-top: 8px;
+`
+
 const Match = styled.li<{ isWin?: any }>`
 	height: 96px;
-	margin-bottom: 8px;
+
 	border-radius: 4px;
 	display: flex;
 	justify-content: space-between;

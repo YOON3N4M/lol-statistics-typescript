@@ -420,7 +420,6 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		champLevel,
 		championId,
 	} = participant
-	console.log(participant)
 	const kda = getKDA(kills, deaths, assists)
 	const cs = getCS(neutralMinionsKilled, totalMinionsKilled)
 	// const csPerMin = getCS(
@@ -529,12 +528,11 @@ export function getMatchStatistics(match: any, searchedName: string) {
 		match.info.participants.map((participant: ParticipantInfo) =>
 			getRefinedParticipant(participant),
 		)
-	console.log(refinedParticipants)
+
 	const currentPlayer: RefinedParticipantInfo = refinedParticipants.filter(
 		(participant: RefinedParticipantInfo) =>
 			searchedName === participant.riotIdGameName,
 	)[0]
-	console.log(currentPlayer, searchedName)
 
 	//양팀 정보
 	const teamA = refinedParticipants.filter(
