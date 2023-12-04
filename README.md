@@ -1,41 +1,43 @@
-### 🚧수정이 진행중인 프로젝트 입니다🚧
-> 
-> 수정중에 있습니다. 
-> 
-> 4/1 1차적인 수정 완료. 미지원 기능 알람, 현재 랭크 표시 등 일부 기능 수정 예정
-
-
-> 10/23 전체 리팩토링 진행중... (목표는 아래와 같음)
-> > * 선언 없이 실행되던 로직들 함수로 분리 선언
-> > * API 관련 함수들 별도의 파일에 모두 분리후 재사용성 향상
-> > * 순서대로 동작해야하는 API들 꼬임 없이 순차적으로 처리 되도록 수정
-> > * Summoners.tsx 에 모여있던 로직, jsx들 모두 개별 컴포넌트화
-> > * inGame 정보 확인 기능 추가
-> > * 불필요하게 선언되었던 state 정리
-> > * 공통 types 별도의 파일에 분리 관리 (특정 컴포넌트 내에서만 쓰이는 type은 컴포넌트 내에서 관리)
-> > * 자주 사용되는 상수, 수시로 변경해야하는 버전 등의 값은 한번의 변경으로 모든 파일에 적용될 수 있게 constants 폴더내에서 관리
-> > * 웹표준에 어긋나는 마크업 수정
-
-> 11/21~ 넥스트 도입
-<br>
-<br>
-
 
 # lol-statistics-typescript
+
+
+### 소개
+
+라이엇 게임즈에서 제공하는 API를 활용해 리그오브레전드 플레이어의 정보를 조회 할 수 있습니다. <br/>
+최근 20게임의 전적, 모스트 7, 포지션 선호도, 승률과 kda 등의 통계 정보 등을 제공 합니다.<br/>
+전체적인 디자인과 구성은 [OP.GG](https://www.op.gg/)를 참고하여 제작 되었습니다.
+
+
+### 버전
 
 * ### V3 버전 ( [배포](https://lol-match-histroy.vercel.app/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/next) )
 > 배포 : vercel (11/23 첫 배포) <br><br>
 > <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
+>
+> * vercel 배포, 개발 브랜치 (next), 배포 브랜치 (main) 분리
+> * 절대 경로 설정
+> * Riot id 시스템 변경에 따라 검색 방식 변경 (account api 추가)
+> * 최근 검색 플레이어 추가
+> * 전적 검색시 보이던 여러 버그들 수정
+> * 전적 갱신 제한 시간 추가
+> * 시간 표시 관련
 <br>
 
 * ### V2 버전 ( [배포](https://lol-statistic.firebaseapp.com/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/main) )
 > 배포 : firebase hosting <br><br>
 > <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
+>
+> * 전체적으로 리팩토링
+> * 챔피언 이름 한글화
+> * RIOT API, Firebase API 각각의 함수로 분리 정리 (utils/api.ts , utils/firebaseApi)
+> * 재사용률이 높은 상수들 개별 정의 (api, img url 등)  (constants/index.ts)
+> * 재사용률이 높은 계산 함수, 추출 함수 개별 정의 (utils/index.ts)
 <br>
 
 * ### V1 버전 ( [배포](https://yoon3n4m.github.io/lol-statistics/) | [저장소](https://github.com/YOON3N4M/lol-statistics) )
 > 배포 : github pages <br><br>
-> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white">, <img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=javascript&logoColor=white">
+> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white"> <img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=javascript&logoColor=white">
 
 <br>
 
@@ -43,27 +45,26 @@
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">  <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
 <hr>
 
-### 🛠️ V2 에서 개선된 점
+### 🛠️ V3 세부 변경사항
+* next.js 도입으로 전체적인 성능 개선
+* next.js 자체 api 활용
+* 꼬여있던 api, db 관련 코드들 전체적으로 개선
+* 각종 오류 수정
+* 서브 검색창 추가
+* RIOT ID 시스템 적용
+
+### 🛠️ V2 세부 변경사항
 * db없이 작동하던 기존의 방식에서 API로 받아온 데이터를 db에 저장하며 활용 할 수 있게 됨
-> 기존엔 앱 실행시 항상 라이엇 API 요청을 보내 매번 새로운 데이터를 받아왔지만, 현재는 db에서 데이터를 조회한 후 존재하지 않을시 라이엇 API 요청을 하게 됨.
-> 이후 사용자 스스로 최신 데이터가 필요해지면 "전적 갱신" 버튼을 통해 라이엇 API 요청 과정을 통해 전적을 갱신 할 수 있게 됨.
+> 기존엔 앱 실행시 항상 라이엇 API 요청을 보내 매번 새로운 데이터를 받아왔지만, 현재는 db와 api 각각의 요청을 통해 필요한 데이터를 수급할 수 있음.
 * 타입스크립트 적용
 * styled-components 적용
 * github Pages가 아닌 firebase hosting을 이용하여 SPA 앱 새로고침, 뒤로가기 등 이슈를 해결
 * 기존의 잘못된 방식으로 변수를 활용하던 점들 대부분 수정/개선
 * map으로 대체가능한 반복 작업 등을 map으로 코드 수정/개선
-* 기존의 방식보다 전적 출력의 속도가 빨라짐
-* 전체적인 코드 개선
+* 전체적인 코드 개선 (V1에선 한 파일에 로직 코드가 1000줄 가까이 됐었음....)
 
 <hr>
 
-### 앱소개
 
-* 라이엇 게임즈에서 제공하는 API를 활용해 리그오브레전드 플레이어의 최근 게임 전적을 조회할 수 있습니다.
 * 조회된 플레이어의 정보와 각 게임의 정보들은 아래와 같이 파이어베이스 db에 저장됩니다.
-> Key는 플레이어 고유의 puuid
-> ![image](https://user-images.githubusercontent.com/115640584/228858451-b13a8ac1-d14f-43aa-9d67-02fcda78674f.png)
-> key는 각 게임의 고유 ID
-> ![image](https://user-images.githubusercontent.com/115640584/228858610-4d412657-58ab-41af-8e6e-61a110f0ae18.png)
-
 
