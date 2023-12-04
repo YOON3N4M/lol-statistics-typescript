@@ -6,7 +6,7 @@ import {
 	RefinedParticipantInfo,
 	UserDocument,
 } from '../@types/types'
-import { calculatedTimeDiffer, getMatchStatistics } from '@/utils'
+import { calculatedTimeDiffer, getMatchStatistics, handleRiotId } from '@/utils'
 import {
 	CHAMPION_ICON_URL,
 	ITEM_ICON_URL,
@@ -23,7 +23,7 @@ interface Props {
 
 function MatchHistory({ userDocument, match }: Props) {
 	const [showDetail, setShowDetail] = useState(false)
-	const name = userDocument.name
+	const name = handleRiotId(userDocument.riotId, '#').name
 
 	const matchStatistics: RefinedMatchStatistics = getMatchStatistics(
 		match,
