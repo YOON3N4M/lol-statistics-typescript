@@ -18,6 +18,7 @@ import SummonerHead from '@/components/summonerPage/SummonerHead'
 import SummonerBody from '@/components/summonerPage/SummonerBody'
 import Header from '@/components/layout/Header'
 import { variable } from '@/styles/Globalstyles'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')
@@ -44,12 +45,12 @@ function Summoners() {
 			)
 			setLoadingPercent(40)
 			const leagueRes = await api.getLeagueInfo(summonerRes.id)
-			setLoadingPercent(100)
+			setLoadingPercent(60)
 			const matchIdsRes: string[] = await api.getMatchId(
 				summonerRes.puuid,
 				matchQty,
 			)
-			setStatus(true)
+
 			return { accountRes, summonerRes, leagueRes, matchIdsRes }
 		} catch {
 			setStatus(false)
@@ -71,6 +72,8 @@ function Summoners() {
 			postFirebaseResult.matchHistory,
 		)
 		setMatchInfoArr(matchInfoResult)
+		setStatus(true)
+		setLoadingPercent(100)
 	}
 
 	async function searchMatchId(matchIdArr?: string[]) {
@@ -180,10 +183,14 @@ function Summoners() {
 							refresh={refresh}
 							loadingPercent={loadingPercent}
 						/>
-						<SummonerBody
-							userDocument={userDocument}
-							matchInfoArr={matchInfoArr}
-						/>
+						{loadingPercent === 100 ? (
+							<SummonerBody
+								userDocument={userDocument}
+								matchInfoArr={matchInfoArr}
+							/>
+						) : (
+							<LoadingSpinner />
+						)}
 					</>
 				)}
 			</StyledSummonerContainer>
