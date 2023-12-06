@@ -411,7 +411,6 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		item2,
 		item3,
 		summonerName,
-
 		item4,
 		item5,
 		item6,
@@ -422,6 +421,7 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		win,
 		champLevel,
 		championId,
+		puuid,
 	} = participant
 	const kda = getKDA(kills, deaths, assists)
 	const cs = getCS(neutralMinionsKilled, totalMinionsKilled)
@@ -469,6 +469,7 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		champLevel,
 		championId,
 		summonerName,
+		puuid,
 	}
 }
 
@@ -525,17 +526,16 @@ export function getRefinedTeamStats(team: RefinedParticipantInfo[]) {
 	}
 }
 
-export function getMatchStatistics(match: any, searchedName: string) {
+export function getMatchStatistics(match: any, puuid: string) {
 	//console.log(match.info.participants)
 	// 모든 플레이어 정제 스탯 추출
 	const refinedParticipants: RefinedParticipantInfo[] =
 		match.info.participants.map((participant: ParticipantInfo) =>
 			getRefinedParticipant(participant),
 		)
-	//	console.log(refinedParticipants)
+
 	const currentPlayer: RefinedParticipantInfo = refinedParticipants.filter(
-		(participant: RefinedParticipantInfo) =>
-			searchedName === participant.riotIdGameName,
+		(participant: RefinedParticipantInfo) => puuid === participant.puuid,
 	)[0]
 
 	//양팀 정보

@@ -8,7 +8,6 @@ export default async function handler(
 ) {
 	if (req.method === 'GET') {
 		const riotId: any = req.query
-		console.log(riotId)
 		try {
 			const accountResult = await api.getAccountByRiotId(riotId)
 

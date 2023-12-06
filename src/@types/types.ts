@@ -126,6 +126,7 @@ export interface ParticipantInfo {
 	baronKills: number
 	turretKills: number
 	championId: number
+	puuid: string
 }
 
 export interface RefinedParticipantInfo {
@@ -156,6 +157,7 @@ export interface RefinedParticipantInfo {
 	win: boolean
 	champLevel: number
 	championId: number
+	puuid: string
 }
 
 export interface LeagueInfo {

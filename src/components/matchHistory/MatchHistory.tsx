@@ -25,11 +25,10 @@ interface Props {
 
 function MatchHistory({ userDocument, match }: Props) {
 	const [showDetail, setShowDetail] = useState(false)
-	const name = handleRiotId(userDocument.riotId, '#').name
 
 	const matchStatistics: RefinedMatchStatistics = getMatchStatistics(
 		match,
-		name,
+		userDocument.puuid,
 	)
 	const { currentPlayer, refinedMatchInfo } = matchStatistics
 	const { gameCreation, queueType, gameDurationTime, teamA, teamB } =
@@ -143,9 +142,7 @@ function MatchHistory({ userDocument, match }: Props) {
 											<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
 										</PartIconBox>
 										<PartNameBox>
-											<PartName
-												$isPlayer={item.riotIdGameName === userDocument.name}
-											>
+											<PartName $isPlayer={item.puuid === userDocument.puuid}>
 												<Link
 													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
 												>
@@ -163,9 +160,7 @@ function MatchHistory({ userDocument, match }: Props) {
 											<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
 										</PartIconBox>
 										<PartNameBox>
-											<PartName
-												$isPlayer={item.riotIdGameName === userDocument.name}
-											>
+											<PartName $isPlayer={item.puuid === userDocument.puuid}>
 												<Link
 													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
 												>
