@@ -1,11 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
-import {
-	MatchInfoObj,
-	RefinedMatchStatistics,
-	RefinedParticipantInfo,
-	UserDocument,
-} from '../@types/types'
+import Link from 'next/link'
+
 import { calculatedTimeDiffer, getMatchStatistics, handleRiotId } from '@/utils'
 import {
 	CHAMPION_ICON_URL,
@@ -13,8 +9,14 @@ import {
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
 } from '@/constants'
-import Link from 'next/link'
-import MatchDetail from './MatchDetail'
+import MatchDetail from '@/components/matchHistory/MatchDetail'
+
+import {
+	MatchInfoObj,
+	RefinedMatchStatistics,
+	RefinedParticipantInfo,
+	UserDocument,
+} from '@/@types/types'
 
 interface Props {
 	userDocument: UserDocument
@@ -23,11 +25,10 @@ interface Props {
 
 function MatchHistory({ userDocument, match }: Props) {
 	const [showDetail, setShowDetail] = useState(false)
-	const name = handleRiotId(userDocument.riotId, '#').name
 
 	const matchStatistics: RefinedMatchStatistics = getMatchStatistics(
 		match,
-		name,
+		userDocument.puuid,
 	)
 	const { currentPlayer, refinedMatchInfo } = matchStatistics
 	const { gameCreation, queueType, gameDurationTime, teamA, teamB } =
@@ -64,9 +65,14 @@ function MatchHistory({ userDocument, match }: Props) {
 							<TopRow>
 								<Champion>
 									<ChampionIconBox>
-										<ChampionIcon
-											src={CHAMPION_ICON_URL(championName)}
-										></ChampionIcon>
+										<a
+											target="_"
+											href={`https://www.op.gg/champions/${championName.toLowerCase()}/build`}
+										>
+											<ChampionIcon
+												src={CHAMPION_ICON_URL(championName)}
+											></ChampionIcon>
+										</a>
 										<ChampionLevel>{champLevel}</ChampionLevel>
 									</ChampionIconBox>
 									<SpellContainer>
@@ -136,9 +142,7 @@ function MatchHistory({ userDocument, match }: Props) {
 											<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
 										</PartIconBox>
 										<PartNameBox>
-											<PartName
-												$isPlayer={item.riotIdGameName === userDocument.name}
-											>
+											<PartName $isPlayer={item.puuid === userDocument.puuid}>
 												<Link
 													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
 												>
@@ -156,9 +160,7 @@ function MatchHistory({ userDocument, match }: Props) {
 											<PartIcon src={CHAMPION_ICON_URL(item.championName)} />
 										</PartIconBox>
 										<PartNameBox>
-											<PartName
-												$isPlayer={item.riotIdGameName === userDocument.name}
-											>
+											<PartName $isPlayer={item.puuid === userDocument.puuid}>
 												<Link
 													href={`/summoners/kr/${item.riotIdGameName}-${item.riotIdTagline}`}
 												>
@@ -174,7 +176,7 @@ function MatchHistory({ userDocument, match }: Props) {
 					<Detail>
 						<DetailBtn
 							isWin={win}
-							onClick={() => setShowDetail((prev) => !prev)}
+							// onClick={() => setShowDetail((prev) => !prev)}
 						></DetailBtn>
 					</Detail>
 				</Match>

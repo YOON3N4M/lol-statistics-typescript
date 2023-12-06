@@ -7,7 +7,7 @@ import {
 	setDoc,
 	where,
 } from 'firebase/firestore'
-import { dbService } from '../fBase'
+import { dbService } from '@/fBase'
 import {
 	LeagueObj,
 	MatchInfoObj,
@@ -15,7 +15,7 @@ import {
 	RiotId,
 	SummonerObj,
 	UserDocument,
-} from '../@types/types'
+} from '@/@types/types'
 
 async function getUserDocument(summonersName: string) {
 	const q = query(

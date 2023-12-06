@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { CHAMPION_ICON_URL } from '../constants'
-import { getKDA, getKDAColor, getWinRate } from '../utils'
-import { variable } from '../styles/Globalstyles'
+import { CHAMPION_ICON_URL } from '@/constants'
+import { getKDA, getKDAColor, getWinRate } from '@/utils'
+import { variable } from '@/styles/Globalstyles'
 
 interface Props {
 	champion: any

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import styled from 'styled-components'
-import SearchInput from '../SearchInput'
+import SearchInput from '@/components/SearchInput'
 import { usePathname } from 'next/navigation'
 
 function Header() {

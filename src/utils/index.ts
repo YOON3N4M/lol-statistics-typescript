@@ -1,15 +1,16 @@
 import { InGameInfo } from '@/components/inGame/InGame'
 import {
 	ParticipantInfo,
+	QueueTypeStr,
 	RefinedMatchInfo,
 	RefinedParticipantInfo,
 	RiotId,
-} from '../@types/types'
-import { tierIcon } from '../constants'
-import championsData from '../data/championsData.json'
-import { variable } from '../styles/Globalstyles'
-import { RefinedInGameInfo } from './../components/inGame/InGame'
-import { ParticipantsData } from './../@types/types'
+} from '@/@types/types'
+import { tierIcon } from '@/constants'
+import championsData from '@/data/championsData.json'
+import { variable } from '@/styles/Globalstyles'
+import { RefinedInGameInfo } from '@/components/inGame/InGame'
+import { ParticipantsData } from '@/@types/types'
 
 export function handleRiotId(riotId: string, sign: string) {
 	const parts = riotId.split(sign)
@@ -153,7 +154,8 @@ export function getCS(
 }
 
 // 큐 타입 코드에 따른 큐 타입 이름 대치
-export function getQueueTypeName(queueType: number) {
+export function getQueueTypeName(queueType: number): QueueTypeStr {
+	console.log(queueType)
 	switch (queueType) {
 		case 400:
 			return '일반'
@@ -169,7 +171,8 @@ export function getQueueTypeName(queueType: number) {
 
 		case 450:
 			return '무작위 총력전'
-
+		case 490:
+			return '빠른 대전'
 		case 700:
 			return '격전'
 
@@ -408,7 +411,6 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		item2,
 		item3,
 		summonerName,
-
 		item4,
 		item5,
 		item6,
@@ -419,6 +421,7 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		win,
 		champLevel,
 		championId,
+		puuid,
 	} = participant
 	const kda = getKDA(kills, deaths, assists)
 	const cs = getCS(neutralMinionsKilled, totalMinionsKilled)
@@ -437,7 +440,7 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 	const dealtToChampion =
 		physicalDamageDealtToChampions + magicDamageDealtToChampions
 	const items = [item0, item1, item2, item3, item4, item5]
-	console.log('dddsad')
+
 	return {
 		riotIdGameName: riotIdGameName ? riotIdGameName : summonerName,
 		riotIdTagline,
@@ -466,6 +469,7 @@ export function getRefinedParticipant(participant: ParticipantInfo) {
 		champLevel,
 		championId,
 		summonerName,
+		puuid,
 	}
 }
 
@@ -522,17 +526,16 @@ export function getRefinedTeamStats(team: RefinedParticipantInfo[]) {
 	}
 }
 
-export function getMatchStatistics(match: any, searchedName: string) {
+export function getMatchStatistics(match: any, puuid: string) {
 	//console.log(match.info.participants)
 	// 모든 플레이어 정제 스탯 추출
 	const refinedParticipants: RefinedParticipantInfo[] =
 		match.info.participants.map((participant: ParticipantInfo) =>
 			getRefinedParticipant(participant),
 		)
-	console.log(refinedParticipants)
+
 	const currentPlayer: RefinedParticipantInfo = refinedParticipants.filter(
-		(participant: RefinedParticipantInfo) =>
-			searchedName === participant.riotIdGameName,
+		(participant: RefinedParticipantInfo) => puuid === participant.puuid,
 	)[0]
 
 	//양팀 정보

@@ -7,7 +7,7 @@ import {
 	MATCH_INFO_URL,
 	SUMMONER_BY_PUUID_ID,
 	SUMMONER_INFO_URL,
-} from '../constants'
+} from '@/constants'
 import axios from 'axios'
 
 async function getSummonersInfo(summonersName: string) {
@@ -18,6 +18,7 @@ async function getSummonersInfo(summonersName: string) {
 
 async function getSummonerByPuuid(puuid: string) {
 	const res = await axios.get(SUMMONER_BY_PUUID_ID(puuid))
+
 	return res.data
 }
 
@@ -33,6 +34,7 @@ async function getMatchId(puuid: string, qty: number) {
 
 async function getMatchInfo(id: string) {
 	const res = await axios.get(MATCH_INFO_URL(id))
+	console.log(res.data)
 	return res.data
 }
 
