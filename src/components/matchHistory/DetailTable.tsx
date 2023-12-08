@@ -1,16 +1,20 @@
 import styled from 'styled-components'
 
-import { RefinedParticipantInfo } from '@/@types/types'
+import { RefinedParticipantInfo, RefinedTeamStats } from '@/@types/types'
 import {
 	CHAMPION_ICON_URL,
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
 } from '@/constants'
-import { fixedChampionName } from '@/utils'
+import { fixedChampionName, getKDAColor } from '@/utils'
 import { variable } from '@/styles/Globalstyles'
+import Link from 'next/link'
 
 interface Props {
 	team: RefinedParticipantInfo[]
+	teamStats: RefinedTeamStats
+	topDealtOnChampion: number
+	topTakenDamage: number
 }
 
 interface RowProps {
@@ -19,8 +23,22 @@ interface RowProps {
 	topTakenDamage?: number
 }
 
-export default function DetailTable({ team }: Props) {
-	console.log(team)
+export default function DetailTable({
+	team,
+	teamStats,
+	topDealtOnChampion,
+	topTakenDamage,
+}: Props) {
+	const {
+		totalKills,
+		totalBaronKills,
+		totalTurretKills,
+		totalDragonKills,
+		totalGold,
+		totalDealtToChampion,
+	} = teamStats
+	const win = team[0].win
+	const teamId = team[0].teamId
 
 	function ParticipantRow({ participant }: RowProps) {
 		const {
@@ -32,9 +50,24 @@ export default function DetailTable({ team }: Props) {
 			kills,
 			deaths,
 			assists,
+			kda,
+			dealtToChampion,
+			totalDamageTaken,
+			visionWardsBoughtInGame,
+			wardsKilled,
+			wardsPlaced,
+			cs,
+			riotIdTagline,
 		} = participant
+		const killPart = Math.round(((kills + assists) / totalKills) * 100)
+		const dealtPercentage = Math.floor(
+			(dealtToChampion / topDealtOnChampion) * 100,
+		)
+		const takenPercentage = Math.floor(
+			(totalDamageTaken / topTakenDamage) * 100,
+		)
 		return (
-			<StyledTr>
+			<StyledTr $kdaColor={getKDAColor(kda)}>
 				<td className="champion">
 					<a
 						target="_"
@@ -69,7 +102,9 @@ export default function DetailTable({ team }: Props) {
 				</td>
 				<td className="name">
 					<div>
-						<span>{riotIdGameName}</span>
+						<Link href={`/summoners/kr/${riotIdGameName}-${riotIdTagline}`}>
+							{riotIdGameName}
+						</Link>
 					</div>
 					<div>
 						<span>티어</span>
@@ -77,18 +112,44 @@ export default function DetailTable({ team }: Props) {
 				</td>
 				<td className="op-score"></td>
 				<td className="kda">
-					<div>{`${kills}/${deaths}/${assists}`}</div>
+					<div>
+						{`${kills}/${deaths}/${assists}`} {`(${killPart}%)`}
+					</div>
+					<div>
+						<span>{kda}</span>
+					</div>
 				</td>
-				<td className="damage"></td>
-				<td className="ward"></td>
-				<td className="cs"></td>
+				<td className="damage">
+					<div>
+						<div>{dealtToChampion.toLocaleString('ko-KR')}</div>
+						<div className="progress">
+							<ProgressBar $progress={dealtPercentage} $color="#e84057" />
+						</div>
+					</div>
+					<div>
+						<div>{totalDamageTaken.toLocaleString('ko-KR')}</div>
+						<div className="progress">
+							<ProgressBar $progress={takenPercentage} $color="#9AA4AF" />
+						</div>
+					</div>
+				</td>
+				<td className="ward">
+					<div>{visionWardsBoughtInGame}</div>
+					<div>
+						{wardsPlaced} / {wardsKilled}
+					</div>
+				</td>
+				<td className="cs">
+					<div>{cs}</div>
+					<div>분당</div>
+				</td>
 				<td className="items"></td>
 			</StyledTr>
 		)
 	}
 
 	return (
-		<StyledTable>
+		<StyledTable $win={win}>
 			<colgroup>
 				<col width="44" />
 				<col width="18" />
@@ -103,8 +164,11 @@ export default function DetailTable({ team }: Props) {
 			</colgroup>
 			<thead>
 				<tr className="detail-head">
-					<th colSpan={4}>패배</th>
-					<th>OP 스코어</th>
+					<th colSpan={4}>
+						{win ? '승리' : '패배'}{' '}
+						{`(${teamId === 100 ? '블루팀' : '레드팀'})`}
+					</th>
+					<th></th>
 					<th>KDA</th>
 					<th>피해량</th>
 					<th>와드</th>
@@ -121,10 +185,11 @@ export default function DetailTable({ team }: Props) {
 	)
 }
 
-const StyledTable = styled.table`
-	background-color: #fff1f3;
+const StyledTable = styled.table<{ $win: boolean }>`
+	background-color: ${(props) => (props.$win ? '#ECF2FF' : '#fff1f3')};
 	width: 100%;
 	box-sizing: border-box;
+
 	th {
 		font-size: 12px;
 	}
@@ -136,7 +201,10 @@ const StyledTable = styled.table`
 		background-color: white;
 	}
 `
-const StyledTr = styled.tr`
+const StyledTr = styled.tr<{ $kdaColor: string }>`
+	padding: 2px 0;
+	font-size: 11px;
+	color: #758592;
 	.champion {
 		padding-left: 10px;
 		div {
@@ -178,12 +246,51 @@ const StyledTr = styled.tr`
 	}
 
 	.name {
-		span {
+		div {
+			width: 90px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		a {
+			white-space: nowrap;
 			font-size: 12px;
 			color: ${variable.color.fontBlack};
+			text-decoration: none;
 		}
 	}
 	.kda {
 		text-align: center;
+
+		span {
+			font-weight: bold;
+			color: ${(props) => props.$kdaColor};
+		}
 	}
+	.damage {
+		display: flex;
+		text-align: center;
+		div {
+			flex: 1 1 0;
+		}
+		.progress {
+			margin: 4px auto 0px;
+			display: flex;
+			justify-content: center;
+		}
+	}
+	.ward,
+	.cs {
+		text-align: center;
+	}
+`
+
+const ProgressBar = styled.div<{ $progress: number; $color: string }>`
+	max-width: 50px;
+	height: 6px;
+	background-color: white;
+	background: linear-gradient(
+		to right,
+		${(props) => props.$color} ${(props) => props.$progress}%,
+		white 0%
+	);
 `

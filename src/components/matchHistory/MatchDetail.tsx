@@ -12,7 +12,37 @@ type DetailContents = '종합' | '팀 분석'
 
 export default function MatchDetail({ matchStatistics }: Props) {
 	const [content, setContents] = useState<DetailContents>('종합')
+	const teamADealtOnChampion = Math.max(
+		...matchStatistics.refinedMatchInfo.teamA.map(
+			(participant) => participant.dealtToChampion,
+		),
+	)
+	const teamBDealtOnChampion = Math.max(
+		...matchStatistics.refinedMatchInfo.teamB.map(
+			(participant) => participant.dealtToChampion,
+		),
+	)
+	const topDealtOnChampion =
+		teamADealtOnChampion - teamBDealtOnChampion > 0
+			? teamADealtOnChampion
+			: teamBDealtOnChampion
 
+	const teamATakenDamage = Math.max(
+		...matchStatistics.refinedMatchInfo.teamA.map(
+			(participant) => participant.totalDamageTaken,
+		),
+	)
+	const teamBTakenDamage = Math.max(
+		...matchStatistics.refinedMatchInfo.teamB.map(
+			(participant) => participant.totalDamageTaken,
+		),
+	)
+	const topTakenDamage =
+		teamATakenDamage - teamBTakenDamage > 0
+			? teamATakenDamage
+			: teamBTakenDamage
+
+	console.log(teamADealtOnChampion, teamBDealtOnChampion, topDealtOnChampion)
 	return (
 		<StyledDetail>
 			<div className="tab">
@@ -32,10 +62,21 @@ export default function MatchDetail({ matchStatistics }: Props) {
 				</StyledTabButton> */}
 			</div>
 			<div className="detail-wrap">
-				<DetailTable team={matchStatistics.refinedMatchInfo.teamA} />
+				<DetailTable
+					team={matchStatistics.refinedMatchInfo.teamA}
+					teamStats={matchStatistics.refinedMatchInfo.teamAStats}
+					topDealtOnChampion={topDealtOnChampion}
+					topTakenDamage={topTakenDamage}
+				/>
 				<div className="summary"></div>
-				<table></table>
+				<DetailTable
+					team={matchStatistics.refinedMatchInfo.teamB}
+					teamStats={matchStatistics.refinedMatchInfo.teamBStats}
+					topDealtOnChampion={topDealtOnChampion}
+					topTakenDamage={topTakenDamage}
+				/>
 			</div>
+			<div className="footer"></div>
 		</StyledDetail>
 	)
 }
@@ -56,6 +97,16 @@ const StyledDetail = styled.div`
 	}
 
 	.detail-table {
+	}
+	.detail-wrap {
+	}
+	.footer {
+		width: 100%;
+		height: 30px;
+		background-color: white;
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+		border-top: 1px solid ${variable.color.border};
 	}
 `
 
