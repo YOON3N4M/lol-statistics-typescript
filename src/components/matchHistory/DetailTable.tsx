@@ -165,8 +165,10 @@ export default function DetailTable({
 			<thead>
 				<tr className="detail-head">
 					<th colSpan={4}>
-						{win ? '승리' : '패배'}{' '}
-						{`(${teamId === 100 ? '블루팀' : '레드팀'})`}
+						<span className="team">
+							{win ? '승리 ' : '패배 '}
+							<span>{`(${teamId === 100 ? '블루팀' : '레드팀'})`}</span>
+						</span>
 					</th>
 					<th></th>
 					<th>KDA</th>
@@ -199,6 +201,17 @@ const StyledTable = styled.table<{ $win: boolean }>`
 	}
 	.detail-head {
 		background-color: white;
+	}
+	.team {
+		font-weight: bold;
+		color: ${(props) =>
+			props.$win
+				? variable.color.selectFontBlue
+				: variable.color.selectFontRed};
+		span {
+			color: ${variable.color.gray};
+			font-weight: normal;
+		}
 	}
 `
 const StyledTr = styled.tr<{ $kdaColor: string }>`
