@@ -46,7 +46,7 @@ const HomeContainer = styled.div`
 
 const LogoContainer = styled.div`
 	width: 100%;
-	height: 224px;
+	height: 100px;
 	margin: 56px 0 46px;
 	display: flex;
 	align-items: center;

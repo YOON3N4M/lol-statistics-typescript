@@ -176,7 +176,7 @@ function MatchHistory({ userDocument, match }: Props) {
 					<Detail>
 						<DetailBtn
 							isWin={win}
-							// onClick={() => setShowDetail((prev) => !prev)}
+							onClick={() => setShowDetail((prev) => !prev)}
 						></DetailBtn>
 					</Detail>
 				</Match>
