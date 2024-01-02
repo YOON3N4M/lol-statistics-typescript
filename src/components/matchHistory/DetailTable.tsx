@@ -3,12 +3,21 @@ import styled from 'styled-components'
 import { RefinedParticipantInfo, RefinedTeamStats } from '@/@types/types'
 import {
 	CHAMPION_ICON_URL,
+	ITEM_ICON_URL,
 	RUNE_ICON_URL,
 	SUMMONER_SPELL_ICON_URL,
 } from '@/constants'
 import { fixedChampionName, getKDAColor } from '@/utils'
 import { variable } from '@/styles/Globalstyles'
 import Link from 'next/link'
+import {
+	ItemBox,
+	ItemContainer,
+	ItemIcon,
+	ItemUl,
+	WardBox,
+	WardIcon,
+} from './MatchHistory'
 
 interface Props {
 	team: RefinedParticipantInfo[]
@@ -58,6 +67,8 @@ export default function DetailTable({
 			wardsPlaced,
 			cs,
 			riotIdTagline,
+			items,
+			item6,
 		} = participant
 		const killPart = Math.round(((kills + assists) / totalKills) * 100)
 		const dealtPercentage = Math.floor(
@@ -66,6 +77,7 @@ export default function DetailTable({
 		const takenPercentage = Math.floor(
 			(totalDamageTaken / topTakenDamage) * 100,
 		)
+		console.log(participant)
 		return (
 			<StyledTr $kdaColor={getKDAColor(kda)}>
 				<td className="champion">
@@ -143,7 +155,22 @@ export default function DetailTable({
 					<div>{cs}</div>
 					<div>분당</div>
 				</td>
-				<td className="items"></td>
+				<td className="items">
+					<ItemContainer>
+						<ItemUl>
+							{items.map((item: number) => (
+								<li>
+									<ItemBox isWin={win}>
+										{item !== 0 && <ItemIcon src={ITEM_ICON_URL(item)} />}
+									</ItemBox>
+								</li>
+							))}
+						</ItemUl>
+						<WardBox isWin={win}>
+							{item6 !== 0 && <WardIcon src={ITEM_ICON_URL(item6)} />}
+						</WardBox>
+					</ItemContainer>
+				</td>
 			</StyledTr>
 		)
 	}
@@ -215,6 +242,7 @@ const StyledTable = styled.table<{ $win: boolean }>`
 	}
 `
 const StyledTr = styled.tr<{ $kdaColor: string }>`
+	height: 40px;
 	padding: 2px 0;
 	font-size: 11px;
 	color: #758592;

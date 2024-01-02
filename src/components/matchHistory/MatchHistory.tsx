@@ -17,6 +17,7 @@ import {
 	RefinedParticipantInfo,
 	UserDocument,
 } from '@/@types/types'
+import IconArrow from '../IconArrow'
 
 interface Props {
 	userDocument: UserDocument
@@ -177,7 +178,9 @@ function MatchHistory({ userDocument, match }: Props) {
 						<DetailBtn
 							isWin={win}
 							onClick={() => setShowDetail((prev) => !prev)}
-						></DetailBtn>
+						>
+							<IconArrow direction="bottom" />
+						</DetailBtn>
 					</Detail>
 				</Match>
 				{showDetail && <MatchDetail matchStatistics={matchStatistics} />}
@@ -339,26 +342,26 @@ const BottomRow = styled.div`
 	height: 22px;
 	margin-top: 8px;
 `
-const ItemContainer = styled.div`
+export const ItemContainer = styled.div`
 	display: flex;
 `
-const ItemUl = styled.ul`
+export const ItemUl = styled.ul`
 	display: flex;
 	margin: 0;
 `
-const ItemBox = styled.div<{ isWin?: any }>`
+export const ItemBox = styled.div<{ isWin?: any }>`
 	width: 22px;
 	height: 22px;
 	background-color: ${(props: any) => (props.isWin ? '#b3cdff' : '#ffbac3')};
 	margin-left: 2px;
 	border-radius: 4px;
 `
-const ItemIcon = styled.img`
+export const ItemIcon = styled.img`
 	width: 22px;
 	height: 22px;
 	border-radius: 4px;
 `
-const WardBox = styled.div<{ isWin?: any }>`
+export const WardBox = styled.div<{ isWin?: any }>`
 	background-color: ${(props: any) => (props.isWin ? '#b3cdff' : '#ffbac3')};
 	width: 22px;
 	height: 22px;
@@ -366,7 +369,7 @@ const WardBox = styled.div<{ isWin?: any }>`
 	margin-left: 2px;
 	margin-right: 4px;
 `
-const WardIcon = styled.img`
+export const WardIcon = styled.img`
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
@@ -422,6 +425,10 @@ const PartNameB = styled.b`
 `
 const Detail = styled.div``
 const DetailBtn = styled.button<{ isWin?: any }>`
+	display: flex;
+	justify-content: center;
+	padding: 20px 0;
+	align-items: end;
 	width: 40px;
 	height: 96px;
 	border: 0px;
