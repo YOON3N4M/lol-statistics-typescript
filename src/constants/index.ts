@@ -19,7 +19,7 @@ import SUP_ICON from '@/img/lane/sup.svg'
 
 // KEY and ETC...
 export const API_KEY = process.env.NEXT_PUBLIC_RIOT_API_KEY
-export const DATA_DRAGON_VERSION = '13.23.1'
+export const DATA_DRAGON_VERSION = '13.24.1'
 
 // API URL
 export const SUMMONER_INFO_URL = (nickname: string) => {
