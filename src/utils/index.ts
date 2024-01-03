@@ -205,7 +205,7 @@ export function getQueueTypeName(queueType: number): QueueTypeStr {
 		case 2020:
 			return '튜토리얼'
 		default:
-			return '없음'
+			return '미등록'
 	}
 }
 
@@ -576,9 +576,13 @@ export function fixedChampionName(championName: string) {
 
 export function translateKorChampionName(championName: string) {
 	const championsObj: any = championsData.data
-	const koreanChampionName = championsObj[fixedChampionName(championName)].name
+	if (championsObj[fixedChampionName(championName)]) {
+		const koreanChampionName =
+			championsObj[fixedChampionName(championName)].name
+		return koreanChampionName
+	}
 
-	return koreanChampionName
+	return championName
 }
 
 export function refineInGameInfo(inGameInfo: InGameInfo) {
