@@ -39,6 +39,8 @@ export default function RecentSearched() {
 			</StyledRecentHeader>
 			<div className="user-wrap">
 				{recentlyUser?.map((user) => {
+					console.log(user.riotId, user.name)
+					if (!user.riotId) return <></>
 					const riotId = handleRiotId(user.riotId, '#')
 					let tier
 					let rank
