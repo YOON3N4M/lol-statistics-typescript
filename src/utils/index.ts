@@ -155,7 +155,6 @@ export function getCS(
 
 // 큐 타입 코드에 따른 큐 타입 이름 대치
 export function getQueueTypeName(queueType: number): QueueTypeStr {
-	console.log(queueType)
 	switch (queueType) {
 		case 400:
 			return '일반'
@@ -199,7 +198,8 @@ export function getQueueTypeName(queueType: number): QueueTypeStr {
 
 		case 1400:
 			return '궁극기 주문서'
-
+		case 1700:
+			return '아레나'
 		case 2000:
 		case 2010:
 		case 2020:
@@ -214,6 +214,7 @@ export function getSummonersSpellName(spellA: number, spellB: number) {
 	//스펠
 	let a
 	let b
+
 	switch (spellA) {
 		case 11:
 			a = 'SummonerSmite'
@@ -260,7 +261,12 @@ export function getSummonersSpellName(spellA: number, spellB: number) {
 		case 39:
 			a = 'SummonerSnowURFSnowball_Mark'
 			break
-
+		case 2202:
+			a = 'SummonerCherryFlash'
+			break
+		case 2201:
+			a = 'SummonerCherryHold'
+			break
 		default:
 			break
 	}
@@ -298,10 +304,15 @@ export function getSummonersSpellName(spellA: number, spellB: number) {
 		case 39:
 			b = 'SummonerSnowURFSnowball_Mark'
 			break
+		case 2202:
+			b = 'SummonerCherryFlash'
+			break
+		case 2201:
+			b = 'SummonerCherryHold'
+			break
 		default:
 			break
 	}
-
 	return { a, b }
 }
 
@@ -383,7 +394,7 @@ export function getRuneName(mainRune: number, subRune: number) {
 		default:
 			break
 	}
-
+	console.log(main, sub, mainRune, subRune)
 	return { main, sub }
 }
 

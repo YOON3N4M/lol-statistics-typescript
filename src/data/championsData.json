@@ -663,6 +663,10 @@
 		"Hwei": {
 			"id": "Hwei",
 			"name": "흐웨이"
+		},
+		"Smolder": {
+			"id": "Smolder",
+			"name": "스몰더"
 		}
 	}
 }
