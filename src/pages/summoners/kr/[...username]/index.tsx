@@ -174,7 +174,7 @@ function Summoners() {
 						</div>
 					</StyledErrorContainer>
 				)}
-				{userDocument && (
+				{userDocument ? (
 					<>
 						<SummonerHead
 							userDocument={userDocument}
@@ -192,6 +192,8 @@ function Summoners() {
 							<LoadingSpinner />
 						)}
 					</>
+				) : (
+					<>{status && <LoadingSpinner />}</>
 				)}
 			</StyledSummonerContainer>
 		</>
