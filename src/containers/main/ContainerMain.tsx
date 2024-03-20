@@ -9,7 +9,6 @@ import RecentSearched from "./RecentSearched";
 export default function ContainerMain() {
   return (
     <>
-      <Header />
       <Flex
         as={"section"}
         w={{ pc: "800px", mo: "340px" }}
