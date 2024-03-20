@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+
 import { useParams } from "react-router-dom";
 import {
   ContentsType,
@@ -17,8 +17,10 @@ import { extractSummonerName, handleRiotId } from "@/utils";
 import SummonerHead from "@/components/summonerPage/SummonerHead";
 import SummonerBody from "@/components/summonerPage/SummonerBody";
 import Header from "@/components/layout/Header";
-import { variable } from "@/styles/Globalstyles";
+
 import LoadingSpinner from "@/components/LoadingSpinner";
+import styled from "@emotion/styled";
+import { variable } from "@/constants/temp";
 
 // export async function getServerSideProps() {
 // 	const res = await firebaseAPI.getUserDocument('멀록몰록말록물록')

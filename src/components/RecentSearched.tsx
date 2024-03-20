@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
+import { variable } from "@/constants/temp";
 
 export default function RecentSearched() {
   const [recentlyUser, setRecentlyUser] = useState<UserDocument[]>();

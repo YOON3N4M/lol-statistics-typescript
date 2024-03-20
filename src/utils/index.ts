@@ -8,9 +8,10 @@ import {
 } from "@/types/types";
 import { tierIcon } from "@/constants";
 import championsData from "@/data/championsData.json";
-import { variable } from "@/styles/Globalstyles";
+
 import { RefinedInGameInfo } from "@/components/inGame/InGame";
 import { ParticipantsData } from "@/types/types";
+import { variable } from "@/constants/temp";
 
 export function handleRiotId(riotId: string, sign: string) {
   const parts = riotId.split(sign);

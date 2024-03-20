@@ -1,9 +1,9 @@
-import styled from "styled-components";
 import { ContentsType, RiotId, UserDocument } from "@/types/types";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { calculatedTimeDiffer, handleRiotId } from "@/utils";
 import ContentsSelectTab from "./ContentsSelectTab";
 import RefreshButton from "@/components/RefreshButton";
+import styled from "@emotion/styled";
 
 interface Props {
   userDocument: UserDocument;

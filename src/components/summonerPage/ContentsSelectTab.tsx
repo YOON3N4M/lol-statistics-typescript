@@ -1,5 +1,5 @@
-import styled from "styled-components";
 import { ContentsType } from "@/types/types";
+import styled from "@emotion/styled";
 
 interface ContentsSelectTabProps {
   selectedContents: string;

@@ -1,10 +1,10 @@
-import styled from "styled-components";
 import CurrentRank from "@/components/CurrentRank";
 import MostSeven from "@/components/MostSeven";
 import Summary from "@/components/Summary";
 import MatchHistory from "@/components/matchHistory/MatchHistory";
 import { MatchInfoObj, UserDocument } from "@/types/types";
 import { useEffect, useState } from "react";
+import styled from "@emotion/styled";
 
 interface Props {
   userDocument: UserDocument;

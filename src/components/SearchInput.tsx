@@ -2,6 +2,7 @@ import { handleRiotId } from "@/utils";
 import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useRouter } from "next/navigation";
+import { variable } from "@/constants/temp";
 
 export default function SearchInput() {
   const router = useRouter();
