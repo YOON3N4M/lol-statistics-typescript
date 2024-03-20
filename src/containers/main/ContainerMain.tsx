@@ -19,7 +19,7 @@ export default function ContainerMain() {
         justifyContent={"space-between"}
         alignItems="center"
         m="0 auto"
-        mt={100}
+        mt={12}
         py={4}
         px={4}
       >

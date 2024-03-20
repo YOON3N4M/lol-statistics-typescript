@@ -9,7 +9,7 @@ import { Box, Flex } from "@chakra-ui/react";
 
 function Home() {
   return (
-    <Flex flexDirection={"column"} h={"100dvh"} bg="#5383e8">
+    <Flex flexDirection={"column"} minH="100dvh" bg="#5383e8" pb={10}>
       <ContainerMain />
     </Flex>
   );
