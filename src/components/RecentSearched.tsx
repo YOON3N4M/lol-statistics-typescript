@@ -7,10 +7,9 @@ import {
 } from "@/utils";
 import { firebaseAPI } from "@/utils/firebaseApi";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { variable } from "@/styles/Globalstyles";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { useRouter } from "next/navigation";
+import styled from "@emotion/styled";
 
 export default function RecentSearched() {
   const [recentlyUser, setRecentlyUser] = useState<UserDocument[]>();
