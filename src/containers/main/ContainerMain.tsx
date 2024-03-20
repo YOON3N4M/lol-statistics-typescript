@@ -1,9 +1,10 @@
 import Header from "@/components/layout/Header";
-import RecentSearched from "@/components/RecentSearched";
+
 import SearchInput from "@/components/SearchInput";
 import { Box, Divider, Flex, Text } from "@chakra-ui/react";
 
 import React from "react";
+import RecentSearched from "./RecentSearched";
 
 export default function ContainerMain() {
   return (
