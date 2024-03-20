@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled from "styled-components";
+
 import Link from "next/link";
 
 import {
@@ -22,6 +22,7 @@ import {
   UserDocument,
 } from "@/types/types";
 import IconArrow from "../IconArrow";
+import styled from "@emotion/styled";
 
 interface Props {
   userDocument: UserDocument;

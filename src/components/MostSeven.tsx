@@ -1,7 +1,8 @@
 import { useState } from "react";
-import styled from "styled-components";
+
 import { ParticipantsData } from "@/types/types";
 import MostChampions from "./MostChampions";
+import styled from "@emotion/styled";
 
 interface Props {
   mostPlayChampions: ParticipantsData;

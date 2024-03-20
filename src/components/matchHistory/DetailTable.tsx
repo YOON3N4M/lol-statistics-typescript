@@ -1,5 +1,3 @@
-import styled from "styled-components";
-
 import { RefinedParticipantInfo, RefinedTeamStats } from "@/types/types";
 import {
   CHAMPION_ICON_URL,
@@ -8,7 +6,6 @@ import {
   SUMMONER_SPELL_ICON_URL,
 } from "@/constants";
 import { fixedChampionName, getKDAColor } from "@/utils";
-import { variable } from "@/styles/Globalstyles";
 import Link from "next/link";
 import {
   ItemBox,
@@ -18,6 +15,8 @@ import {
   WardBox,
   WardIcon,
 } from "./MatchHistory";
+import styled from "@emotion/styled";
+import { variable } from "@/constants/temp";
 
 interface Props {
   team: RefinedParticipantInfo[];

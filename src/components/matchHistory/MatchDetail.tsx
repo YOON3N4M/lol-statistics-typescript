@@ -1,7 +1,9 @@
+import { variable } from "@/constants/temp";
 import { RefinedMatchStatistics } from "@/types/types";
-import styled from "styled-components";
+import styled from "@emotion/styled";
+
 import { useState } from "react";
-import { variable } from "@/styles/Globalstyles";
+
 import DetailTable from "./DetailTable";
 
 interface Props {

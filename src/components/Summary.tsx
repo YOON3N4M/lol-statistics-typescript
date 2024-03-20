@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import { MatchInfoArray, ParticipantInfo } from "@/types/types";
 import PositionsBar from "@/components/PositionsBar";
 import Summarys from "@/components/SummaryMost";
+import styled from "@emotion/styled";
 
 interface Props {
   mostPlayChampions: any;

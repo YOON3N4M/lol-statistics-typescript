@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+
 import { ParticipantInfo } from "@/types/types";
 import { CHAMPION_ICON_URL } from "@/constants";
-import { variable } from "@/styles/Globalstyles";
+
 import { getKDA, getKDAColor, translateKorChampionName } from "@/utils";
+import styled from "@emotion/styled";
+import { variable } from "@/constants/temp";
 
 interface Props {
   champions: ParticipantInfo[];
