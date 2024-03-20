@@ -11,10 +11,13 @@ import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
 import { variable } from "@/constants/temp";
+import { Box, Center, Flex, Text } from "@chakra-ui/react";
 
 export default function RecentSearched() {
-  const [recentlyUser, setRecentlyUser] = useState<UserDocument[]>();
+  const [recentlyUser, setRecentlyUser] = useState<UserDocument[]>([]);
   const router = useRouter();
+
+  // * 최근 검색된 모든 플레이어 doc 가져옴
   useEffect(() => {
     async function getCollection() {
       const collection = await firebaseAPI.getUserCollection();
@@ -26,18 +29,29 @@ export default function RecentSearched() {
         );
       setRecentlyUser(sortByLastRequestTime);
     }
+
     getCollection();
   }, []);
 
   function goSelectUser(riotId: RiotId) {
     router.push(`summoners/kr/${riotId.name}-${riotId.tag}`);
   }
+
   return (
-    <StyledRecentContainer>
-      <StyledRecentHeader>
-        <h2>최근 갱신 (KR)</h2>
-      </StyledRecentHeader>
-      <div className="user-wrap">
+    <Box
+      position={"relative"}
+      mt={50}
+      w={{ pc: "1024px", mo: "100%" }}
+      maxH="500px"
+      bg={"white"}
+      borderRadius="4px"
+      overflow={"hidden"}
+      boxShadow="md"
+    >
+      <Box width={"100%"} p="10px 15px">
+        <Text fontWeight={700}>최근 갱신 (KR)</Text>
+      </Box>
+      <Box className="styled-scroll" overflowY={"scroll"} h="400px">
         {recentlyUser?.map((user) => {
           console.log(user.riotId, user.name);
           if (!user.riotId) return <></>;
@@ -52,184 +66,99 @@ export default function RecentSearched() {
           }
 
           return (
-            <StyledUserContainer onClick={() => goSelectUser(riotId)}>
-              <div className="summoner">
-                <div>
+            <Flex
+              w={"100%"}
+              position={"relative"}
+              p="10px 20px"
+              borderBottom="1px solid"
+              borderColor={"keyColor.border"}
+              alignItems="center"
+              cursor={"pointer"}
+              _hover={{ backgroundColor: "#f7f7f9" }}
+              onClick={() => goSelectUser(riotId)}
+            >
+              <Box className="summoner-icon">
+                <Box
+                  position={"relative"}
+                  w={"50px"}
+                  h={"50px"}
+                  borderRadius="4px"
+                >
                   <img src={SUMMONER_PROFILE_ICON_URL(user.profileIconId)} />
-                </div>
-                <div className="level">
-                  <span>{user.summonerLevel}</span>
-                </div>
-              </div>
-              <div className="riot-id">
-                <h3>
-                  {riotId.name} <span>#{riotId.tag}</span>
-                </h3>
-                <span className="region">KR</span>
-              </div>
-              <div className="rank">
+                  <Box
+                    className="summoner-level"
+                    position="absolute"
+                    bg={"rgb(28,28,31)"}
+                    color="white"
+                    p={"1px 7px"}
+                    borderRadius="12px"
+                    top="80%"
+                    left="50%"
+                    transform={"translateX(-50%)"}
+                  >
+                    <Text fontSize={"xs"}>{user.summonerLevel}</Text>
+                  </Box>
+                </Box>
+              </Box>
+              <Box
+                className="riot-id"
+                ml="10px"
+                minW="180px"
+                maxW="180px"
+                overflow="hidden"
+              >
+                <Text fontWeight={800}>
+                  {riotId.name}{" "}
+                  <Text color={"keyColor.gray"} display={"inline"}>
+                    #{riotId.tag}
+                  </Text>
+                </Text>
+                <Text fontSize={"sm"}>KR</Text>
+              </Box>
+              <Flex
+                display={{ mo: "none", pc: "flex" }}
+                className="rank"
+                alignItems={"center"}
+                ml="auto"
+              >
                 {user.league1 && (
                   <>
-                    <div className="badge">
-                      <div>
+                    <Center
+                      borderRadius={"50%"}
+                      className="badge"
+                      bg={"#f7f7f9"}
+                      w="50px"
+                      h={"50px"}
+                    >
+                      <Box w="30px">
                         <img src={matchingTierImg(user.league1.tier)}></img>
-                      </div>
-                    </div>
-                    <div className="point">
-                      <div>
-                        <span>
+                      </Box>
+                    </Center>
+                    <Box ml="8px" className="point" fontSize={"sm"}>
+                      <Box>
+                        <Text fontWeight={700}>
                           {tier} {rank}
-                        </span>
-                      </div>
-                      <div>{user.league1.leaguePoints}LP</div>
-                    </div>
+                        </Text>
+                      </Box>
+                      <Text color={"keyColor.gray"} fontWeight={600}>
+                        {user.league1.leaguePoints}LP
+                      </Text>
+                    </Box>
                   </>
                 )}
-              </div>
-              <div className="blank">
-                <span>{calculatedTimeDiffer(user.lastRequestTime)}</span>
-              </div>
-            </StyledUserContainer>
+              </Flex>
+              <Box
+                className="time"
+                ml="auto"
+                fontSize={"sm"}
+                color={"keyColor.gray"}
+              >
+                <Text>{calculatedTimeDiffer(user.lastRequestTime)}</Text>
+              </Box>
+            </Flex>
           );
         })}
-      </div>
-    </StyledRecentContainer>
+      </Box>
+    </Box>
   );
 }
-
-const StyledRecentContainer = styled.div`
-  position: relative;
-  margin-top: 50px;
-  width: 1024px;
-  max-height: 500px;
-  background-color: white;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 19%);
-  .user-wrap {
-    overflow-y: scroll;
-    height: 400px;
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: #88888875;
-      border-radius: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background-color: #f1f1f1;
-    }
-  }
-`;
-
-const StyledRecentHeader = styled.div`
-  position: sticky;
-  width: 100%;
-  padding: 5px 10px;
-  //border-bottom: 1px solid ${variable.color.border};
-  box-sizing: border-box;
-  z-index: 1000;
-  background-color: white;
-  h2 {
-    font-size: 15px;
-  }
-`;
-
-const StyledUserContainer = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-
-  box-sizing: border-box;
-  padding: 10px 20px;
-  border-bottom: 1px solid ${variable.color.border};
-  align-items: center;
-  cursor: pointer;
-  :hover {
-    background-color: #f7f7f9;
-  }
-  .summoner {
-    display: flex;
-    flex-direction: column;
-    width: min-content;
-    height: min-content;
-    justify-content: center;
-    text-align: center;
-    img {
-      width: 50px;
-      height: 50px;
-      border-radius: 4px;
-    }
-    .level {
-      margin-top: -20px;
-    }
-    .level > span {
-      border-radius: 12px;
-      background-color: rgb(28, 28, 31);
-      color: white;
-      font-size: 12px;
-      padding: 2px 8px;
-    }
-  }
-
-  .riot-id {
-    width: 60%;
-    margin-left: 10px;
-    h3 {
-      font-size: 17px;
-      margin: 0;
-      span {
-        color: ${variable.color.gray};
-      }
-    }
-    .region {
-      font-size: 12px;
-    }
-  }
-
-  .rank {
-    display: flex;
-    .badge {
-      display: flex;
-      align-items: center;
-    }
-    .badge > div {
-      width: 50px;
-      height: 50px;
-      background-color: #f7f7f9;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    img {
-      width: 30px;
-    }
-    .point {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      margin-left: 5px;
-      font-size: 15px;
-      color: ${variable.color.gray};
-      div {
-        width: 100%;
-        text-align: left;
-      }
-      span {
-        font-size: 13px;
-        font-weight: bold;
-        color: black;
-      }
-    }
-  }
-  .blank {
-    margin-left: auto;
-    font-size: 12px;
-    color: ${variable.color.gray};
-  }
-`;

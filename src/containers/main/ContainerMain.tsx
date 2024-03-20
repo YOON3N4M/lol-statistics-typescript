@@ -11,7 +11,7 @@ export default function ContainerMain() {
       <Header />
       <Flex
         as={"section"}
-        w={{ pc: "800px", mo: "300px" }}
+        w={{ pc: "800px", mo: "340px" }}
         h="60px"
         bg="white"
         borderRadius={"30px"}
@@ -20,6 +20,7 @@ export default function ContainerMain() {
         alignItems="center"
         m="0 auto"
         mt={100}
+        py={4}
         px={4}
       >
         <Box w={{ pc: "234px", mo: "80px" }} h="40px" pl={{ pc: 4, mo: 2 }}>
@@ -41,9 +42,9 @@ export default function ContainerMain() {
           .GG
         </Box>
       </Flex>
-      {/* <Flex as={"section"} m="0 auto">
+      <Flex as={"section"} m="0 auto">
         <RecentSearched />
-      </Flex> */}
+      </Flex>
     </>
   );
 }
