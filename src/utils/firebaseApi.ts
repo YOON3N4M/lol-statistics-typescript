@@ -113,6 +113,34 @@ async function postMatchInfoOnDB(matchInfo: MatchInfoObj) {
   const res = await setDoc(docRef, matchInfo);
 }
 
+export interface CompareResult {
+  existMatchInfoArr: (string | MatchInfoObj)[];
+  unExistMatchIdArr: (string | MatchInfoObj)[];
+}
+/**
+ * matchIdArr를 인자로 받아 db에 해당 경기의 데이터가 있는지 조회합니다.
+ *
+ * 조회된 데이터는 existMatchInfoArr로 출력하고
+ *
+ *  조회 되지 않은 경기의 id만 다시 matchidArr로 출력합니다.
+ */
+async function compareMatchId(matchIdArr: string[]) {
+  if (matchIdArr === undefined || matchIdArr.length < 1) return null;
+  const searchResult = await Promise.all(
+    matchIdArr.map(async (matchID: string) => {
+      const res = await firebaseAPI.getMatchFromDB(matchID);
+      if (res === undefined) return matchID;
+      return res;
+    })
+  );
+  const existMatchInfoArr = searchResult.filter((e) => typeof e !== "string");
+  const unExistMatchIdArr = searchResult.filter(
+    (e) => typeof e === "string"
+  ) as string[];
+
+  return { existMatchInfoArr, unExistMatchIdArr } as CompareResult;
+}
+
 export const firebaseAPI = {
   getUserDocument,
   getMatchFromDB,
@@ -120,4 +148,5 @@ export const firebaseAPI = {
   postMatchInfoOnDB,
   getUserDocumentByRiotId,
   getUserCollection,
+  compareMatchId,
 };
