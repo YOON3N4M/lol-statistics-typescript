@@ -4,23 +4,19 @@ import { calculatedTimeDiffer, handleRiotId } from "@/utils";
 import ContentsSelectTab from "./ContentsSelectTab";
 import RefreshButton from "@/components/RefreshButton";
 import styled from "@emotion/styled";
+import { useRiotId, useUserDocument } from "@/store/summonersStore";
+import useSummoner from "@/hooks/useSummoner";
 
-interface Props {
-  userDocument: UserDocument;
-  selectedContents: ContentsType;
-  setSelectedContents: React.Dispatch<React.SetStateAction<ContentsType>>;
-  refresh: (riotId: RiotId) => Promise<void>;
-  loadingPercent: number;
+interface SummonerHeadProps {
+  refreshActions: () => Promise<void>;
 }
 
-export default function SummonerHead({
-  userDocument,
-  selectedContents,
-  setSelectedContents,
-  refresh,
-  loadingPercent,
-}: Props) {
-  const riotId = handleRiotId(userDocument.riotId, "#");
+export default function SummonerHead(props: SummonerHeadProps) {
+  const { refreshActions } = props;
+  const riotId = useRiotId();
+  const userDocument = useUserDocument();
+
+  if (!riotId || !userDocument) return <></>;
   return (
     <>
       <ContentsHeader>
@@ -49,9 +45,9 @@ export default function SummonerHead({
             </Name>
 
             <RefreshButton
-              loadingPercent={loadingPercent}
-              refresh={refresh}
-              riotId={handleRiotId(userDocument.riotId, "#")}
+              loadingPercent={100}
+              refresh={refreshActions}
+              riotId={riotId}
               lastRequestTime={userDocument.lastRequestTime}
             />
             <LastUpdate>
@@ -61,10 +57,10 @@ export default function SummonerHead({
           </Info>
         </Wrapper>
       </ContentsHeader>
-      <ContentsSelectTab
+      {/* <ContentsSelectTab
         setSelectedContents={setSelectedContents}
         selectedContents={selectedContents}
-      />
+      /> */}
     </>
   );
 }

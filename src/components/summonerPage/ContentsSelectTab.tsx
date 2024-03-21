@@ -1,4 +1,3 @@
-import { ContentsType } from "@/types/types";
 import styled from "@emotion/styled";
 
 interface ContentsSelectTabProps {
