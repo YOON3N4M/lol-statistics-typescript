@@ -1,4 +1,4 @@
-import { ContentsType, RiotId, UserDocument } from "@/types/types";
+import { RiotId, UserDocument } from "@/types/types";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { calculatedTimeDiffer, handleRiotId } from "@/utils";
 import ContentsSelectTab from "./ContentsSelectTab";
