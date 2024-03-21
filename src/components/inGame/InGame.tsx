@@ -1,12 +1,12 @@
 import { API_KEY } from "@/constants";
-import { variable } from "@/styles/Globalstyles";
 import { refineInGameInfo } from "@/utils";
-import { api } from "@/utils/api";
+import { riotApi } from "@/utils/riotApi";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+
 import TeamContainer from "./TeamContainer";
 import { ContentsType } from "@/types/types";
+import styled from "@emotion/styled";
 
 interface Props {
   summonerId?: string;
