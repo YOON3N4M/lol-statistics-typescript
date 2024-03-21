@@ -58,9 +58,9 @@ export default function SummonerBody() {
       >
         <Box width={{ pc: "332px", mo: "100%" }}>
           <CurrentRank />
-          {/* {mostPlayChampions && (
-          <MostSeven mostPlayChampions={mostPlayChampions} />
-        )} */}
+          {mostPlayChampions && (
+            <MostSeven mostPlayChampions={mostPlayChampions} />
+          )}
         </Box>
         {/* <RightContents>
         <MatchHistoryTab>

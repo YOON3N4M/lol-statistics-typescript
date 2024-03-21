@@ -6,6 +6,7 @@ import { CHAMPION_ICON_URL } from "@/constants";
 import { getKDA, getKDAColor, translateKorChampionName } from "@/utils";
 import styled from "@emotion/styled";
 import { variable } from "@/constants/temp";
+import { Box } from "@chakra-ui/react";
 
 interface Props {
   champions: ParticipantInfo[];
@@ -40,10 +41,24 @@ function MostChampions({ champions }: Props) {
 
   return (
     <>
-      <ChampionContainer>
-        <IconBox>
+      <Box
+        display={"table"}
+        w="100%"
+        h={"48px"}
+        borderBottom="1px solid"
+        borderColor={"keyColor.border"}
+        textAlign="center"
+        px={2}
+        py={1.5}
+      >
+        <Box
+          display={"table-cell"}
+          w="32px"
+          textAlign={"right"}
+          verticalAlign="middle"
+        >
           <Icon src={CHAMPION_ICON_URL(ChampionName)} />
-        </IconBox>
+        </Box>
         <MostInfo>
           <MostName>{translateKorChampionName(ChampionName)}</MostName>
           <CS>CS {csAverage}</CS>
@@ -62,7 +77,7 @@ function MostChampions({ champions }: Props) {
           <WinRate color={winRateColor}>{winRate}%</WinRate>
           <Qty>{gameQty} 게임</Qty>
         </Played>
-      </ChampionContainer>
+      </Box>
     </>
   );
 }
