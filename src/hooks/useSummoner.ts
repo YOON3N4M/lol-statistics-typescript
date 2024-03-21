@@ -64,7 +64,7 @@ export default function useSummoner() {
       if (!riotId) return;
       const userDocArr = await firebaseAPI.getUserDocumentByRiotId(riotId);
 
-      // ^ irebase에 있을때
+      // ^ firebase에 있을때
       if (userDocArr) {
         const vliadUserDoc = userDocArr[0];
         setUserDocument(vliadUserDoc);
@@ -72,6 +72,7 @@ export default function useSummoner() {
         setMatchIdArr(vliadUserDoc.matchHistory);
       } else {
         // ^ firebase에 없을때
+        refreshActions();
       }
     }
 
