@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ParticipantsData } from "@/types/types";
 import MostChampions from "./MostChampions";
 import styled from "@emotion/styled";
+import { Box } from "@chakra-ui/react";
 
 interface Props {
   mostPlayChampions: ParticipantsData;
@@ -11,7 +12,7 @@ export default function MostSeven({ mostPlayChampions }: Props) {
   const most7 = mostPlayChampions.slice(0, 7);
   return (
     <>
-      <MostPlayedBox>
+      <Box mt="8px" bg="white" borderRadius={"4px"}>
         <MostPlayedTab>
           <MostPlayedItem selected={true}>최근게임</MostPlayedItem>
           <MostPlayedItem selected={false}></MostPlayedItem>
@@ -23,7 +24,7 @@ export default function MostSeven({ mostPlayChampions }: Props) {
           ))}
         </MostChampionContainer>
         {/* <More>더 보기</More> */}
-      </MostPlayedBox>
+      </Box>
     </>
   );
 }
