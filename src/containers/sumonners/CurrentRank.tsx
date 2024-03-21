@@ -1,13 +1,11 @@
+import { useUserDocument } from "@/store/summonersStore";
 import { LeagueInfo, UserDocument } from "@/types/types";
 import { matchingTierImg, romeNumToArabNum } from "@/utils";
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 
-interface Props {
-  userDocument: UserDocument;
-}
-
-export default function CurrentRank({ userDocument }: Props) {
+export default function CurrentRank() {
+  const userDocument = useUserDocument();
   const [leagues, setLeagues] = useState<any>([]);
 
   function refineLeague(league: LeagueInfo) {
@@ -19,6 +17,7 @@ export default function CurrentRank({ userDocument }: Props) {
   }
 
   useEffect(() => {
+    if (!userDocument) return;
     if (userDocument.league1) {
       setLeagues((prev: any) => [...prev, refineLeague(userDocument.league1)]);
     }

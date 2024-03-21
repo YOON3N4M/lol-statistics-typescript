@@ -1,22 +1,20 @@
-import CurrentRank from "@/components/CurrentRank";
+import CurrentRank from "@/containers/sumonners/CurrentRank";
 import MostSeven from "@/components/MostSeven";
 import Summary from "@/components/Summary";
 import MatchHistory from "@/components/matchHistory/MatchHistory";
 import { MatchInfoObj, UserDocument } from "@/types/types";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
+import { useMatchHistory, useUserDocument } from "@/store/summonersStore";
 
-interface Props {
-  userDocument: UserDocument;
-  matchInfoArr: MatchInfoObj[];
-}
-
-export default function SummonerBody({ userDocument, matchInfoArr }: Props) {
+export default function SummonerBody() {
   const [mostPlayChampions, setMostPlayChampions] = useState<any>();
+  const userDocument = useUserDocument();
+  const matchHistory = useMatchHistory();
 
   function getMostChampion() {
-    if (!matchInfoArr) return;
-    const filtered = matchInfoArr?.map(
+    if (!matchHistory) return;
+    const filtered = matchHistory?.map(
       (game) =>
         game?.info.participants.filter(
           (player: any) => player.summonerName === userDocument?.name
@@ -37,9 +35,9 @@ export default function SummonerBody({ userDocument, matchInfoArr }: Props) {
   }
 
   useEffect(() => {
-    if (!matchInfoArr) return;
+    if (!matchHistory) return;
     getMostChampion();
-  }, [matchInfoArr]);
+  }, [matchHistory]);
   return (
     <ContentsContainer>
       <LeftContents>
@@ -58,19 +56,19 @@ export default function SummonerBody({ userDocument, matchInfoArr }: Props) {
           </MatchHistroyTabUl>
         </MatchHistoryTab>
         {/** */}
-        {mostPlayChampions && (
+        {/* {mostPlayChampions && (
           <Summary
-            matchInfoArr={matchInfoArr}
+            matchHistory={matchHistory}
             mostPlayChampions={mostPlayChampions}
           />
-        )}
+        )} */}
 
-        <MatchHistoryContainer>
-          {matchInfoArr &&
-            matchInfoArr.map((match: any) => (
+        {/* <MatchHistoryContainer>
+          {matchHistory &&
+            matchHistory.map((match: any) => (
               <MatchHistory match={match} userDocument={userDocument} />
             ))}
-        </MatchHistoryContainer>
+        </MatchHistoryContainer> */}
       </RightContents>
     </ContentsContainer>
   );
