@@ -1,7 +1,9 @@
 import { useUserDocument } from "@/store/summonersStore";
 import { LeagueInfo, UserDocument } from "@/types/types";
 import { matchingTierImg, romeNumToArabNum } from "@/utils";
+import { Box, Center, Flex, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 export default function CurrentRank() {
@@ -27,35 +29,59 @@ export default function CurrentRank() {
   }, []);
 
   return (
-    <>
-      {leagues.map((league: any) => (
-        <CurrentRankContainer>
-          <CurrentRankHeader>
-            <span>
+    <Flex w="100%" flexDirection={{ pc: "column", mo: "row" }}>
+      {leagues.map((league: any, idx: number) => (
+        <Box mt={{ pc: idx * 2 }} w={{ pc: "100%", mo: "50%" }} flex={1}>
+          <Flex
+            w="100%"
+            bg="white"
+            p={2}
+            borderTopRadius={"4px"}
+            justifyContent={{ mo: "center", pc: "left" }}
+          >
+            <Text fontSize={"sm"} fontWeight="600">
               {league.league.queueType === "RANKED_SOLO_5x5"
                 ? "솔로랭크"
                 : "자유랭크"}
-            </span>
-          </CurrentRankHeader>
-
-          <CurrentRankContents>
-            <CurrentTierImgContainer>
-              <CurrentTierImg
-                src={matchingTierImg(league.league.tier)}
-                alt={league.tier}
-              />
-            </CurrentTierImgContainer>
-            <CurrentTierContainer>
-              <CurrentTier>
+            </Text>
+          </Flex>
+          <Flex
+            borderTop={"1px solid"}
+            borderColor="keyColor.border"
+            py={8}
+            px={4}
+            bg={"white"}
+            alignItems="center"
+            justifyContent={"space-between"}
+            direction={{ mo: "column", pc: "row" }}
+            borderBottomRadius={"4px"}
+            textAlign={{ mo: "center", pc: "left" }}
+          >
+            <Center w="72px" h={"72px"} bg={"#F7F7F9"} borderRadius={"50%"}>
+              <Box w="60px">
+                <Image
+                  width={60}
+                  height={60}
+                  src={matchingTierImg(league.league.tier)}
+                  alt=""
+                />
+              </Box>
+            </Center>
+            <Box flex={1} ml={{ pc: 4 }} color={"black"}>
+              <Text fontWeight={"bold"} fontSize="xl">
                 {league.tier} {league.rank}
-              </CurrentTier>
-              <CurrentLp>{league.league.leaguePoints} LP</CurrentLp>
-            </CurrentTierContainer>
-            <WinLoseContainer>
-              <WinLose>
+              </Text>
+              <Text fontSize={"xs"} color="keyColor.darkGray">
+                {league.league.leaguePoints} LP
+              </Text>
+            </Box>
+            <Box fontSize={"xs"} color="keyColor.darkGray">
+              <Text>
+                {" "}
                 {league.league.wins}승 {league.league.losses}패
-              </WinLose>
-              <WinRate>
+              </Text>
+              <Text>
+                {" "}
                 승률{` `}
                 {Math.ceil(
                   (league.league.wins /
@@ -63,77 +89,11 @@ export default function CurrentRank() {
                     100
                 )}
                 %
-              </WinRate>
-            </WinLoseContainer>
-          </CurrentRankContents>
-        </CurrentRankContainer>
+              </Text>
+            </Box>
+          </Flex>
+        </Box>
       ))}
-    </>
+    </Flex>
   );
 }
-
-const CurrentRankContainer = styled.div`
-  margin-bottom: 8px;
-`;
-const CurrentRankHeader = styled.div`
-  background-color: white;
-  margin-top: 8px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  line-height: 35px;
-  padding: 0 12px;
-  font-size: 14px;
-`;
-const CurrentRankContents = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-top: 1px solid;
-  border-color: #ebeef1;
-  width: 308px;
-  height: 97px;
-  background-color: white;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-`;
-const CurrentTierImg = styled.img`
-  width: 60px;
-`;
-const CurrentTierImgContainer = styled.div`
-  background-color: #f7f7f9;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-const CurrentTierContainer = styled.div`
-  flex: 1 1 0%;
-  position: relative;
-  margin-left: 16px;
-`;
-const CurrentTier = styled.div`
-  font-size: 20px;
-  font-weight: bold;
-`;
-const CurrentLp = styled.div`
-  line-height: 16px;
-  margin-top: 2px;
-  font-size: 12px;
-  color: #758592;
-`;
-const WinLoseContainer = styled.div`
-  font-size: 12px;
-  color: #9aa4af;
-`;
-const WinLose = styled.div`
-  line-height: 26px;
-  color: #9aa4af;
-`;
-const WinRate = styled.div`
-  margin-top: 2px;
-  line-height: 16px;
-`;
