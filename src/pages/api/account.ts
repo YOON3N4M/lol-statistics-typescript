@@ -1,5 +1,5 @@
 import { RiotId } from "@/types/types";
-import { api } from "@/utils/api";
+import { riotApi } from "@/utils/riotApi";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -9,7 +9,7 @@ export default async function handler(
   if (req.method === "GET") {
     const riotId: any = req.query;
     try {
-      const accountResult = await api.getAccountByRiotId(riotId);
+      const accountResult = await riotApi.getAccountByRiotId(riotId);
 
       res.status(200).json(accountResult);
     } catch (err) {

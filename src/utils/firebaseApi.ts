@@ -13,7 +13,7 @@ import {
   MatchInfoObj,
   RiotAccount,
   RiotId,
-  SummonerObj,
+  Summoner,
   UserDocument,
 } from "@/types/types";
 
@@ -33,18 +33,27 @@ async function getUserDocument(summonersName: string) {
 }
 
 async function getUserDocumentByRiotId(riotId: RiotId) {
+  const { name, tag } = riotId;
+
   const q = query(
     collection(dbService, "user"),
-    where("riotId", "==", `${riotId.name}#${riotId.tag}`)
+    where("riotId", "==", `${name}#${tag}`)
   );
 
   const querySnapshot = await getDocs(q);
-  let result;
+  let result: UserDocument[] = [];
+
   querySnapshot.forEach((doc) => {
-    result = doc.data();
+    if (doc.exists()) {
+      result.push(doc.data() as UserDocument);
+    }
   });
 
-  return result;
+  if (result.length > 0) {
+    return result;
+  } else {
+    return null;
+  }
 }
 
 async function getUserCollection() {
@@ -65,7 +74,7 @@ async function getMatchFromDB(MatchID: string) {
 }
 
 async function postUserDocumentOnDB(
-  summonerInfo: SummonerObj,
+  summonerInfo: Summoner,
   leagueInfo: LeagueObj[],
   matchIdArr: string[],
   riotAccount: RiotAccount

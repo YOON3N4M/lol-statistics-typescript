@@ -1,4 +1,4 @@
-import { RiotId } from "@/types/types";
+import { RiotAccount, RiotId, Summoner } from "@/types/types";
 import {
   ACCOUNT_BY_RIOT_ID_URL,
   INGAME_INFO_URL,
@@ -56,7 +56,19 @@ async function getAccountByNextApi(riotId: RiotId) {
   return { ...res.data, tagLine: riotId.tag, gameName: riotId.name };
 }
 
-export const api = {
+async function getRiotsSummonerData(riotId: RiotId) {
+  try {
+    const accountRes: RiotAccount = await getAccountByNextApi(riotId);
+    const summonerRes: Summoner = await getSummonerByPuuid(accountRes.puuid);
+    const leagueRes = await getLeagueInfo(summonerRes.id);
+    const matchIdRes: string[] = await getMatchId(summonerRes.puuid, 20);
+    return { accountRes, summonerRes, leagueRes, matchIdRes };
+  } catch (err) {
+    return null;
+  }
+}
+
+export const riotApi = {
   getSummonersInfo,
   getLeagueInfo,
   getMatchId,
@@ -65,4 +77,5 @@ export const api = {
   getAccountByRiotId,
   getAccountByNextApi,
   getSummonerByPuuid,
+  getRiotsSummonerData,
 };
