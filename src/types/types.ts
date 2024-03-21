@@ -176,8 +176,6 @@ export interface ParticipantsData extends Array<ParticipantInfo[]> {
   [index: number]: ParticipantInfo[];
 }
 
-export type ContentsType = "InGame" | "MatchHistorys";
-
 export interface SearchResult {
   existMatchInfoArr: MatchInfoObj[];
   unExistMatchIdArr: string[];
