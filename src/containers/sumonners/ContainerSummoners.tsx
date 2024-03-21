@@ -1,4 +1,5 @@
 import Header from "@/components/layout/Header";
+import SummonerBody from "@/components/summonerPage/SummonerBody";
 import SummonerHead from "@/components/summonerPage/SummonerHead";
 import useSummoner from "@/hooks/useSummoner";
 import { useSummonerActions, useUserDocument } from "@/store/summonersStore";
@@ -36,6 +37,7 @@ export default function ContainerSummoners() {
       {userDocument && (
         <>
           <SummonerHead refreshActions={refreshActions} />
+          <SummonerBody />
         </>
       )}
     </Box>
