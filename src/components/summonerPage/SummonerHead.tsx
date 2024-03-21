@@ -6,6 +6,8 @@ import RefreshButton from "@/components/RefreshButton";
 import styled from "@emotion/styled";
 import { useRiotId, useUserDocument } from "@/store/summonersStore";
 import useSummoner from "@/hooks/useSummoner";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import Image from "next/image";
 
 interface SummonerHeadProps {
   refreshActions: () => Promise<void>;
@@ -17,9 +19,68 @@ export default function SummonerHead(props: SummonerHeadProps) {
   const userDocument = useUserDocument();
 
   if (!riotId || !userDocument) return <></>;
+
+  const { profileIconId, summonerLevel, lastRequestTime } = userDocument;
   return (
     <>
-      <ContentsHeader>
+      <Flex w={"100%"} bg="white" px={{ mo: 4 }}>
+        <Flex m="0 auto" w="100%" maxW={"1080px"} py={12}>
+          <Box className="head-left">
+            <Box>
+              <Box
+                position={"relative"}
+                w="100px"
+                h="100px"
+                borderRadius={"8px"}
+                overflow="hidden"
+              >
+                <Image
+                  alt="summoner-icon"
+                  fill={true}
+                  src={SUMMONER_PROFILE_ICON_URL(profileIconId)}
+                />
+              </Box>
+            </Box>
+          </Box>
+          <Box className="head-right" ml={{ pc: 6, mo: 6 }}>
+            <Heading fontSize={"2xl"}>
+              {" "}
+              {riotId.name}{" "}
+              <Text ml={2} display={"inline"} color="keyColor.gray">
+                #{riotId.tag}
+              </Text>
+            </Heading>{" "}
+            {riotId.tag !== "KR1" && (
+              <Text
+                fontSize={"sm"}
+                color="keyColor.gray"
+                className="prev-nickname"
+              >
+                prev. {userDocument.name}
+              </Text>
+            )}
+            <Box
+              display={{ mo: "flex", pc: "block" }}
+              flexDirection={"column"}
+              mt={12}
+            >
+              <Button bg="keyColor.bgSky" color={"white"}>
+                전적 갱신
+              </Button>
+              <Text
+                mt={2}
+                fontSize={"xs"}
+                fontWeight="600"
+                color={"keyColor.gray"}
+                textAlign={{ pc: "initial", mo: "right" }}
+              >
+                최근 업데이트: 1주 전
+              </Text>
+            </Box>
+          </Box>
+        </Flex>
+      </Flex>
+      {/* <ContentsHeader>
         <Wrapper>
           <ProfileIconContainer>
             <ProfileIcon
@@ -56,7 +117,7 @@ export default function SummonerHead(props: SummonerHeadProps) {
             </LastUpdate>
           </Info>
         </Wrapper>
-      </ContentsHeader>
+      </ContentsHeader> */}
       {/* <ContentsSelectTab
         setSelectedContents={setSelectedContents}
         selectedContents={selectedContents}
@@ -73,6 +134,7 @@ const ContentsHeader = styled.div`
   padding-bottom: 25px;
   padding-top: 16px;
 `;
+
 const Wrapper = styled.div`
   width: 1080px;
   margin-bottom: 10px;
