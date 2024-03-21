@@ -1,3 +1,4 @@
+import { useRiotId, useSummonerActions } from "@/store/summonersStore";
 import {
   MatchInfoArray,
   MatchInfoObj,
@@ -12,17 +13,17 @@ type UserValid = "initial" | "valid" | "inValid";
 
 export default function useSummoner() {
   const [isInvalid, setIsInValid] = useState<UserValid>("initial");
-  const [riotId, setRiotId] = useState<RiotId | null>(null);
   const [loadingPercent, setLoadingPercent] = useState(100);
-  const [userDocument, setUserDocument] = useState<UserDocument | null>(null);
   const [matchIdArr, setMatchIdArr] = useState<string[]>([]);
-  const [matchInfo, setMatchInfo] = useState<MatchInfoObj[]>([]);
+
+  const riotId = useRiotId();
+  const { setMatchHistory, setUserDocument, setRiotId } = useSummonerActions();
 
   async function handleMatchIdArr() {
     const compareResult = await firebaseAPI.compareMatchId(matchIdArr);
     if (!compareResult) return;
     const mergedResult = await handleCompareResult(compareResult);
-    setMatchInfo(mergedResult);
+    setMatchHistory(mergedResult);
   }
 
   async function handleCompareResult(compareResult: CompareResult) {
@@ -82,5 +83,5 @@ export default function useSummoner() {
     handleMatchIdArr();
   }, [matchIdArr]);
 
-  return { userDocument, matchInfo, setRiotId, refreshActions };
+  return { refreshActions };
 }
