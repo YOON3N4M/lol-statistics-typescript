@@ -3,80 +3,59 @@ import React from "react";
 import styled from "@emotion/styled";
 import SearchInput from "@/components/SearchInput";
 import { usePathname } from "next/navigation";
+import { Box, Center, Flex, Text } from "@chakra-ui/react";
 
 function Header() {
   const pathname = usePathname();
 
   return (
     <>
-      <StyledHeader>
+      <Flex
+        h="50px"
+        bg="keyColor.bgSky"
+        alignItems={"center"}
+        justifyContent="space-between"
+        px={4}
+        gap={4}
+      >
         <Link style={{ textDecoration: "none" }} href="/">
           <StyledLogo>OP.GG</StyledLogo>
         </Link>
         {pathname !== "/" && (
-          <StyledInputContainer>
-            <div className="region">
-              <span>KR</span>
-            </div>
-            <div className="search">
+          <Flex
+            w={{ pc: "50%", mo: "80%" }}
+            h="30px"
+            bg="white"
+            borderRadius={"4px"}
+            alignItems="center"
+            overflow={"hidden"}
+          >
+            <Center
+              bg="keyColor.selectBgBlue"
+              color={"keyColor.sky"}
+              fontSize="sm"
+              className="region"
+              borderLeftRadius={"4px"}
+              p={2}
+            >
+              <Text>KR</Text>
+            </Center>
+            <Box flex={1} className="search" ml={4}>
               <SearchInput />
-            </div>
-          </StyledInputContainer>
+            </Box>
+          </Flex>
         )}
 
         <div></div>
-      </StyledHeader>
+      </Flex>
     </>
   );
 }
-
-const StyledHeader = styled.div`
-  background-color: #5383e8;
-  width: 100%;
-  height: 50px;
-  border-bottom: 1px solid #4171d6;
-  display: flex;
-  align-items: center;
-  padding-left: 15px;
-  padding-right: 35px;
-  box-sizing: border-box;
-  justify-content: space-between;
-`;
 const StyledLogo = styled.h1`
   color: white;
   font-size: 20px;
   font-weight: 800;
   text-decoration-line: none;
-`;
-const StyledInputContainer = styled.div`
-  display: flex;
-  width: 1024px;
-  height: 30px;
-  background-color: white;
-  border-radius: 4px;
-
-  .region {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 100%;
-    background-color: rgb(236, 242, 255);
-    border-bottom-left-radius: 4px;
-    border-top-left-radius: 4px;
-    span {
-      color: rgb(65, 113, 214);
-      font-size: 12px;
-    }
-  }
-  .search {
-    padding-left: 10px;
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: center;
-  }
 `;
 
 export default Header;

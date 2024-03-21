@@ -41,12 +41,12 @@ export default function SummonerBody() {
   return (
     <ContentsContainer>
       <LeftContents>
-        <CurrentRank userDocument={userDocument} />
+        <CurrentRank />
         {mostPlayChampions && (
           <MostSeven mostPlayChampions={mostPlayChampions} />
         )}
       </LeftContents>
-      <RightContents>
+      {/* <RightContents>
         <MatchHistoryTab>
           <MatchHistroyTabUl>
             <MatchHistoryTabLi selected={true}>전체</MatchHistoryTabLi>
@@ -55,28 +55,28 @@ export default function SummonerBody() {
             <MatchHistoryTabLi selected={false}></MatchHistoryTabLi>
           </MatchHistroyTabUl>
         </MatchHistoryTab>
-        {/** */}
-        {/* {mostPlayChampions && (
+        
+        {mostPlayChampions && (
           <Summary
             matchHistory={matchHistory}
             mostPlayChampions={mostPlayChampions}
           />
-        )} */}
+        )}
 
-        {/* <MatchHistoryContainer>
+        <MatchHistoryContainer>
           {matchHistory &&
             matchHistory.map((match: any) => (
               <MatchHistory match={match} userDocument={userDocument} />
             ))}
-        </MatchHistoryContainer> */}
-      </RightContents>
+        </MatchHistoryContainer>
+      </RightContents> */}
     </ContentsContainer>
   );
 }
 
 // 컨텐츠 부분 컴포넌트
 const ContentsContainer = styled.div`
-  width: 1080px;
+  width: 100%;
   margin: 0 auto;
   min-height: auto;
 `;

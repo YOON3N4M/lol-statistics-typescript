@@ -6,6 +6,7 @@ const breakpoints = {
 };
 const colors = {
   keyColor: {
+    bgSky: "#5383E8",
     orange: "#f06f00",
     sky: "#0093ff",
     mint: "#00bba3",
