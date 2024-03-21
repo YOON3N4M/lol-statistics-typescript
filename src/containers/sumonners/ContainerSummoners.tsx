@@ -1,4 +1,5 @@
 import Header from "@/components/layout/Header";
+import SummonerHead from "@/components/summonerPage/SummonerHead";
 import useSummoner from "@/hooks/useSummoner";
 import { UserDocument } from "@/types/types";
 import { extractSummonerName, handleRiotId } from "@/utils";
@@ -9,7 +10,7 @@ import React, { useEffect, useState } from "react";
 
 export default function ContainerSummoners() {
   const pathname = usePathname();
-  const { setRiotId, userDocument } = useSummoner();
+  const { setRiotId, userDocument, matchInfo } = useSummoner();
 
   function extractRiotId() {
     const sumonnerName = extractSummonerName(pathname);
@@ -21,5 +22,6 @@ export default function ContainerSummoners() {
     if (!pathname) return;
     extractRiotId();
   }, [pathname]);
-  return <Box></Box>;
+
+  return <Box>{userDocument && <SummonerHead />}</Box>;
 }
