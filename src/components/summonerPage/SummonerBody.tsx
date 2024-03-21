@@ -6,6 +6,7 @@ import { MatchInfoObj, UserDocument } from "@/types/types";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useMatchHistory, useUserDocument } from "@/store/summonersStore";
+import { Box, Flex } from "@chakra-ui/react";
 
 export default function SummonerBody() {
   const [mostPlayChampions, setMostPlayChampions] = useState<any>();
@@ -39,14 +40,29 @@ export default function SummonerBody() {
     getMostChampion();
   }, [matchHistory]);
   return (
-    <ContentsContainer>
-      <LeftContents>
-        <CurrentRank />
-        {mostPlayChampions && (
+    <Flex flexDirection={"column"} w="100%">
+      <Box
+        display={{ pc: "flex", mo: "none" }}
+        className="tab"
+        w="100%"
+        h={"50px"}
+        bg="white"
+        borderTop={"1px solid"}
+        borderColor="keyColor.border"
+      ></Box>
+      <Flex
+        w={{ pc: "1080px" }}
+        maxW="1080px"
+        m={{ pc: "0 auto" }}
+        mt={{ pc: 2 }}
+      >
+        <Box width={{ pc: "332px", mo: "100%" }}>
+          <CurrentRank />
+          {/* {mostPlayChampions && (
           <MostSeven mostPlayChampions={mostPlayChampions} />
-        )}
-      </LeftContents>
-      {/* <RightContents>
+        )} */}
+        </Box>
+        {/* <RightContents>
         <MatchHistoryTab>
           <MatchHistroyTabUl>
             <MatchHistoryTabLi selected={true}>전체</MatchHistoryTabLi>
@@ -70,7 +86,8 @@ export default function SummonerBody() {
             ))}
         </MatchHistoryContainer>
       </RightContents> */}
-    </ContentsContainer>
+      </Flex>
+    </Flex>
   );
 }
 

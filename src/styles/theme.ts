@@ -12,6 +12,7 @@ const colors = {
     mint: "#00bba3",
     red: "#d31a45",
     gray: "#9AA4AF",
+    darkGray: "rgb(117, 133, 146)",
     border: "#ebeef1",
     selectBgBlue: "#ecf2ff",
     selectFontBlue: "#4171d6",

@@ -33,11 +33,11 @@ export default function ContainerSummoners() {
   }, [userDocument]);
 
   return (
-    <Center>
+    <Center flexDirection={"column"}>
       {userDocument && (
         <>
           <SummonerHead refreshActions={refreshActions} />
-          {/* <SummonerBody /> */}
+          <SummonerBody />
         </>
       )}
     </Center>
