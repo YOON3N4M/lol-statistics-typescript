@@ -64,7 +64,11 @@ export default function SummonerHead(props: SummonerHeadProps) {
               flexDirection={"column"}
               mt={12}
             >
-              <Button bg="keyColor.bgSky" color={"white"}>
+              <Button
+                bg="keyColor.bgSky"
+                color={"white"}
+                onClick={refreshActions}
+              >
                 전적 갱신
               </Button>
               <Text

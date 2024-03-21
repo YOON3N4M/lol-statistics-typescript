@@ -15,7 +15,7 @@ export default function ContainerSummoners() {
 
   const { refreshActions } = useSummoner();
   const userDocument = useUserDocument();
-  const { setRiotId } = useSummonerActions();
+  const { setRiotId, setUserDocument, setMatchHistory } = useSummonerActions();
 
   function extractRiotId() {
     const sumonnerName = extractSummonerName(pathname);
@@ -31,6 +31,14 @@ export default function ContainerSummoners() {
   useEffect(() => {
     console.log(userDocument);
   }, [userDocument]);
+
+  useEffect(() => {
+    return () => {
+      setRiotId(null);
+      setUserDocument(null);
+      setMatchHistory(null);
+    };
+  }, []);
 
   return (
     <Center flexDirection={"column"} pb={8}>
