@@ -2,13 +2,13 @@ import { MatchInfoArray, ParticipantInfo } from "@/types/types";
 import PositionsBar from "@/components/PositionsBar";
 import Summarys from "@/components/SummaryMost";
 import styled from "@emotion/styled";
+import { Box, Flex } from "@chakra-ui/react";
 
 interface Props {
   mostPlayChampions: any;
-  matchInfoArr: MatchInfoArray;
 }
 
-export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
+export default function Summary({ mostPlayChampions }: Props) {
   const flattedArr = mostPlayChampions.flat();
   const winCount = flattedArr.filter(
     (info: ParticipantInfo) => info.win === true
@@ -41,7 +41,7 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
 
   const kdaAvg = (totalKillsAvg + totalAssistsAvg) / totalDeathsAvg;
   return (
-    <SummaryContainer>
+    <Flex borderBottomRadius={"4px"} bg="white" p={{ pc: "24px 21px" }}>
       {mostPlayChampions.length !== 0 ? (
         <>
           {" "}
@@ -115,7 +115,7 @@ export default function Summary({ mostPlayChampions, matchInfoArr }: Props) {
           {/* 전적 정보가 없습니다. 전적이 있다면 전적 갱신을 시도 해보세요. */}
         </NoHistory>
       )}
-    </SummaryContainer>
+    </Flex>
   );
 }
 

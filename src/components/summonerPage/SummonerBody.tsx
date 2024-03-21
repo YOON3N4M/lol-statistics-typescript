@@ -1,4 +1,4 @@
-import CurrentRank from "@/containers/sumonners/CurrentRank";
+import CurrentRank from "@/containers/sumonners/summonerBody/CurrentRank";
 import MostSeven from "@/components/MostSeven";
 import Summary from "@/components/Summary";
 import MatchHistory from "@/components/matchHistory/MatchHistory";
@@ -55,12 +55,17 @@ export default function SummonerBody() {
         maxW="1080px"
         m={{ pc: "0 auto" }}
         mt={{ pc: 2 }}
+        gap={{ pc: 2 }}
+        flexDirection={{ pc: "row", mo: "column" }}
       >
-        <Box width={{ pc: "332px", mo: "100%" }}>
+        <Box className="left" width={{ pc: "332px", mo: "100%" }}>
           <CurrentRank />
           {mostPlayChampions && (
             <MostSeven mostPlayChampions={mostPlayChampions} />
           )}
+        </Box>
+        <Box className="right" flex={1} minH={"50px"}>
+          {/* <Summary mostPlayChampions={mostPlayChampions} /> */}
         </Box>
         {/* <RightContents>
         <MatchHistoryTab>
