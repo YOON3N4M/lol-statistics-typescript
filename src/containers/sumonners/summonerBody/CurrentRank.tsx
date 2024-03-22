@@ -19,6 +19,7 @@ export default function CurrentRank() {
   }
 
   useEffect(() => {
+    setLeagues([]);
     if (!userDocument) return;
     if (userDocument.league1) {
       setLeagues((prev: any) => [...prev, refineLeague(userDocument.league1)]);
@@ -26,7 +27,7 @@ export default function CurrentRank() {
     if (userDocument.league2) {
       setLeagues((prev: any) => [...prev, refineLeague(userDocument.league2)]);
     }
-  }, []);
+  }, [userDocument]);
 
   return (
     <Flex w="100%" flexDirection={{ pc: "column", mo: "row" }}>

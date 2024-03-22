@@ -45,6 +45,8 @@ export default function useSummoner() {
   }
 
   async function refreshActions() {
+    console.log("전적 갱신");
+    setMatchIdArr([]);
     if (!riotId) return;
     const riotDataRes = await riotApi.getRiotsSummonerData(riotId);
     if (!riotDataRes) return;
@@ -57,7 +59,7 @@ export default function useSummoner() {
       accountRes
     );
     setUserDocument(postUserDocRes);
-    setMatchIdArr(matchIdArr);
+    setMatchIdArr(matchIdRes);
   }
 
   useEffect(() => {
@@ -81,7 +83,9 @@ export default function useSummoner() {
   }, [riotId]);
 
   useEffect(() => {
+    setMatchHistory([]);
     if (matchIdArr.length < 1) return;
+    console.log("갱신된");
     handleMatchIdArr();
   }, [matchIdArr]);
 
