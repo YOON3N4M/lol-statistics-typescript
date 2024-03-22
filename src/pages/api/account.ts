@@ -9,8 +9,8 @@ export default async function handler(
   if (req.method === "GET") {
     const riotId: any = req.query;
     try {
+      console.log(riotId);
       const accountResult = await riotApi.getAccountByRiotId(riotId);
-
       res.status(200).json(accountResult);
     } catch (err) {
       res.status(500).json({ message: "500, 등록 실패" });
