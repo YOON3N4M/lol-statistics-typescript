@@ -23,7 +23,7 @@ import {
 } from "@/types/types";
 import IconArrow from "../IconArrow";
 import styled from "@emotion/styled";
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 
 interface Props {
   userDocument: UserDocument;
@@ -68,7 +68,7 @@ function MatchHistory({ userDocument, match }: Props) {
               <Result isWin={win}>{win ? "승리" : "패배"}</Result>
               <Length>{`${gameDurationTime}분`}</Length>
             </Game>
-            <GameInfo>
+            <Box w={{ pc: "377px" }} h="83px">
               <TopRow>
                 <Champion>
                   <ChampionIconBox>
@@ -117,7 +117,7 @@ function MatchHistory({ userDocument, match }: Props) {
                   width={"140px"}
                   fontSize="xs"
                   borderLeft={"1px solid"}
-                  borderColor="keyColor.border"
+                  borderColor="keyColor.gray"
                   pl={"4px"}
                 >
                   <Stat color="red">
@@ -148,7 +148,7 @@ function MatchHistory({ userDocument, match }: Props) {
                   </WardBox>
                 </ItemContainer>
               </BottomRow>
-            </GameInfo>
+            </Box>
             <Flex display={{ pc: "flex", mo: "none" }}>
               <ul>
                 {teamA.map((item: RefinedParticipantInfo, index: any) => (

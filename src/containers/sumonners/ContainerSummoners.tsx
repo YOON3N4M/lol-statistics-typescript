@@ -41,7 +41,7 @@ export default function ContainerSummoners() {
   }, []);
 
   return (
-    <Center minH={"3000px"} flexDirection={"column"} pb={8}>
+    <Center flexDirection={"column"} pb={8}>
       {userDocument && (
         <>
           <SummonerHead refreshActions={refreshActions} />
