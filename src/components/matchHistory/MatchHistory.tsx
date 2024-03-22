@@ -137,8 +137,8 @@ function MatchHistory({ userDocument, match }: Props) {
               <BottomRow>
                 <ItemContainer>
                   <ItemUl>
-                    {items.map((item: number) => (
-                      <li>
+                    {items.map((item: number, idx) => (
+                      <li key={idx}>
                         <ItemBox isWin={win}>
                           {item !== 0 && <ItemIcon src={ITEM_ICON_URL(item)} />}
                         </ItemBox>
@@ -154,7 +154,9 @@ function MatchHistory({ userDocument, match }: Props) {
             <Flex display={{ pc: "flex", mo: "none" }}>
               <ul>
                 {teamA.map((item: RefinedParticipantInfo, index: any) => (
-                  <PartLi>
+                  <PartLi
+                    key={`${gameCreation}-${item.riotIdGameName}-${index}`}
+                  >
                     <PartIconBox>
                       <PartIcon src={CHAMPION_ICON_URL(item.championName)} />
                     </PartIconBox>
@@ -171,8 +173,8 @@ function MatchHistory({ userDocument, match }: Props) {
                 ))}
               </ul>
               <ul>
-                {teamB.map((item: RefinedParticipantInfo) => (
-                  <PartLi>
+                {teamB.map((item: RefinedParticipantInfo, idx: number) => (
+                  <PartLi key={`${gameCreation}-${item.riotIdGameName}-${idx}`}>
                     <PartIconBox>
                       <PartIcon src={CHAMPION_ICON_URL(item.championName)} />
                     </PartIconBox>

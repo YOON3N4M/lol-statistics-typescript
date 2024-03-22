@@ -54,7 +54,7 @@ export default function RecentSearched() {
       <Box className="styled-scroll" overflowY={"scroll"} h="400px">
         {recentlyUser?.map((user) => {
           console.log(user.riotId, user.name);
-          if (!user.riotId) return <></>;
+          if (!user.riotId) return <Box key={user.puuid}></Box>;
           const riotId = handleRiotId(user.riotId, "#");
           let tier;
           let rank;
@@ -67,6 +67,7 @@ export default function RecentSearched() {
 
           return (
             <Flex
+              key={user.puuid}
               w={"100%"}
               position={"relative"}
               p="10px 20px"

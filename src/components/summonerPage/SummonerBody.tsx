@@ -66,7 +66,11 @@ export default function SummonerBody() {
             <Box mt="4x">
               {matchHistory &&
                 matchHistory.map((match: any) => (
-                  <MatchHistory match={match} userDocument={userDocument!} />
+                  <MatchHistory
+                    key={match.metadata.matchId}
+                    match={match}
+                    userDocument={userDocument!}
+                  />
                 ))}
             </Box>
           </Box>
