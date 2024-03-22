@@ -23,6 +23,7 @@ import {
 } from "@/types/types";
 import IconArrow from "../IconArrow";
 import styled from "@emotion/styled";
+import { Flex } from "@chakra-ui/react";
 
 interface Props {
   userDocument: UserDocument;
@@ -110,7 +111,15 @@ function MatchHistory({ userDocument, match }: Props) {
                     <span>{kda}</span> 평점
                   </Ratio>
                 </KDAContainer>
-                <Stats>
+                <Flex
+                  display={{ mo: "none", pc: "flex" }}
+                  flexDirection="column"
+                  width={"140px"}
+                  fontSize="xs"
+                  borderLeft={"1px solid"}
+                  borderColor="keyColor.border"
+                  pl={"4px"}
+                >
                   <Stat color="red">
                     킬관여{" "}
                     {/* {matchStatistics?.searchedPlayer.searchedPlayersKillPart}% */}
@@ -121,7 +130,7 @@ function MatchHistory({ userDocument, match }: Props) {
                     {/* {matchStatistics?.searchedPlayer.csPerMin}) */}
                   </Stat>
                   <Stat color="gray"></Stat>
-                </Stats>
+                </Flex>
               </TopRow>
               <BottomRow>
                 <ItemContainer>
@@ -140,7 +149,7 @@ function MatchHistory({ userDocument, match }: Props) {
                 </ItemContainer>
               </BottomRow>
             </GameInfo>
-            <PartContainer>
+            <Flex display={{ pc: "flex", mo: "none" }}>
               <ul>
                 {teamA.map((item: RefinedParticipantInfo, index: any) => (
                   <PartLi>
@@ -177,7 +186,7 @@ function MatchHistory({ userDocument, match }: Props) {
                   </PartLi>
                 ))}
               </ul>
-            </PartContainer>
+            </Flex>
           </GameContainer>
           <Detail>
             <DetailBtn
@@ -197,11 +206,11 @@ function MatchHistory({ userDocument, match }: Props) {
 const MatchContainer = styled.div`
   position: relative;
   margin-top: 8px;
+  //overflow: hidden;
 `;
 
 const Match = styled.li<{ isWin?: any }>`
   height: 96px;
-
   border-radius: 4px;
   display: flex;
   justify-content: space-between;

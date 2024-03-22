@@ -5,8 +5,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import TeamContainer from "./TeamContainer";
-import { ContentsType } from "@/types/types";
+
 import styled from "@emotion/styled";
+import { ContentsType } from "@/store/summonersStore";
 
 interface Props {
   summonerId?: string;
@@ -63,7 +64,7 @@ export default function InGame({ summonerId, setSelectedContents }: Props) {
   const [isOnGame, setIsOnGame] = useState<true | false | undefined>(undefined);
   useEffect(() => {
     alert("현재 인게임 정보 기능이 수정 중 입니다.");
-    setSelectedContents("MatchHistorys");
+    setSelectedContents("전적");
 
     // async function getAPI() {
     // 	if (!summonerId) return
