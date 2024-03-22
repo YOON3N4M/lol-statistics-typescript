@@ -2,13 +2,15 @@ import { MatchInfoArray, ParticipantInfo } from "@/types/types";
 import PositionsBar from "@/components/PositionsBar";
 import Summarys from "@/components/SummaryMost";
 import styled from "@emotion/styled";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import useDeviceDetect from "@/hooks/useDeviceDetect";
 
 interface Props {
   mostPlayChampions: any;
 }
 
 export default function Summary({ mostPlayChampions }: Props) {
+  const { isMobile } = useDeviceDetect();
   const flattedArr = mostPlayChampions.flat();
   const winCount = flattedArr.filter(
     (info: ParticipantInfo) => info.win === true
@@ -40,20 +42,39 @@ export default function Summary({ mostPlayChampions }: Props) {
   );
 
   const kdaAvg = (totalKillsAvg + totalAssistsAvg) / totalDeathsAvg;
+
+  function Most() {}
   return (
-    <Flex borderBottomRadius={"4px"} bg="white" p={{ pc: "24px 21px" }}>
+    <Flex
+      borderBottomRadius={"4px"}
+      bg="white"
+      p={{ pc: "24px 21px", mo: "12px 10px" }}
+    >
       {mostPlayChampions.length !== 0 ? (
         <>
           {" "}
-          <SumStats>
+          <Box>
             <SumWinLose>
               {flattedArr.length}전 {winCount}승 {loseCount}패
             </SumWinLose>
-            <RatioKda>
-              <Chart>
-                <Text>
+            <Flex mt={{ pc: "12px", mo: "20px" }}>
+              <Box
+                position={"relative"}
+                w="88px"
+                h="88px"
+                display={{ pc: "initial", mo: "none" }}
+              >
+                <Box
+                  position={"absolute"}
+                  w="88px"
+                  h="88px"
+                  textAlign={"center"}
+                  lineHeight="88px"
+                  color={"keyColor.bgSky"}
+                  fontSize="sm"
+                >
                   <strong>{winRate}%</strong>
-                </Text>
+                </Box>
                 <div>
                   <svg viewBox="0 0 200 200">
                     <circle
@@ -80,8 +101,8 @@ export default function Summary({ mostPlayChampions }: Props) {
                     />
                   </svg>
                 </div>
-              </Chart>
-              <SumInfo>
+              </Box>
+              <Box ml={{ pc: "32px" }}>
                 <KDA>
                   <KDANum deaths={false}>{totalKillsAvg}</KDANum>/
                   <KDANum deaths={true}>{totalDeathsAvg}</KDANum>/
@@ -95,17 +116,30 @@ export default function Summary({ mostPlayChampions }: Props) {
 								: 0}
 									% */}
                 </KillPart>
-              </SumInfo>
-            </RatioKda>
-          </SumStats>
-          <Champions>
-            <Title>플레이한 챔피언 (최근 {flattedArr.length}게임)</Title>
-            <ul>
+              </Box>
+            </Flex>
+          </Box>
+          <Flex
+            w={"222px"}
+            ml="16px"
+            flexDirection={"column"}
+            alignItems={{ mo: "center" }}
+          >
+            <Title>
+              {isMobile
+                ? "모스트 승률"
+                : `플레이한 챔피언 (최근 ${flattedArr.length}게임)`}
+            </Title>
+            <Flex
+              mt={{ mo: 4, pc: 2 }}
+              flexDirection={{ pc: "column", mo: "row" }}
+              gap={{ pc: "8px", mo: 2 }}
+            >
               {mostPlayChampions.slice(0, 3).map((champion: any) => (
                 <Summarys champion={champion} />
               ))}
-            </ul>
-          </Champions>
+            </Flex>
+          </Flex>
           <Positions>
             <PositionsBar currentMatch={flattedArr} />
           </Positions>
@@ -151,17 +185,7 @@ const Chart = styled.div`
   width: 88px;
   height: 88px;
 `;
-const Text = styled.div`
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 88px;
-  height: 88px;
-  line-height: 88px;
-  text-align: center;
-  font-size: 14px;
-  color: #5383e8;
-`;
+
 const SumInfo = styled.div`
   margin-left: 32px;
 `;

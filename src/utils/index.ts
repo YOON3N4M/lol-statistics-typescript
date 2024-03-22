@@ -728,7 +728,9 @@ export function getMostChampionsStats(championsStats: ParticipantInfo[]) {
   const wins = championsStats.filter(
     (champion) => champion.win === true
   ).length;
-
+  const lose = championsStats.filter(
+    (champion) => champion.win === false
+  ).length;
   //평균
   const csAverage = (TotalCs / gameQty).toFixed(1);
   const kdaAverage = getKDA(totalKills, totalDeaths, totalAssists);
@@ -745,5 +747,7 @@ export function getMostChampionsStats(championsStats: ParticipantInfo[]) {
     kdaDeaths,
     kdaAssists,
     gameQty,
+    wins,
+    lose,
   };
 }
