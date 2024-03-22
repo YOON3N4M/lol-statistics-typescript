@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 type UserValid = "initial" | "valid" | "inValid";
 
 export default function useSummoner() {
+  const [isFetchLoading, setIsFetchLoading] = useState(false);
   const [isInvalid, setIsInValid] = useState<UserValid>("initial");
   const [loadingPercent, setLoadingPercent] = useState(100);
   const [matchIdArr, setMatchIdArr] = useState<string[]>([]);
@@ -46,6 +47,7 @@ export default function useSummoner() {
 
   async function refreshActions() {
     console.log("전적 갱신");
+    setIsFetchLoading(true);
     setMatchIdArr([]);
     if (!riotId) return;
     const riotDataRes = await riotApi.getRiotsSummonerData(riotId);
@@ -60,11 +62,13 @@ export default function useSummoner() {
     );
     setUserDocument(postUserDocRes);
     setMatchIdArr(matchIdRes);
+    setIsFetchLoading(false);
   }
 
   useEffect(() => {
     async function initActions() {
       if (!riotId) return;
+      setIsFetchLoading(true);
       const userDocArr = await firebaseAPI.getUserDocumentByRiotId(riotId);
 
       // ^ firebase에 있을때
@@ -77,6 +81,7 @@ export default function useSummoner() {
         // ^ firebase에 없을때
         refreshActions();
       }
+      setIsFetchLoading(false);
     }
 
     initActions();
@@ -89,5 +94,5 @@ export default function useSummoner() {
     handleMatchIdArr();
   }, [matchIdArr]);
 
-  return { refreshActions };
+  return { refreshActions, isFetchLoading };
 }
