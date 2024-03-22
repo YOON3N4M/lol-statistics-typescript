@@ -24,21 +24,44 @@ export default function SummonerHead(props: SummonerHeadProps) {
   return (
     <>
       <Flex w={"100%"} bg="white" px={{ mo: 4 }}>
-        <Flex m="0 auto" w="100%" maxW={"1080px"} py={12}>
+        <Flex
+          m="0 auto"
+          w="100%"
+          maxW={"1080px"}
+          py={12}
+          justifyContent={{ mo: "space-around", pc: "start" }}
+        >
           <Box className="head-left">
             <Box py={4}>
-              <Box
-                position={"relative"}
-                w="100px"
-                h="100px"
-                borderRadius={"8px"}
-                overflow="hidden"
-              >
-                <Image
-                  alt="summoner-icon"
-                  fill={true}
-                  src={SUMMONER_PROFILE_ICON_URL(profileIconId)}
-                />
+              <Box position={"relative"}>
+                <Box
+                  position={"absolute"}
+                  bg="rgb(32, 45, 55)"
+                  color={"white"}
+                  zIndex={100}
+                  p="2px 12px"
+                  fontSize={"xs"}
+                  top={"90%"}
+                  left="50%"
+                  transform={"translateX(-50%)"}
+                  borderRadius="10px"
+                  fontWeight={700}
+                >
+                  {summonerLevel}
+                </Box>
+                <Box
+                  position={"relative"}
+                  w="100px"
+                  h="100px"
+                  borderRadius={"20px"}
+                  overflow="hidden"
+                >
+                  <Image
+                    alt="summoner-icon"
+                    fill={true}
+                    src={SUMMONER_PROFILE_ICON_URL(profileIconId)}
+                  />
+                </Box>
               </Box>
             </Box>
           </Box>

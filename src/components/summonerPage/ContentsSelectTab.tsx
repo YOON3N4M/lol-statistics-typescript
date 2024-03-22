@@ -1,3 +1,4 @@
+import { ContentsType } from "@/store/summonersStore";
 import styled from "@emotion/styled";
 
 interface ContentsSelectTabProps {
@@ -13,7 +14,7 @@ export default function ContentsSelectTab(props: ContentsSelectTabProps) {
 
   return (
     <>
-      <InfoListTab>
+      {/* <InfoListTab>
         <InfoList>
           <li>
             <InfoListItem
@@ -32,7 +33,7 @@ export default function ContentsSelectTab(props: ContentsSelectTabProps) {
             </InfoListItem>
           </li>
         </InfoList>
-      </InfoListTab>
+      </InfoListTab> */}
     </>
   );
 }
