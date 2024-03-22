@@ -400,7 +400,7 @@ export function getRuneName(mainRune: number, subRune: number) {
     default:
       break;
   }
-  console.log(main, sub, mainRune, subRune);
+  // console.log(main, sub, mainRune, subRune);
   return { main, sub };
 }
 
@@ -545,6 +545,10 @@ export function getRefinedTeamStats(team: RefinedParticipantInfo[]) {
 
 export function getMatchStatistics(match: any, puuid: string) {
   //console.log(match.info.participants)
+
+  if (match.info.endOfGameResult === "Abort_Unexpected") {
+    return null;
+  }
   // 모든 플레이어 정제 스탯 추출
   const refinedParticipants: RefinedParticipantInfo[] =
     match.info.participants.map((participant: ParticipantInfo) =>
