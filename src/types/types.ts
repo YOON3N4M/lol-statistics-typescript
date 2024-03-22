@@ -18,7 +18,7 @@ export interface Summoner {
   summonerLevel: number;
 }
 ////
-export interface LeagueObj {
+export interface League {
   wins: number;
   losses: number;
   rank: string;
@@ -67,8 +67,8 @@ export interface UserDocument {
   profileIconId: number;
   puuid: string;
   summonerLevel: number;
-  league1?: any;
-  league2?: any;
+  league1?: League;
+  league2?: League;
   matchHistory?: Array<string>;
   lastRequestTime: number;
   riotId: string;
@@ -76,7 +76,7 @@ export interface UserDocument {
 
 export interface RiotApiObj {
   summonerInfo: Summoner[];
-  leagueInfo: LeagueObj[];
+  leagueInfo: League[];
   matchInfo: string[];
 }
 

@@ -30,7 +30,7 @@ export default function ContainerSummoners() {
   }, [pathname]);
 
   useEffect(() => {
-    console.log(userDocument);
+    //  console.log(userDocument);
   }, [userDocument]);
 
   useEffect(() => {
@@ -46,6 +46,15 @@ export default function ContainerSummoners() {
       {userDocument && (
         <>
           <SummonerHead refreshActions={refreshActions} />
+          <Box
+            display={{ pc: "flex", mo: "none" }}
+            className="tab"
+            w="100%"
+            h={"50px"}
+            bg="white"
+            borderTop={"1px solid"}
+            borderColor="keyColor.border"
+          ></Box>
           {!isFetchLoading ? <SummonerBody /> : <LoadingSpinner />}
         </>
       )}
