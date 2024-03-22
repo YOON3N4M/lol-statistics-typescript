@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import { ParticipantInfo } from "@/types/types";
 import { CHAMPION_ICON_URL } from "@/constants";
 
-import { getKDA, getKDAColor, translateKorChampionName } from "@/utils";
+import {
+  getKDA,
+  getKDAColor,
+  getMostChampionsStats,
+  translateKorChampionName,
+} from "@/utils";
 import styled from "@emotion/styled";
 import { variable } from "@/constants/temp";
 import { Box } from "@chakra-ui/react";
@@ -13,29 +18,17 @@ interface Props {
 }
 
 function MostChampions({ champions }: Props) {
-  const ChampionName: any = champions[0].championName;
-  const gameQty = champions.length;
-  const totalKills = champions.reduce((sum, { kills }) => sum + kills, 0);
-  const totalDeaths = champions.reduce((sum, { deaths }) => sum + deaths, 0);
-  const totalAssists = champions.reduce((sum, { assists }) => sum + assists, 0);
-  const totalMobKills = champions.reduce(
-    (sum, { neutralMinionsKilled }) => sum + neutralMinionsKilled,
-    0
-  );
-  const totalMinionKills = champions.reduce(
-    (sum, { totalMinionsKilled }) => sum + totalMinionsKilled,
-    0
-  );
-  const TotalCs = totalMobKills + totalMinionKills;
-  const wins = champions.filter((champion) => champion.win === true).length;
-
-  //평균
-  const csAverage = (TotalCs / gameQty).toFixed(1);
-  const kdaAverage = getKDA(totalKills, totalDeaths, totalAssists);
-  const winRate = Math.round((wins / gameQty) * 100);
-
+  const {
+    ChampionName,
+    csAverage,
+    kdaAverage,
+    winRate,
+    kdaKills,
+    kdaDeaths,
+    kdaAssists,
+    gameQty,
+  } = getMostChampionsStats(champions);
   //색상 관련
-
   const winRateColor = winRate >= 60 ? variable.color.red : variable.color.gray;
   const kdaColor = getKDAColor(kdaAverage);
 
@@ -68,9 +61,7 @@ function MostChampions({ champions }: Props) {
             {0 === Infinity ? "Perfect" : <>{kdaAverage}:1 평점</>}
           </MostRatio>
           <MostKda>
-            {(totalKills / gameQty).toFixed(1)} /
-            {(totalDeaths / gameQty).toFixed(1)} /
-            {(totalAssists / gameQty).toFixed(1)}
+            {kdaKills} /{kdaDeaths} /{kdaAssists}
           </MostKda>
         </MostStats>
         <Played>

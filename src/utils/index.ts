@@ -1,5 +1,6 @@
 import { InGameInfo } from "@/components/inGame/InGame";
 import {
+  MatchInfoObj,
   ParticipantInfo,
   QueueTypeStr,
   RefinedMatchInfo,
@@ -674,4 +675,73 @@ export function refineInGameInfo(inGameInfo: InGameInfo) {
     platformId,
   };
   return result;
+}
+
+export function getMostChampions(
+  matchHistory: MatchInfoObj[] | null,
+  userDocumentName: string
+) {
+  if (!matchHistory) return;
+  const filtered = matchHistory?.map(
+    (game) =>
+      game?.info.participants.filter(
+        (player: any) => player.summonerName === userDocumentName
+      )[0]
+  );
+
+  const removeUndefined: any = filtered?.filter((item) => item !== undefined);
+  const most = removeUndefined.reduce((acc: any, obj: any) => {
+    const key = obj.championName;
+    acc[key] = (acc[key] || []).concat(obj);
+    return acc;
+  }, {});
+  const mostList = Object.values(most).sort(
+    (a: any, b: any) => b.length - a.length
+  );
+
+  return mostList;
+}
+
+export function getMostChampionsStats(championsStats: ParticipantInfo[]) {
+  const ChampionName: string = championsStats[0].championName;
+  const gameQty = championsStats.length;
+  const totalKills = championsStats.reduce((sum, { kills }) => sum + kills, 0);
+  const totalDeaths = championsStats.reduce(
+    (sum, { deaths }) => sum + deaths,
+    0
+  );
+  const totalAssists = championsStats.reduce(
+    (sum, { assists }) => sum + assists,
+    0
+  );
+  const totalMobKills = championsStats.reduce(
+    (sum, { neutralMinionsKilled }) => sum + neutralMinionsKilled,
+    0
+  );
+  const totalMinionKills = championsStats.reduce(
+    (sum, { totalMinionsKilled }) => sum + totalMinionsKilled,
+    0
+  );
+  const TotalCs = totalMobKills + totalMinionKills;
+  const wins = championsStats.filter(
+    (champion) => champion.win === true
+  ).length;
+
+  //평균
+  const csAverage = (TotalCs / gameQty).toFixed(1);
+  const kdaAverage = getKDA(totalKills, totalDeaths, totalAssists);
+  const winRate = Math.round((wins / gameQty) * 100);
+  const kdaKills = (totalKills / gameQty).toFixed(1);
+  const kdaDeaths = (totalDeaths / gameQty).toFixed(1);
+  const kdaAssists = (totalAssists / gameQty).toFixed(1);
+  return {
+    ChampionName,
+    csAverage,
+    kdaAverage,
+    winRate,
+    kdaKills,
+    kdaDeaths,
+    kdaAssists,
+    gameQty,
+  };
 }
