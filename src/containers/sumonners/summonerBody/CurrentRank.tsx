@@ -37,7 +37,12 @@ export default function CurrentRank() {
   }, [userDocument]);
 
   return (
-    <Flex w="100%" flexDirection={{ pc: "column", mo: "row" }}>
+    <Flex
+      w="100%"
+      flexDirection={{ pc: "column", mo: "row" }}
+      borderTop={{ pc: "0px", mo: "1px solid" }}
+      borderColor="keyColor.border"
+    >
       <Box
         className="solo-rank"
         w={{ pc: "100%", mo: "50%" }}
@@ -51,6 +56,8 @@ export default function CurrentRank() {
           borderTopRadius={"4px"}
           justifyContent={{ mo: "center", pc: "left" }}
           alignItems="center"
+          borderBottom={"1px solid"}
+          borderColor="keyColor.border"
         >
           <Text fontSize={"sm"} fontWeight="600">
             솔로랭크{" "}
@@ -63,8 +70,6 @@ export default function CurrentRank() {
         </Flex>
         {solo && (
           <Flex
-            borderTop={"1px solid"}
-            borderColor="keyColor.border"
             py={8}
             px={4}
             bg={"white"}
@@ -124,6 +129,8 @@ export default function CurrentRank() {
           borderTopRadius={"4px"}
           justifyContent={{ mo: "center", pc: "left" }}
           alignItems="center"
+          borderBottom={"1px solid"}
+          borderColor="keyColor.border"
         >
           <Text fontSize={"sm"} fontWeight="600">
             자유랭크{" "}
@@ -136,8 +143,6 @@ export default function CurrentRank() {
         </Flex>
         {flex && (
           <Flex
-            borderTop={"1px solid"}
-            borderColor="keyColor.border"
             py={8}
             px={4}
             bg={"white"}
