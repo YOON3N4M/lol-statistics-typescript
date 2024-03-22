@@ -56,6 +56,18 @@ export interface RefinedMatchStatistics {
   currentPlayer: RefinedParticipantInfo;
   refinedMatchInfo: RefinedMatchInfo;
 }
+
+export interface LeagueObj {
+  wins: number;
+  losses: number;
+  rank: string;
+  tier: string;
+  leaguePoints: number;
+  queueType: string;
+}
+
+export type LeagueArray = Array<LeagueObj>;
+
 export type MatchInfoArray = Array<MatchInfoObj> | undefined[] | undefined;
 
 //firebase
@@ -67,8 +79,8 @@ export interface UserDocument {
   profileIconId: number;
   puuid: string;
   summonerLevel: number;
-  league1?: League;
-  league2?: League;
+  league1?: LeagueObj | undefined;
+  league2?: LeagueObj | undefined;
   matchHistory?: Array<string>;
   lastRequestTime: number;
   riotId: string;
