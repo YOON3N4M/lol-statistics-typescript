@@ -135,9 +135,11 @@ export default function Summary({ mostPlayChampions }: Props) {
               flexDirection={{ pc: "column", mo: "row" }}
               gap={{ pc: "8px", mo: 2 }}
             >
-              {mostPlayChampions.slice(0, 3).map((champion: any) => (
-                <Summarys champion={champion} />
-              ))}
+              {mostPlayChampions
+                .slice(0, 3)
+                .map((champion: any, idx: number) => (
+                  <Summarys key={idx} champion={champion} />
+                ))}
             </Flex>
           </Flex>
           <Positions>

@@ -89,7 +89,10 @@ export default function MostSeven({ mostPlayChampions }: MostSevenProps) {
         </MostPlayedTab>
         <MostChampionContainer>
           {most7.map((champions) => (
-            <MostChampion champions={champions} />
+            <MostChampion
+              key={`most7-${champions[0].championName}`}
+              champions={champions}
+            />
           ))}
         </MostChampionContainer>
         {/* <More>더 보기</More> */}

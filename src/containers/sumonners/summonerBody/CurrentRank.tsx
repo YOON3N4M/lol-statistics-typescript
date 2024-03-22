@@ -32,7 +32,12 @@ export default function CurrentRank() {
   return (
     <Flex w="100%" flexDirection={{ pc: "column", mo: "row" }}>
       {leagues.map((league: any, idx: number) => (
-        <Box mt={{ pc: idx * 2 }} w={{ pc: "100%", mo: "50%" }} flex={1}>
+        <Box
+          key={league.league.queueType}
+          mt={{ pc: idx * 2 }}
+          w={{ pc: "100%", mo: "50%" }}
+          flex={1}
+        >
           <Flex
             w="100%"
             bg="white"
