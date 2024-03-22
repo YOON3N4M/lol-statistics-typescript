@@ -1,7 +1,15 @@
 import { CHAMPION_ICON_URL } from "@/constants";
 import { variable } from "@/constants/temp";
-import { getKDA, getKDAColor, getWinRate } from "@/utils";
+
+import {
+  getKDA,
+  getKDAColor,
+  getMostChampionsStats,
+  getWinRate,
+} from "@/utils";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import Image from "next/image";
 
 interface Props {
   champion: any;
@@ -25,32 +33,36 @@ const WinLose = styled.div`
   color: "#9AA4AF";
 `;
 
-const Text = styled.span<{ color: string }>`
-  color: ${(props) => props.color};
-`;
 function Summarys({ champion }: Props) {
-  const championName = champion[0].championName;
-
-  const wins = champion.filter((e: any) => e.win === true).length;
-  const loses = champion.filter((e: any) => e.win === false).length;
-  const kills: number = champion.reduce(function add(sum: any, item: any) {
-    return sum + item.kills;
-  }, 0);
-  const deaths: number = champion.reduce(function add(sum: any, item: any) {
-    return sum + item.deaths;
-  }, 0);
-  const assists: number = champion.reduce(function add(sum: any, item: any) {
-    return sum + item.assists;
-  }, 0);
-  const winRate = getWinRate(wins, loses);
-  const kda: any = getKDA(kills, deaths, assists);
-
+  const {
+    ChampionName,
+    csAverage,
+    kdaAverage,
+    winRate,
+    kdaKills,
+    kdaDeaths,
+    kdaAssists,
+    gameQty,
+    wins,
+    lose,
+  } = getMostChampionsStats(champion);
   return (
     <>
-      <SumLi>
-        <ChampionIcon src={CHAMPION_ICON_URL(championName)} />
+      <Flex
+        mt={{ mo: 2, pc: 0 }}
+        alignItems={"center"}
+        flexDirection={{ pc: "row", mo: "column" }}
+      >
+        <Flex
+          width={{ pc: "24px", mo: "35px" }}
+          h={{ pc: "24px", mo: "35px" }}
+          borderRadius="50%"
+          overflow={"hidden"}
+        >
+          <img src={CHAMPION_ICON_URL(ChampionName)} alt={ChampionName} />
+        </Flex>
 
-        <WinLose>
+        <Flex fontSize={"11px"} gap={1} ml={{ pc: 2 }}>
           <Text
             color={
               Math.round(winRate) >= 60
@@ -60,12 +72,21 @@ function Summarys({ champion }: Props) {
           >
             {Math.round(winRate)}%{" "}
           </Text>
-          <Text color={variable.color.gray}>
-            ({wins}승 {loses}패)
+          <Text
+            color={variable.color.gray}
+            display={{ pc: "inline", mo: "none" }}
+          >
+            ({wins}승 {lose}패)
           </Text>
-          <Text color={getKDAColor(kda)}> {kda} 평점</Text>
-        </WinLose>
-      </SumLi>
+          <Text
+            color={getKDAColor(kdaAverage)}
+            display={{ pc: "inline", mo: "none" }}
+          >
+            {" "}
+            {kdaAverage} 평점
+          </Text>
+        </Flex>
+      </Flex>
     </>
   );
 }
