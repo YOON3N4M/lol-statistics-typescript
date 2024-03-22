@@ -48,7 +48,24 @@ export default function SummonerBody() {
           )}
         </Box>
         <Box className="right" flex={1} minH={"50px"}>
-          <Summary mostPlayChampions={mostPlayChampions} />
+          <Box
+            className="right-tab"
+            w="100%"
+            bg="white"
+            borderTopRadius={"4px"}
+            p={2}
+          >
+            전체
+          </Box>
+          <Box borderTop="1px solid" borderColor={"keyColor.border"}>
+            <Summary mostPlayChampions={mostPlayChampions} />
+            <Box mt="4x">
+              {matchHistory &&
+                matchHistory.map((match: any) => (
+                  <MatchHistory match={match} userDocument={userDocument!} />
+                ))}
+            </Box>
+          </Box>
         </Box>
         {/* <RightContents>
         <MatchHistoryTab>
