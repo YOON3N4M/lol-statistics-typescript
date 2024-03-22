@@ -1,5 +1,5 @@
 import CurrentRank from "@/containers/sumonners/summonerBody/CurrentRank";
-import MostSeven from "@/components/MostSeven";
+import MostSeven from "@/containers/sumonners/summonerBody/MostSeven";
 import Summary from "@/components/Summary";
 import MatchHistory from "@/components/matchHistory/MatchHistory";
 import { MatchInfoObj, UserDocument } from "@/types/types";
@@ -7,38 +7,21 @@ import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useMatchHistory, useUserDocument } from "@/store/summonersStore";
 import { Box, Flex } from "@chakra-ui/react";
+import { getMostChampions } from "@/utils";
 
 export default function SummonerBody() {
   const [mostPlayChampions, setMostPlayChampions] = useState<any>();
   const userDocument = useUserDocument();
   const matchHistory = useMatchHistory();
 
-  function getMostChampion() {
-    if (!matchHistory) return;
-    const filtered = matchHistory?.map(
-      (game) =>
-        game?.info.participants.filter(
-          (player: any) => player.summonerName === userDocument?.name
-        )[0]
-    );
-
-    const removeUndefined: any = filtered?.filter((item) => item !== undefined);
-    const most = removeUndefined.reduce((acc: any, obj: any) => {
-      const key = obj.championName;
-      acc[key] = (acc[key] || []).concat(obj);
-      return acc;
-    }, {});
-    const mostList = Object.values(most).sort(
-      (a: any, b: any) => b.length - a.length
-    );
-
-    setMostPlayChampions(mostList);
-  }
-
   useEffect(() => {
     if (!matchHistory) return;
-    getMostChampion();
+    if (!userDocument) return;
+    const mostPlay = getMostChampions(matchHistory, userDocument?.name);
+    console.log(mostPlay);
+    setMostPlayChampions(mostPlay);
   }, [matchHistory]);
+
   return (
     <Flex flexDirection={"column"} w="100%">
       <Box
