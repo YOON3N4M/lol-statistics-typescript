@@ -27,8 +27,6 @@ export interface LeagueObj {
   queueType: string;
 }
 
-export type LeagueArray = Array<LeagueObj>;
-
 export interface MatchInfoObj {
   info?: any;
   metadata?: any;
