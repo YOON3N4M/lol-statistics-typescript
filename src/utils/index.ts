@@ -213,7 +213,9 @@ export function getQueueTypeName(queueType: number): QueueTypeStr {
   }
 }
 
-// 스펠 코드에 따른 스펠 이름 대치
+/**
+ * 숫자 형태의 스펠 코드와 문자열 형태의 이름을 매칭 해주는 함수
+ */
 export function getSummonersSpellName(spellA: number, spellB: number) {
   //스펠
   let a;

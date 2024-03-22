@@ -10,7 +10,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { getMostChampions } from "@/utils";
 
 export default function SummonerBody() {
-  const [mostPlayChampions, setMostPlayChampions] = useState<any>();
+  const [mostPlayChampions, setMostPlayChampions] = useState<any>([]);
   const userDocument = useUserDocument();
   const matchHistory = useMatchHistory();
 
@@ -48,7 +48,7 @@ export default function SummonerBody() {
           )}
         </Box>
         <Box className="right" flex={1} minH={"50px"}>
-          {/* <Summary mostPlayChampions={mostPlayChampions} /> */}
+          <Summary mostPlayChampions={mostPlayChampions} />
         </Box>
         {/* <RightContents>
         <MatchHistoryTab>
