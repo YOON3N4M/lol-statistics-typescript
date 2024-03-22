@@ -33,10 +33,12 @@ interface Props {
 function MatchHistory({ userDocument, match }: Props) {
   const [showDetail, setShowDetail] = useState(false);
 
-  const matchStatistics: RefinedMatchStatistics = getMatchStatistics(
+  const matchStatistics: RefinedMatchStatistics | null = getMatchStatistics(
     match,
     userDocument.puuid
   );
+
+  if (!matchStatistics) return <></>;
   const { currentPlayer, refinedMatchInfo } = matchStatistics;
   const { gameCreation, queueType, gameDurationTime, teamA, teamB } =
     refinedMatchInfo;

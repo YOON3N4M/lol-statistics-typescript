@@ -49,10 +49,11 @@ export default function useSummoner() {
     const riotDataRes = await riotApi.getRiotsSummonerData(riotId);
     if (!riotDataRes) return;
     const { accountRes, summonerRes, leagueRes, matchIdRes } = riotDataRes;
+
     const postUserDocRes = await firebaseAPI.postUserDocumentOnDB(
       summonerRes,
       leagueRes,
-      matchIdArr,
+      matchIdRes,
       accountRes
     );
     setUserDocument(postUserDocRes);
