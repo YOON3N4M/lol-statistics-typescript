@@ -14,9 +14,7 @@ export default function SummonerBody() {
   const userDocument = useUserDocument();
   const matchHistory = useMatchHistory();
 
-  useEffect(() => {
-    console.log(matchHistory);
-  }, [matchHistory]);
+  useEffect(() => {}, [matchHistory]);
 
   useEffect(() => {
     if (!matchHistory) return;
@@ -28,15 +26,6 @@ export default function SummonerBody() {
 
   return (
     <Flex flexDirection={"column"} w="100%">
-      <Box
-        display={{ pc: "flex", mo: "none" }}
-        className="tab"
-        w="100%"
-        h={"50px"}
-        bg="white"
-        borderTop={"1px solid"}
-        borderColor="keyColor.border"
-      ></Box>
       <Flex
         w={{ pc: "1080px" }}
         maxW="1080px"

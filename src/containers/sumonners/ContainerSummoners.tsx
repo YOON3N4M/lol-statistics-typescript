@@ -1,4 +1,5 @@
 import Header from "@/components/layout/Header";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import SummonerBody from "@/components/summonerPage/SummonerBody";
 import SummonerHead from "@/components/summonerPage/SummonerHead";
 import useSummoner from "@/hooks/useSummoner";
@@ -13,7 +14,7 @@ import React, { useEffect, useState } from "react";
 export default function ContainerSummoners() {
   const pathname = usePathname();
 
-  const { refreshActions } = useSummoner();
+  const { refreshActions, isFetchLoading } = useSummoner();
   const userDocument = useUserDocument();
   const { setRiotId, setUserDocument, setMatchHistory } = useSummonerActions();
 
@@ -29,7 +30,7 @@ export default function ContainerSummoners() {
   }, [pathname]);
 
   useEffect(() => {
-    console.log(userDocument);
+    //  console.log(userDocument);
   }, [userDocument]);
 
   useEffect(() => {
@@ -45,7 +46,16 @@ export default function ContainerSummoners() {
       {userDocument && (
         <>
           <SummonerHead refreshActions={refreshActions} />
-          <SummonerBody />
+          <Box
+            display={{ pc: "flex", mo: "none" }}
+            className="tab"
+            w="100%"
+            h={"50px"}
+            bg="white"
+            borderTop={"1px solid"}
+            borderColor="keyColor.border"
+          ></Box>
+          {!isFetchLoading ? <SummonerBody /> : <LoadingSpinner />}
         </>
       )}
     </Center>
