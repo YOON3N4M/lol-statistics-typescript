@@ -96,8 +96,8 @@ async function postUserDocumentOnDB(
     puuid: summonerInfo.puuid,
     summonerLevel: summonerInfo.summonerLevel,
     matchHistory: matchIdArr || [],
-    league1: soloRank || undefined,
-    league2: freeRank || undefined,
+    league1: soloRank || null,
+    league2: freeRank || null,
     lastRequestTime,
     riotId: `${riotAccount.gameName}#${riotAccount.tagLine}`,
   };

@@ -79,8 +79,8 @@ export interface UserDocument {
   profileIconId: number;
   puuid: string;
   summonerLevel: number;
-  league1?: LeagueObj | undefined;
-  league2?: LeagueObj | undefined;
+  league1?: LeagueObj | null;
+  league2?: LeagueObj | null;
   matchHistory?: Array<string>;
   lastRequestTime: number;
   riotId: string;
