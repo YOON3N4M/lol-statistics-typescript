@@ -2,7 +2,6 @@ import { RiotId, UserDocument } from "@/types/types";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { calculatedTimeDiffer, handleRiotId } from "@/utils";
 import ContentsSelectTab from "./ContentsSelectTab";
-import RefreshButton from "@/components/RefreshButton";
 import styled from "@emotion/styled";
 import { useRiotId, useUserDocument } from "@/store/summonersStore";
 import useSummoner from "@/hooks/useSummoner";
@@ -21,6 +20,20 @@ export default function SummonerHead(props: SummonerHeadProps) {
   if (!riotId || !userDocument) return <></>;
 
   const { profileIconId, summonerLevel, lastRequestTime } = userDocument;
+
+  function handleRefresh() {
+    const currentTime = new Date().getTime();
+    const timeDiffer = Math.abs((lastRequestTime - currentTime) / 1000);
+    const timeLimit = 180;
+    const remainTime = Math.floor(timeLimit - timeDiffer);
+
+    if (timeDiffer < timeLimit) {
+      alert(`전적 갱신은 180초마다 가능합니다. ${remainTime}초 남았습니다.`);
+    } else {
+      refreshActions();
+    }
+  }
+
   return (
     <>
       <Flex w={"100%"} bg="white" px={{ mo: 4 }}>
@@ -90,7 +103,7 @@ export default function SummonerHead(props: SummonerHeadProps) {
               <Button
                 bg="keyColor.bgSky"
                 color={"white"}
-                onClick={refreshActions}
+                onClick={handleRefresh}
               >
                 전적 갱신
               </Button>
@@ -101,7 +114,7 @@ export default function SummonerHead(props: SummonerHeadProps) {
                 color={"keyColor.gray"}
                 textAlign={{ pc: "initial", mo: "right" }}
               >
-                최근 업데이트: 1주 전
+                최근 업데이트: {calculatedTimeDiffer(lastRequestTime)}
               </Text>
             </Box>
           </Box>
