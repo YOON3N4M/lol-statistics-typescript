@@ -9,16 +9,14 @@ import { firebaseAPI } from "@/utils/firebaseApi";
 import { useEffect, useState } from "react";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { useRouter } from "next/navigation";
-import styled from "@emotion/styled";
-import { variable } from "@/constants/temp";
 import { Box, Center, Flex, Text } from "@chakra-ui/react";
 
 export default function RecentSearched() {
   const [recentlyUser, setRecentlyUser] = useState<UserDocument[]>([]);
   const router = useRouter();
 
-  // * 최근 검색된 모든 플레이어 doc 가져옴
   useEffect(() => {
+    // * 최근 검색된 모든 플레이어 doc 가져옴
     async function getCollection() {
       const collection = await firebaseAPI.getUserCollection();
       const sortByLastRequestTime = collection
@@ -33,7 +31,7 @@ export default function RecentSearched() {
     getCollection();
   }, []);
 
-  function goSelectUser(riotId: RiotId) {
+  function handleSummonerClick(riotId: RiotId) {
     router.push(`summoners/kr/${riotId.name}-${riotId.tag}`);
   }
 
@@ -76,7 +74,7 @@ export default function RecentSearched() {
               alignItems="center"
               cursor={"pointer"}
               _hover={{ backgroundColor: "#f7f7f9" }}
-              onClick={() => goSelectUser(riotId)}
+              onClick={() => handleSummonerClick(riotId)}
             >
               <Box className="summoner-icon">
                 <Box
