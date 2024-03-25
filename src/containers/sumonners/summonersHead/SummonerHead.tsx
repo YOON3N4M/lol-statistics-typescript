@@ -1,7 +1,6 @@
 import { RiotId, UserDocument } from "@/types/types";
 import { SUMMONER_PROFILE_ICON_URL } from "@/constants";
 import { calculatedTimeDiffer, handleRiotId } from "@/utils";
-import ContentsSelectTab from "../../../components/summonerPage/ContentsSelectTab";
 import styled from "@emotion/styled";
 import { useRiotId, useUserDocument } from "@/store/summonersStore";
 import useSummoner from "@/hooks/useSummoner";
