@@ -1,5 +1,6 @@
 import { CHAMPION_ICON_URL } from "@/constants";
 import { variable } from "@/constants/temp";
+import { ParticipantInfo } from "@/types/types";
 
 import {
   getKDA,
@@ -12,26 +13,8 @@ import styled from "@emotion/styled";
 import Image from "next/image";
 
 interface Props {
-  champion: any;
+  champion: ParticipantInfo[];
 }
-
-const SumLi = styled.li`
-  height: 24px;
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-`;
-const ChampionIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  margin-right: 8px;
-`;
-const WinLose = styled.div`
-  font-size: 11px;
-  position: relative;
-  color: "#9AA4AF";
-`;
 
 function Summarys({ champion }: Props) {
   const {
@@ -46,6 +29,8 @@ function Summarys({ champion }: Props) {
     wins,
     lose,
   } = getMostChampionsStats(champion);
+
+  console.log(champion);
   return (
     <>
       <Flex

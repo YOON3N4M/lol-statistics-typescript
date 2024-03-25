@@ -1,7 +1,7 @@
 import CurrentRank from "@/containers/sumonners/summonerBody/CurrentRank";
 import MostSeven from "@/containers/sumonners/summonerBody/MostSeven";
 import Summary from "@/components/Summary";
-import MatchHistory from "@/components/matchHistory/MatchHistory";
+import MatchHistory from "@/containers/sumonners/summonerBody/matchHistory/MatchHistory";
 import { MatchInfoObj, UserDocument } from "@/types/types";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";

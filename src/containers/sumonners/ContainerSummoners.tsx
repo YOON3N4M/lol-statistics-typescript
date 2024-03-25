@@ -1,7 +1,7 @@
 import Header from "@/components/layout/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import SummonerBody from "@/components/summonerPage/SummonerBody";
-import SummonerHead from "@/components/summonerPage/SummonerHead";
+import SummonerBody from "@/containers/sumonners/summonerBody/SummonerBody";
+import SummonerHead from "@/containers/sumonners/summonersHead/SummonerHead";
 import useSummoner from "@/hooks/useSummoner";
 import { useSummonerActions, useUserDocument } from "@/store/summonersStore";
 import { UserDocument } from "@/types/types";

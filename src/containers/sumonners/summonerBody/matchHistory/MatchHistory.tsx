@@ -13,7 +13,7 @@ import {
   RUNE_ICON_URL,
   SUMMONER_SPELL_ICON_URL,
 } from "@/constants";
-import MatchDetail from "@/components/matchHistory/MatchDetail";
+import MatchDetail from "@/containers/sumonners/summonerBody/matchHistory/MatchDetail";
 
 import {
   MatchInfoObj,
@@ -21,7 +21,7 @@ import {
   RefinedParticipantInfo,
   UserDocument,
 } from "@/types/types";
-import IconArrow from "../IconArrow";
+import IconArrow from "../../../../components/IconArrow";
 import styled from "@emotion/styled";
 import { Box, Flex } from "@chakra-ui/react";
 
