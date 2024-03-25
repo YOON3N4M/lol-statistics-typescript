@@ -6,7 +6,7 @@ import { MatchInfoObj, UserDocument } from "@/types/types";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useMatchHistory, useUserDocument } from "@/store/summonersStore";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { getMostChampions } from "@/utils";
 
 export default function SummonerBody() {
@@ -48,7 +48,13 @@ export default function SummonerBody() {
             borderTopRadius={"4px"}
             p={2}
           >
-            전체
+            <Button
+              size={"sm"}
+              color="keyColor.selectFontBlue"
+              bg="keyColor.selectBgBlue"
+            >
+              전체
+            </Button>
           </Box>
           <Box borderTop="1px solid" borderColor={"keyColor.border"}>
             <Summary mostPlayChampions={mostPlayChampions} />
