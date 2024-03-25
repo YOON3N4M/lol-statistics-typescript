@@ -1,50 +1,30 @@
-
 # lol-statistics-typescript
-
-
-### 소개
-
 라이엇 게임즈에서 제공하는 API를 활용해 리그오브레전드 플레이어의 정보를 조회 할 수 있습니다. <br/>
 최근 20게임의 전적, 모스트 7, 포지션 선호도, 승률과 kda 등의 통계 정보 등을 제공 합니다.<br/>
-전체적인 디자인과 구성은 [OP.GG](https://www.op.gg/)를 참고하여 제작 되었습니다.
+전체적인 디자인과 구성은 [OP.GG](https://www.op.gg/)를 참고하여 제작 되었습니다.<br/>
+
+javascript로 만들었던 [기존 프로젝트](https://github.com/YOON3N4M/lol-statistics/) 를 typescirpt로 마이그레이션 후 <br/>
+여러 기술 도입, 기능 추가, 디자인 수정, 반응형, 코드 리팩토링 등을 통해 지속적인 업데이트를 진행중에 있습니다. <br/>
 
 
-### 버전
+<br/>
 
-* ### V3 버전 ( [배포](https://lol-match-histroy.vercel.app/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/next) )
-> 배포 : vercel (11/23 첫 배포) <br><br>
-> <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
->
-> * vercel 배포, 개발 브랜치 (next), 배포 브랜치 (main) 분리
-> * 전체적으로 리팩토링
-> * 절대 경로 설정
-> * next.js 도입으로 전체적인 성능 개선
-> * next.js 자체 api 활용
-> * 꼬여있던 api, db 관련 코드들 전체적으로 개선
+## Stacks
+<strong>Front</strong> : Next.js, typescript, zustand, chakra ui(emotion) <br/>
+<strong>DB</strong> : firebase
 
-<br>
+<br/>
 
-* ### V2 버전 ( [배포](https://lol-statistic.firebaseapp.com/) | [저장소](https://github.com/YOON3N4M/lol-statistics-typescript/tree/main) )
-> 배포 : firebase hosting <br><br>
-> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/styled components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white">
->
-> * 전체적으로 리팩토링
-> * RIOT API, Firebase API 각각의 함수로 분리 정리 (utils/api.ts , utils/firebaseApi)
-> * 재사용률이 높은 상수들 개별 정의 (api, img url 등)  (constants/index.ts)
-> * 재사용률이 높은 계산 함수, 추출 함수 개별 정의 (utils/index.ts)
-> * 타입스크립트 적용
-> * styled-components 적용
-> * github Pages가 아닌 firebase hosting을 이용하여 SPA 앱 새로고침, 뒤로가기 등 이슈를 해결
-<br>
+## Update
+#### 24.03 
+* styled-compoent -> emotion 변경후 일부 기능 제외 반응형 구현
+* zustand 도입
+* pages / containers 폴더 구조 변경
+* 코드 리팩토링 / 개선 중 ...
 
-* ### V1 버전 ( [배포](https://yoon3n4m.github.io/lol-statistics/) | [저장소](https://github.com/YOON3N4M/lol-statistics) )
-> 배포 : github pages <br><br>
-> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white"> <img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=javascript&logoColor=white">
+<br/>
 
-<br>
-
-<hr>
-
+## Prev version
 ### 🛠️ V3 기능 변경사항
 * 각종 오류 수정
 * 서브 검색창 추가
@@ -63,8 +43,7 @@
 
 * 기존의 잘못된 방식으로 변수를 활용하던 점들 대부분 수정/개선
 * map으로 대체가능한 반복 작업 등을 map으로 코드 수정/개선
-* 전체적인 코드 개선 (V1에선 한 파일에 로직 코드가 1000줄 가까이 됐었음....)
+* 전체적인 코드 개선 
 * 챔피언 이름 한글화
 
-<hr>
 
